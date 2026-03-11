@@ -1,0 +1,854 @@
+import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom'
+import './App.css'
+
+// ==========================================
+// 1. SHARED COMPONENTS (Header, Sidebar, Footer)
+// ==========================================
+function SharedHeader() {
+  const [searchInput, setSearchInput] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchInput.trim()) {
+      navigate(`/?search=${encodeURIComponent(searchInput.trim())}`);
+    } else {
+      navigate('/');
+    }
+    setIsMobileMenuOpen(false); 
+  };
+
+  const closeMenu = () => setIsMobileMenuOpen(false);
+
+  return (
+    <>
+      <header className="top-header">
+        <div className="header-content">
+          <div className="logo-area">
+            {/* UPDATED: Changed to .png */}
+            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <img src="/logo.png" alt="Study Marrow Logo" className="site-logo" />
+              <h1>Study Marrow Careers</h1>
+            </Link>
+          </div>
+          <form className="search-area" onSubmit={handleSearch}>
+            <input 
+              type="text" 
+              placeholder="Search this website..." 
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+            <button type="submit" className="search-btn">Search</button>
+          </form>
+        </div>
+      </header>
+      <nav className="main-nav">
+        <div className="mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? '✕ Close Menu' : '☰ Main Menu'}
+        </div>
+
+        <ul className={`nav-links ${isMobileMenuOpen ? 'open' : ''}`}>
+          <li><Link to="/" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Home</Link></li>
+          <li><Link to="/category/Admission" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Admission</Link></li>
+          <li><Link to="/category/Admit Card" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Admit Card</Link></li>
+          <li><Link to="/category/Private Job" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Private Job</Link></li>
+          <li><Link to="/category/Result" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Result</Link></li>
+          <li><Link to="/category/Scholarship" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Scholarship</Link></li>
+          <li><Link to="/imp-links" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Imp Links</Link></li>
+          <li><Link to="/contact" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Contact</Link></li>
+        </ul>
+      </nav>
+    </>
+  );
+}
+
+function Sidebar() {
+  return (
+    <div className="sidebar-column">
+      <div className="sidebar-box text-center">
+         <h3 style={{marginTop: 0, textAlign: 'center', borderBottom: '1px solid #eee', paddingBottom: '10px'}}>Follow Us</h3>
+         <div className="social-icons" style={{display: 'flex', justifyContent: 'center', gap: '10px'}}>
+           <span className="icon fb-icon">f</span>
+           <span className="icon insta-icon">in</span>
+           <span className="icon x-icon">x</span>
+           <span className="icon yt-icon">yt</span>
+         </div>
+      </div>
+      <div className="sidebar-box bookstore-banner">
+        <h2>BOOKSTORE</h2>
+        <p>Study Marrow</p>
+      </div>
+      <div className="sidebar-box">
+        <h3>🔥 Trending Topics</h3>
+        <ul className="trending-list">
+          {/* Dynamic Trending Topics will be mapped here later! */}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function Footer() {
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    setMessage('Subscribing...');
+    try {
+      const res = await fetch('https://study-marrow-backend.onrender.com/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('✅ Subscribed successfully!');
+        setEmail('');
+      } else {
+        setMessage(`❌ ${data.message}`);
+      }
+    } catch (err) {
+      setMessage('❌ Error connecting to server.');
+    }
+    setTimeout(() => setMessage(''), 3000);
+  };
+
+  return (
+    <footer className="study-footer">
+      <div className="footer-container">
+        <div className="footer-left">
+          {/* UPDATED: Changed to .png */}
+          <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px'}}>
+            <img src="/logo.png" alt="Study Marrow Logo" className="footer-logo-img" />
+            <h2 className="footer-logo" style={{margin: 0}}>Study Marrow Careers</h2>
+          </div>
+          <div className="footer-social-icons">
+            <span className="f-icon">f</span>
+            <span className="f-icon">t</span>
+            <span className="f-icon">rss</span>
+            <span className="f-icon">yt</span>
+          </div>
+        </div>
+        <div className="footer-right">
+          <h3>Subscribe to This Blog</h3>
+          <form className="subscribe-form" onSubmit={handleSubscribe}>
+            <input 
+              type="email" 
+              placeholder="Please Enter Your Email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <button type="submit">Subscribe</button>
+            {message && <p style={{marginTop: '8px', fontSize: '0.95rem', color: '#bfdbfe', fontWeight: 'bold'}}>{message}</p>}
+          </form>
+        </div>
+      </div>
+      <div className="footer-bottom-bar">
+        <span onClick={scrollToTop} className="back-to-top" style={{cursor: 'pointer'}}>Return to top of page</span>
+        <span>Copyright © 2024-2026 · Study Marrow Careers</span>
+      </div>
+    </footer>
+  );
+}
+
+// ==========================================
+// 2. PUBLIC HOME PAGE
+// ==========================================
+function PublicPage({ jobs }) {
+  const { categoryName } = useParams();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const searchQuery = searchParams.get('search');
+
+  let displayedJobs = jobs;
+
+  if (categoryName) {
+    displayedJobs = displayedJobs.filter(job => job.category === categoryName);
+  }
+
+  if (searchQuery) {
+    const lowerQuery = searchQuery.toLowerCase();
+    displayedJobs = displayedJobs.filter(job => 
+      job.title.toLowerCase().includes(lowerQuery) ||
+      job.company.toLowerCase().includes(lowerQuery) ||
+      job.description.toLowerCase().includes(lowerQuery)
+    );
+  }
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+
+      <div className="content-wrapper">
+        <div className="main-column">
+          <div className="quick-updates-box">
+            <div className="update-row">
+              <strong>WhatsApp Channel</strong>
+              <button className="join-btn">Join Now</button>
+            </div>
+            <div className="update-row">
+              <strong>Telegram Channel</strong>
+              <button className="check-btn">Join Now</button>
+            </div>
+          </div>
+
+          {categoryName && (
+            <h2 style={{ borderBottom: '2px solid #2563eb', paddingBottom: '10px', color: '#1e3a8a' }}>
+              Showing Posts for: {categoryName}
+            </h2>
+          )}
+
+          {searchQuery && !categoryName && (
+            <h2 style={{ borderBottom: '2px solid #2563eb', paddingBottom: '10px', color: '#1e3a8a' }}>
+              Search Results for: "{searchQuery}"
+            </h2>
+          )}
+
+          {displayedJobs.map((job) => (
+            <div key={job._id} className="list-job-card">
+              <Link to={`/job/${job._id}`} style={{ textDecoration: 'none' }}>
+                <h2 className="list-job-title">
+                  {job.company} Recruitment 2026 - {job.title}
+                </h2>
+              </Link>
+              
+              <div className="list-job-body">
+                <div className="job-logo-box">
+                  {job.imageUrl ? (
+                    <img src={job.imageUrl} alt={`${job.company} Logo`} className="logo-image" />
+                  ) : (
+                    <div className="logo-placeholder-top">Logo</div>
+                  )}
+                  <div className="logo-placeholder-bottom">{job.company.substring(0,10)}</div>
+                </div>
+                
+                <div className="job-text-content">
+                  <p>
+                    <strong>{job.company}.</strong> Last Date: {job.deadline}.<br/><br/>
+                    <strong>{job.company} {job.location ? `(${job.location})` : ''}</strong> has released an employment notification for the recruitment of {job.title} vacancies. {job.description.substring(0, 130)}...
+                  </p>
+                  <Link to={`/job/${job._id}`} className="read-more-link">Read more »</Link>
+                  <div className="job-meta">
+                    <p>📁 Category: {job.category || 'General'} | 🕒 Updated: {new Date(job.datePosted || Date.now()).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          {displayedJobs.length === 0 && (
+            <p style={{padding: '20px', fontSize: '1.1rem', color: '#666'}}>
+              No updates or matches found. Please try a different search!
+            </p>
+          )}
+
+          {displayedJobs.length > 0 && !searchQuery && (
+            <div style={{ textAlign: 'right', marginTop: '20px' }}>
+              <button className="older-posts-btn">Older Posts</button>
+            </div>
+          )}
+        </div>
+        <Sidebar />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 3. INDIVIDUAL JOB DETAILS PAGE
+// ==========================================
+function JobDetailsPage({ jobs }) {
+  const { id } = useParams();
+  const job = jobs.find((j) => j._id === id);
+
+  if (!job) {
+    return (
+      <div className="site-wrapper">
+        <SharedHeader />
+        <div style={{ padding: '50px', textAlign: 'center' }}><h2>Loading details...</h2></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          
+          <div className="quick-updates-box" style={{ marginBottom: '15px' }}>
+            <div className="update-row">
+              <strong>WhatsApp Channel</strong>
+              <button className="join-btn">Join Now</button>
+            </div>
+            <div className="update-row">
+              <strong>Telegram Channel</strong>
+              <button className="check-btn">Join Now</button>
+            </div>
+          </div>
+
+          <div className="breadcrumb">
+            Home » {job.category || 'General'} » {job.company}
+          </div>
+
+          <h1 className="details-main-title">
+            {job.company} Recruitment 2026 – {job.title} Vacancy, Online Apply
+          </h1>
+
+          <div className="details-meta">
+            <p><strong>Organization: {job.company}</strong><br/>
+            <strong>Last Date: {job.deadline}</strong></p>
+          </div>
+
+          <div className="details-intro" style={{ whiteSpace: 'pre-wrap', marginBottom: '30px', fontSize: '1.05rem', lineHeight: '1.6' }}>
+            {job.description}
+          </div>
+
+          {[1, 2, 3, 4].map((num) => {
+            const heading = job[`section${num}Heading`];
+            const details = job[`section${num}Details`];
+            
+            if (heading || details) {
+              return (
+                <div key={num}>
+                  {heading && <h2 className="gradient-header">{heading}</h2>}
+                  {details && (
+                    <div className="details-content">
+                      <p style={{ whiteSpace: 'pre-wrap' }}>{details}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return null;
+          })}
+
+          <h2 id="links" className="gradient-header">Important Web-Links</h2>
+          <table className="links-table">
+            <tbody>
+              {[1, 2, 3, 4, 5, 6, 7].map((num) => {
+                const linkName = job[`link${num}Name`];
+                const linkUrl = job[`link${num}Url`];
+                
+                if (linkName && linkUrl) {
+                  return (
+                    <tr key={num}>
+                      <td><strong>{linkName}</strong></td>
+                      <td style={{ textAlign: 'center', width: '150px' }}>
+                        <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
+                      </td>
+                    </tr>
+                  );
+                }
+                return null; 
+              })}
+            </tbody>
+          </table>
+
+          <div className="bottom-social-box">
+            <div className="social-row" style={{ backgroundColor: '#e6f4ea' }}>
+              <strong>WhatsApp Channel</strong>
+              <button className="join-btn">Join Now</button>
+            </div>
+            <div className="social-row" style={{ backgroundColor: '#e0e7ff' }}>
+              <strong>Telegram Channel</strong>
+              <button className="join-btn" style={{ backgroundColor: '#2563eb' }}>Join Now</button>
+            </div>
+          </div>
+        </div>
+
+        <Sidebar />
+      </div>
+
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 4. IMPORTANT LINKS PAGE
+// ==========================================
+function ImpLinksPage({ impLinks }) {
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          
+          <div className="quick-updates-box" style={{ marginBottom: '30px' }}>
+            <div className="update-row"><strong>WhatsApp Channel</strong><button className="join-btn">Join Now</button></div>
+            <div className="update-row"><strong>Telegram Channel</strong><button className="check-btn">Join Now</button></div>
+          </div>
+
+          <h2 style={{color: '#1e3a8a', fontSize: '2.2rem', margin: '0 0 15px 0'}}>Download</h2>
+          
+          <p style={{fontSize: '1.05rem', lineHeight: '1.6', marginBottom: '30px'}}>
+            This page provides various important <strong>free resources</strong> for job seekers/ students/ general public in the field of education, employment and entrepreneurship.
+          </p>
+
+          <table className="links-table">
+            <tbody>
+              {impLinks.map((link) => (
+                <tr key={link._id}>
+                  <td>{link.name}</td>
+                  <td style={{ textAlign: 'center', width: '150px' }}>
+                    <a href={link.url} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {impLinks.length === 0 && (
+            <p style={{textAlign: 'center', padding: '20px', color: '#888'}}>No important links have been added yet.</p>
+          )}
+
+        </div>
+        <Sidebar />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 5. DEDICATED CONTACT US PAGE
+// ==========================================
+function ContactPage({ contacts }) {
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          
+          <div className="quick-updates-box" style={{ marginBottom: '30px' }}>
+            <div className="update-row"><strong>WhatsApp Channel</strong><button className="join-btn">Join Now</button></div>
+            <div className="update-row"><strong>Telegram Channel</strong><button className="check-btn">Join Now</button></div>
+          </div>
+
+          <h2 style={{color: '#1e3a8a', fontSize: '2.2rem', margin: '0 0 15px 0'}}>Contact Us</h2>
+          
+          <p style={{fontSize: '1.05rem', lineHeight: '1.6', marginBottom: '15px'}}>
+            If anyone notices any error kindly inform us that immediately. Feel free to contact us with any suggestion, criticism, job openings and the information about Various Competitive Examinations or for any institutional promotions.
+          </p>
+          <p style={{fontSize: '1.05rem', lineHeight: '1.6', marginBottom: '30px'}}>
+            You can contact us through following channels.
+          </p>
+
+          <table className="links-table">
+            <tbody>
+              {contacts.map((c) => (
+                <tr key={c._id}>
+                  <td style={{width: '30%'}}><strong>{c.platform}</strong></td>
+                  <td>
+                    {c.isLink ? (
+                      <a href={c.value} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
+                    ) : (
+                      <span>{c.value}</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          <p style={{fontSize: '0.9rem', color: '#555', marginTop: '10px'}}>
+            * Pl avoid silly questions; go through our site thoroughly before asking.
+          </p>
+        </div>
+        <Sidebar />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// DEFAULT FORM BLANK STATE 
+// ==========================================
+const defaultFormState = { 
+  title: '', company: '', imageUrl: '', location: '', description: '', deadline: '', category: 'General',
+  section1Heading: 'Vacancy Details', section1Details: '',
+  section2Heading: 'Eligibility Criteria', section2Details: '',
+  section3Heading: 'How to Apply', section3Details: '',
+  section4Heading: 'Important Dates', section4Details: '',
+  link1Name: 'Online Application Form', link1Url: '',
+  link2Name: '', link2Url: '', link3Name: '', link3Url: '', link4Name: '', link4Url: '',
+  link5Name: '', link5Url: '', link6Name: '', link6Url: '', link7Name: '', link7Url: ''
+};
+
+// ==========================================
+// 6. SECURE ADMIN VIEW
+// ==========================================
+function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, contacts }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  
+  const [editJobId, setEditJobId] = useState(null); 
+  const [formData, setFormData] = useState(defaultFormState);
+
+  const [impLinkForm, setImpLinkForm] = useState({ name: '', url: '' });
+
+  const [editContactId, setEditContactId] = useState(null);
+  const [contactForm, setContactForm] = useState({ platform: '', value: '', isLink: false });
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (passwordInput === '2Sc#') setIsAuthenticated(true);
+    else { alert('Incorrect Password!'); setPasswordInput(''); }
+  };
+
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleEditClick = (job) => {
+    setEditJobId(job._id);
+    setFormData({
+      title: job.title || '', company: job.company || '', imageUrl: job.imageUrl || '', location: job.location || '', description: job.description || '',
+      deadline: job.deadline || '', category: job.category || 'General',
+      section1Heading: job.section1Heading || '', section1Details: job.section1Details || '',
+      section2Heading: job.section2Heading || '', section2Details: job.section2Details || '',
+      section3Heading: job.section3Heading || '', section3Details: job.section3Details || '',
+      section4Heading: job.section4Heading || '', section4Details: job.section4Details || '',
+      link1Name: job.link1Name || '', link1Url: job.link1Url || '',
+      link2Name: job.link2Name || '', link2Url: job.link2Url || '',
+      link3Name: job.link3Name || '', link3Url: job.link3Url || '',
+      link4Name: job.link4Name || '', link4Url: job.link4Url || '',
+      link5Name: job.link5Name || '', link5Url: job.link5Url || '',
+      link6Name: job.link6Name || '', link6Url: job.link6Url || '',
+      link7Name: job.link7Name || '', link7Url: job.link7Url || ''
+    });
+    window.scrollTo(0, 0);
+  };
+
+  const handleCancelEdit = () => {
+    setEditJobId(null);
+    setFormData(defaultFormState);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const method = editJobId ? 'PUT' : 'POST';
+    const url = editJobId ? `https://study-marrow-backend.onrender.com/api/jobs/${editJobId}` : 'https://study-marrow-backend.onrender.com/api/jobs';
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      if (response.ok) {
+        alert(editJobId ? 'Post updated successfully!' : 'Post published successfully!');
+        setFormData(defaultFormState);
+        setEditJobId(null); 
+        fetchJobs(); 
+      }
+    } catch (error) { console.error("Error posting/updating job:", error); }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { method: 'DELETE' });
+        if (response.ok) fetchJobs();
+      } catch (error) { console.error("Error deleting job:", error); }
+    }
+  };
+
+  const handleImpLinkSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('https://study-marrow-backend.onrender.com/api/implinks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(impLinkForm)
+      });
+      if (response.ok) {
+        alert('Global Link Added!');
+        setImpLinkForm({ name: '', url: '' });
+        fetchImpLinks(); 
+      }
+    } catch (error) { console.error("Error adding link:", error); }
+  };
+
+  const handleImpLinkDelete = async (id) => {
+    if (window.confirm("Delete this link from the Download page?")) {
+      try {
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/implinks/${id}`, { method: 'DELETE' });
+        if (response.ok) fetchImpLinks();
+      } catch (error) { console.error("Error deleting link:", error); }
+    }
+  };
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    const method = editContactId ? 'PUT' : 'POST';
+    const url = editContactId ? `https://study-marrow-backend.onrender.com/api/contacts/${editContactId}` : 'https://study-marrow-backend.onrender.com/api/contacts';
+    try {
+      const response = await fetch(url, { 
+        method: method, 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(contactForm) 
+      });
+      if(response.ok) {
+        setContactForm({ platform: '', value: '', isLink: false });
+        setEditContactId(null);
+        fetchContacts(); 
+      }
+    } catch (error) { console.error("Error saving contact:", error); }
+  };
+
+  const handleContactEdit = (c) => { 
+    setEditContactId(c._id); 
+    setContactForm({ platform: c.platform, value: c.value, isLink: c.isLink }); 
+  };
+  
+  const handleContactDelete = async (id) => { 
+    if (window.confirm("Delete this contact info?")) { 
+      await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${id}`, { method: 'DELETE' }); 
+      fetchContacts(); 
+    } 
+  };
+
+  const moveContact = async (index, direction) => {
+    const newContacts = [...contacts];
+    if (direction === 'up' && index > 0) {
+      const temp = newContacts[index].order;
+      newContacts[index].order = newContacts[index - 1].order;
+      newContacts[index - 1].order = temp;
+    } else if (direction === 'down' && index < newContacts.length - 1) {
+      const temp = newContacts[index].order;
+      newContacts[index].order = newContacts[index + 1].order;
+      newContacts[index + 1].order = temp;
+    } else return; 
+
+    await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${newContacts[index]._id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ order: newContacts[index].order }) });
+    await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${direction === 'up' ? newContacts[index-1]._id : newContacts[index+1]._id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ order: direction === 'up' ? newContacts[index-1].order : newContacts[index+1].order }) });
+    
+    fetchContacts(); 
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="admin-container" style={{padding: '50px'}}>
+        <form className="job-form" onSubmit={handleLogin} style={{ maxWidth: '400px', margin: '0 auto', textAlign: 'center', backgroundColor: 'white', padding: '30px', borderRadius: '8px' }}>
+          <h2>🔒 Admin Access</h2>
+          <input type="password" placeholder="Enter Password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} required style={{ width: '100%', padding: '10px', marginBottom: '15px' }} />
+          <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#2563eb', color: 'white', border: 'none' }}>Unlock Dashboard</button>
+        </form>
+      </div>
+    );
+  }
+
+  return (
+    <div className="admin-container" style={{padding: '50px', backgroundColor: '#f4f4f4', minHeight: '100vh'}}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <h2>⚙️ Admin Dashboard</h2>
+        <Link to="/"><button style={{padding: '10px', cursor: 'pointer'}}>Back to Public Site</button></Link>
+      </div>
+      
+      <h3 style={{color: editJobId ? '#3b82f6' : '#10b981', margin: '0 0 20px 0'}}>
+        {editJobId ? '✏️ Updating Existing Post' : '📝 Create New Post'}
+      </h3>
+
+      <form className="job-form" onSubmit={handleSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
+        
+        <select name="category" value={formData.category} onChange={handleChange} required style={{padding: '10px', fontSize: '1rem', border: '1px solid #cbd5e1', borderRadius: '4px'}}>
+          <option value="General">General (Main Feed Only)</option>
+          <option value="Admission">Admission</option>
+          <option value="Admit Card">Admit Card</option>
+          <option value="Private Job">Private Job</option>
+          <option value="Result">Result</option>
+          <option value="Scholarship">Scholarship</option>
+        </select>
+
+        <input type="text" name="title" placeholder="Post Title (e.g. IDBI Bank Assistant Manager)" value={formData.title} onChange={handleChange} required style={{padding: '10px'}}/>
+        <input type="text" name="company" placeholder="Institution / Organization Name" value={formData.company} onChange={handleChange} required style={{padding: '10px'}}/>
+        <input type="url" name="imageUrl" placeholder="Logo Image URL (Optional: Paste link from internet)" value={formData.imageUrl} onChange={handleChange} style={{padding: '10px'}}/>
+        <input type="text" name="location" placeholder="Location (Optional)" value={formData.location} onChange={handleChange} style={{padding: '10px'}}/>
+        
+        <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
+        <textarea name="description" placeholder="Write the introductory paragraph here..." value={formData.description} onChange={handleChange} required style={{padding: '10px', height: '80px'}}/>
+        <input type="date" name="deadline" value={formData.deadline} onChange={handleChange} required style={{padding: '10px'}}/>
+
+        <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
+          <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections</h3>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginTop: 0}}>You can rename these headings for Scholarships/Admissions, or leave details blank to hide the section.</p>
+          
+          {[1, 2, 3, 4].map((num) => (
+            <div key={num} style={{ marginBottom: '15px', borderBottom: num !== 4 ? '1px solid #cbd5e1' : 'none', paddingBottom: '10px' }}>
+              <input 
+                type="text" 
+                name={`section${num}Heading`} 
+                placeholder={`Section ${num} Heading`} 
+                value={formData[`section${num}Heading`]} 
+                onChange={handleChange} 
+                style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }}
+              />
+              <textarea 
+                name={`section${num}Details`} 
+                placeholder={`Type the details for section ${num} here...`} 
+                value={formData[`section${num}Details`]} 
+                onChange={handleChange} 
+                style={{ width: '100%', padding: '10px', height: '100px', boxSizing: 'border-box' }}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
+          <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links (Fill up to 7)</h3>
+          {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+            <div key={num} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+              <input type="text" name={`link${num}Name`} placeholder={`Link ${num} Name`} value={formData[`link${num}Name`]} onChange={handleChange} style={{flex: 1, padding: '8px'}} required={num === 1} />
+              <input type="url" name={`link${num}Url`} placeholder={`Link ${num} URL (https://...)`} value={formData[`link${num}Url`]} onChange={handleChange} style={{flex: 2, padding: '8px'}} required={num === 1} />
+            </div>
+          ))}
+        </div>
+        
+        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+          <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: editJobId ? '#3b82f6' : '#10b981', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>
+            {editJobId ? 'Update Post' : 'Publish Update'}
+          </button>
+          
+          {editJobId && (
+            <button type="button" onClick={handleCancelEdit} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>
+              Cancel Edit
+            </button>
+          )}
+        </div>
+      </form>
+
+      <h2>Manage Active Posts</h2>
+      {jobs.map((job) => (
+        <div key={job._id} style={{backgroundColor: 'white', padding: '15px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div><strong style={{color: '#2563eb'}}>({job.category || 'Uncategorized'})</strong> {job.title} - {job.company}</div>
+          <div>
+            <button onClick={() => handleEditClick(job)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer'}}>Edit</button>
+            <button onClick={() => handleDelete(job._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer'}}>Delete</button>
+          </div>
+        </div>
+      ))}
+
+      <hr style={{ margin: '50px 0', border: '1px solid #ccc' }} />
+      <h2 style={{color: '#1e3a8a'}}>🔗 Manage "Imp Links" Page</h2>
+      
+      <form onSubmit={handleImpLinkSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', gap: '10px', marginBottom: '20px' }}>
+        <input type="text" placeholder="Link Display Name (e.g. Standard Form of Application)" value={impLinkForm.name} onChange={(e) => setImpLinkForm({...impLinkForm, name: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
+        <input type="url" placeholder="URL (https://...)" value={impLinkForm.url} onChange={(e) => setImpLinkForm({...impLinkForm, url: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
+        <button type="submit" style={{padding: '10px 20px', backgroundColor: '#2563eb', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Add to Imp Links</button>
+      </form>
+
+      {impLinks.map((link) => (
+        <div key={link._id} style={{backgroundColor: '#f8fafc', padding: '10px 15px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #e2e8f0'}}>
+          <div><strong>{link.name}</strong> </div>
+          <button onClick={() => handleImpLinkDelete(link._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Delete</button>
+        </div>
+      ))}
+
+      <hr style={{ margin: '50px 0', border: '1px solid #ccc' }} />
+      <h2 style={{color: '#1e3a8a'}}>📞 Manage "Contact Us" Page</h2>
+      
+      <form onSubmit={handleContactSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+        <h4 style={{margin: 0}}>{editContactId ? 'Editing Contact Info' : 'Add New Contact Info'}</h4>
+        <div style={{display: 'flex', gap: '10px'}}>
+          <input type="text" placeholder="Platform (e.g. Email, WhatsApp, Facebook)" value={contactForm.platform} onChange={(e) => setContactForm({...contactForm, platform: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
+          <input type="text" placeholder="Details (e.g. editor@... OR https://...)" value={contactForm.value} onChange={(e) => setContactForm({...contactForm, value: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
+        </div>
+        
+        <label style={{display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 'bold'}}>
+          <input type="checkbox" checked={contactForm.isLink} onChange={(e) => setContactForm({...contactForm, isLink: e.target.checked})} style={{width: '20px', height: '20px'}}/>
+          Check this box if the Details field is a Website URL (It will render as a blue "Click Here" button)
+        </label>
+        
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button type="submit" style={{padding: '10px 20px', backgroundColor: editContactId ? '#3b82f6' : '#22c55e', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>
+            {editContactId ? 'Update Contact' : 'Add Contact'}
+          </button>
+          {editContactId && (
+            <button type="button" onClick={() => {setEditContactId(null); setContactForm({platform:'', value:'', isLink: false})}} style={{padding: '10px 20px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>
+              Cancel Edit
+            </button>
+          )}
+        </div>
+      </form>
+
+      {contacts.map((c, index) => (
+        <div key={c._id} style={{backgroundColor: '#f8fafc', padding: '10px 15px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #e2e8f0'}}>
+          <div><strong>{c.platform}:</strong> {c.isLink ? '[Click Here Link]' : c.value}</div>
+          
+          <div style={{display: 'flex', gap: '8px'}}>
+            <button type="button" onClick={() => moveContact(index, 'up')} disabled={index === 0} style={{padding: '6px 10px', cursor: index === 0 ? 'not-allowed' : 'pointer'}}>⬆️</button>
+            <button type="button" onClick={() => moveContact(index, 'down')} disabled={index === contacts.length - 1} style={{padding: '6px 10px', cursor: index === contacts.length - 1 ? 'not-allowed' : 'pointer'}}>⬇️</button>
+            
+            <button type="button" onClick={() => handleContactEdit(c)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Edit</button>
+            <button type="button" onClick={() => handleContactDelete(c._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Delete</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ==========================================
+// 7. MAIN APP ROUTER 
+// ==========================================
+function App() {
+  const [jobs, setJobs] = useState([]);
+  const [impLinks, setImpLinks] = useState([]); 
+  const [contacts, setContacts] = useState([]); 
+
+  const fetchJobs = () => {
+    fetch('https://study-marrow-backend.onrender.com/api/jobs')
+      .then(res => res.json())
+      .then(data => setJobs(data))
+      .catch(err => console.error(err));
+  };
+
+  const fetchImpLinks = () => {
+    fetch('https://study-marrow-backend.onrender.com/api/implinks')
+      .then(res => res.json())
+      .then(data => setImpLinks(data))
+      .catch(err => console.error(err));
+  };
+
+  const fetchContacts = () => { 
+    fetch('https://study-marrow-backend.onrender.com/api/contacts')
+      .then(res => res.json())
+      .then(data => setContacts(data))
+      .catch(err => console.error(err)); 
+  };
+
+  useEffect(() => {
+    fetchJobs();
+    fetchImpLinks(); 
+    fetchContacts(); 
+  }, []);
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<PublicPage jobs={jobs} />} />
+        <Route path="/category/:categoryName" element={<PublicPage jobs={jobs} />} />
+        <Route path="/imp-links" element={<ImpLinksPage impLinks={impLinks} />} />
+        <Route path="/contact" element={<ContactPage contacts={contacts} />} />
+        <Route path="/job/:id" element={<JobDetailsPage jobs={jobs} />} />
+        
+        <Route path="/syn-world-23" element={
+          <AdminPage 
+            fetchJobs={fetchJobs} jobs={jobs} 
+            fetchImpLinks={fetchImpLinks} impLinks={impLinks} 
+            fetchContacts={fetchContacts} contacts={contacts} 
+          />} 
+        />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;

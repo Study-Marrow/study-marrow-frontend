@@ -1,0 +1,24 @@
+:root {
+  --primary-blue: #2563eb; 
+  --primary-blue-hover: #1d4ed8;
+  --bg-body: #f4f4f4; /* Light gray background for the sides */
+  --bg-white: #ffffff;
+  --text-dark: #333333;
+}
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-dark);
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* This puts a white box ONLY around the main content, not the header */
+.site-wrapper {
+  max-width: 1050px; 
+  margin: 20px auto; 
+  background-color: var(--bg-white);
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  min-height: 80vh;
+}
