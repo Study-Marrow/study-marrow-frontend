@@ -359,7 +359,7 @@ function JobDetailsPage({ jobs }) {
             </div>
             <div className="social-row" style={{ backgroundColor: '#e0e7ff' }}>
               <strong>Telegram Channel</strong>
-              <button className="join-btn" style={{ backgroundColor: '#2563eb' }}>Join Now</button>
+              <button className="check-btn" style={{ backgroundColor: '#2563eb' }}>Join Now</button>
             </div>
           </div>
         </div>
