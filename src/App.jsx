@@ -77,8 +77,8 @@ function Sidebar() {
          </div>
       </div>
       <div className="sidebar-box bookstore-banner">
-        <h2>BOOKSTORE</h2>
-        <p>Study Marrow</p>
+        <h2>BOOK STORE</h2>
+        <p>Coming Soon</p>
       </div>
       <div className="sidebar-box">
         <h3>🔥 Trending Topics</h3>
