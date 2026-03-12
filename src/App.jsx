@@ -493,10 +493,6 @@ function ContactPage({ contacts }) {
               ))}
             </tbody>
           </table>
-          
-          <p style={{fontSize: '0.9rem', color: '#555', marginTop: '10px'}}>
-            * Pl avoid silly questions; go through our site thoroughly before asking.
-          </p>
         </div>
         <Sidebar />
       </div>
