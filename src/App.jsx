@@ -422,7 +422,7 @@ function ImpLinksPage({ impLinks }) {
             <div className="update-row"><strong>Telegram Channel</strong><button className="check-btn">Join Now</button></div>
           </div>
 
-          <h2 style={{color: '#1e3a8a', fontSize: '2.2rem', margin: '0 0 15px 0'}}>Download</h2>
+          <h2 style={{color: '#1e3a8a', fontSize: '2.2rem', margin: '0 0 15px 0'}}>Documents and Links</h2>
           
           <p style={{fontSize: '1.05rem', lineHeight: '1.6', marginBottom: '30px'}}>
             Explore a curated collection of free, essential resources tailored to support students, job hunters, and aspiring entrepreneurs in their academic and professional journeys.
@@ -519,7 +519,9 @@ const defaultFormState = {
 // 6. SECURE ADMIN VIEW
 // ==========================================
 function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, contacts }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // 🔐 Security Updates: Store the JWT Token
+  const [token, setToken] = useState(localStorage.getItem('adminToken') || '');
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
   const [passwordInput, setPasswordInput] = useState('');
   
   const [editJobId, setEditJobId] = useState(null); 
@@ -530,10 +532,43 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
   const [editContactId, setEditContactId] = useState(null);
   const [contactForm, setContactForm] = useState({ platform: '', value: '', isLink: false });
 
-  const handleLogin = (e) => {
+  // 🔐 Security Headers helper
+  const getAuthHeaders = () => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+
+  const getDeleteHeaders = () => ({
+    'Authorization': `Bearer ${token}`
+  });
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (passwordInput === '2Sc#') setIsAuthenticated(true);
-    else { alert('Incorrect Password!'); setPasswordInput(''); }
+    try {
+      const res = await fetch('https://study-marrow-backend.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordInput })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        setToken(data.token);
+        setIsAuthenticated(true);
+        localStorage.setItem('adminToken', data.token); // Save key in browser
+      } else {
+        alert('❌ Incorrect Password! Access Denied.');
+        setPasswordInput('');
+      }
+    } catch (err) {
+      alert('❌ Server error. Make sure your backend is live!');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    setToken('');
+    setIsAuthenticated(false);
   };
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -570,9 +605,11 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
     try {
       const response = await fetch(url, {
         method: method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(), // 🔐 Pass the Key
         body: JSON.stringify(formData)
       });
+      if (response.status === 401) return alert('Session expired! Please log out and back in.');
+      
       if (response.ok) {
         alert(editJobId ? 'Post updated successfully!' : 'Post published successfully!');
         setFormData(defaultFormState);
@@ -585,7 +622,11 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { method: 'DELETE' });
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { 
+          method: 'DELETE',
+          headers: getDeleteHeaders() // 🔐 Pass the Key
+        });
+        if (response.status === 401) return alert('Session expired! Please log out and back in.');
         if (response.ok) fetchJobs();
       } catch (error) { console.error("Error deleting job:", error); }
     }
@@ -596,9 +637,10 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
     try {
       const response = await fetch('https://study-marrow-backend.onrender.com/api/implinks', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(), // 🔐 Pass the Key
         body: JSON.stringify(impLinkForm)
       });
+      if (response.status === 401) return alert('Session expired! Please log out and back in.');
       if (response.ok) {
         alert('Global Link Added!');
         setImpLinkForm({ name: '', url: '' });
@@ -610,7 +652,11 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
   const handleImpLinkDelete = async (id) => {
     if (window.confirm("Delete this link from the Download page?")) {
       try {
-        const response = await fetch(`https://study-marrow-backend.onrender.com/api/implinks/${id}`, { method: 'DELETE' });
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/implinks/${id}`, { 
+          method: 'DELETE',
+          headers: getDeleteHeaders() // 🔐 Pass the Key
+        });
+        if (response.status === 401) return alert('Session expired! Please log out and back in.');
         if (response.ok) fetchImpLinks();
       } catch (error) { console.error("Error deleting link:", error); }
     }
@@ -623,9 +669,10 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
     try {
       const response = await fetch(url, { 
         method: method, 
-        headers: { 'Content-Type': 'application/json' }, 
+        headers: getAuthHeaders(), // 🔐 Pass the Key
         body: JSON.stringify(contactForm) 
       });
+      if (response.status === 401) return alert('Session expired! Please log out and back in.');
       if(response.ok) {
         setContactForm({ platform: '', value: '', isLink: false });
         setEditContactId(null);
@@ -641,7 +688,11 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
   
   const handleContactDelete = async (id) => { 
     if (window.confirm("Delete this contact info?")) { 
-      await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${id}`, { method: 'DELETE' }); 
+      const response = await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${id}`, { 
+        method: 'DELETE',
+        headers: getDeleteHeaders() // 🔐 Pass the Key
+      }); 
+      if (response.status === 401) return alert('Session expired! Please log out and back in.');
       fetchContacts(); 
     } 
   };
@@ -658,8 +709,9 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
       newContacts[index + 1].order = temp;
     } else return; 
 
-    await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${newContacts[index]._id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ order: newContacts[index].order }) });
-    await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${direction === 'up' ? newContacts[index-1]._id : newContacts[index+1]._id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ order: direction === 'up' ? newContacts[index-1].order : newContacts[index+1].order }) });
+    // 🔐 Pass the Key to both calls
+    await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${newContacts[index]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: newContacts[index].order }) });
+    await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${direction === 'up' ? newContacts[index-1]._id : newContacts[index+1]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: direction === 'up' ? newContacts[index-1].order : newContacts[index+1].order }) });
     
     fetchContacts(); 
   };
@@ -668,8 +720,8 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
     return (
       <div className="admin-container" style={{padding: '50px'}}>
         <form className="job-form" onSubmit={handleLogin} style={{ maxWidth: '400px', margin: '0 auto', textAlign: 'center', backgroundColor: 'white', padding: '30px', borderRadius: '8px' }}>
-          <h2>🔒 Admin Access</h2>
-          <input type="password" placeholder="Enter Password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} required style={{ width: '100%', padding: '10px', marginBottom: '15px' }} />
+          <h2>🔒 Secure Admin Access</h2>
+          <input type="password" placeholder="Enter Master Password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} required style={{ width: '100%', padding: '10px', marginBottom: '15px' }} />
           <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#2563eb', color: 'white', border: 'none' }}>Unlock Dashboard</button>
         </form>
       </div>
@@ -679,8 +731,11 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
   return (
     <div className="admin-container" style={{padding: '50px', backgroundColor: '#f4f4f4', minHeight: '100vh'}}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <h2>⚙️ Admin Dashboard</h2>
-        <Link to="/"><button style={{padding: '10px', cursor: 'pointer'}}>Back to Public Site</button></Link>
+        <h2>⚙️ Secure Admin Dashboard</h2>
+        <div style={{display: 'flex', gap: '10px'}}>
+          <Link to="/"><button style={{padding: '10px', cursor: 'pointer', backgroundColor: '#fff', border: '1px solid #ccc'}}>🏠 Public Site</button></Link>
+          <button onClick={handleLogout} style={{padding: '10px', cursor: 'pointer', backgroundColor: '#ef4444', color: 'white', border: 'none'}}>🔓 Logout</button>
+        </div>
       </div>
       
       <h3 style={{color: editJobId ? '#3b82f6' : '#10b981', margin: '0 0 20px 0'}}>
