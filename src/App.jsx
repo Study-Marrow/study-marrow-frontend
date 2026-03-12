@@ -425,7 +425,7 @@ function ImpLinksPage({ impLinks }) {
           <h2 style={{color: '#1e3a8a', fontSize: '2.2rem', margin: '0 0 15px 0'}}>Download</h2>
           
           <p style={{fontSize: '1.05rem', lineHeight: '1.6', marginBottom: '30px'}}>
-            This page provides various important <strong>free resources</strong> for job seekers/ students/ general public in the field of education, employment and entrepreneurship.
+            Explore a curated collection of free, essential resources tailored to support students, job hunters, and aspiring entrepreneurs in their academic and professional journeys.
           </p>
 
           <table className="links-table">
