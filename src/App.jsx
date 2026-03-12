@@ -471,10 +471,10 @@ function ContactPage({ contacts }) {
           <h2 style={{color: '#1e3a8a', fontSize: '2.2rem', margin: '0 0 15px 0'}}>Contact Us</h2>
           
           <p style={{fontSize: '1.05rem', lineHeight: '1.6', marginBottom: '15px'}}>
-            If anyone notices any error kindly inform us that immediately. Feel free to contact us with any suggestion, criticism, job openings and the information about Various Competitive Examinations or for any institutional promotions.
+            Our platform grows stronger with your insights! If you spot an error, please let us know so we can fix it right away. We are always eager to hear your ideas, constructive feedback, and any updates you might have regarding job openings or upcoming competitive exams. Additionally, we are open to discussing opportunities for institutional promotions.
           </p>
           <p style={{fontSize: '1.05rem', lineHeight: '1.6', marginBottom: '30px'}}>
-            You can contact us through following channels.
+            Feel free to reach out to us via the following platforms.
           </p>
 
           <table className="links-table">
