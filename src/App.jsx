@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom'
-import ReactQuill from 'react-quill'; // 📝 NEW: Rich Text Editor
-import 'react-quill/dist/quill.snow.css'; // 📝 NEW: Editor Styles
+import ReactQuill from 'react-quill-new'; 
+import 'react-quill-new/dist/quill.snow.css';
 import './App.css'
 
 // 📝 NEW: Helper function to remove HTML tags for the short preview text on the Home page
