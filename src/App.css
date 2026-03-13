@@ -828,3 +828,28 @@ html, body {
   .footer-bottom-bar { flex-direction: column; align-items: center; gap: 15px; text-align: center;}
   .list-job-body { flex-direction: column; align-items: center; text-align: center; }
 }
+
+/* ==========================================
+   RICH TEXT EDITOR SAFETY RULES
+   ========================================== */
+
+/* 1. Forces any image pasted into the editor to shrink to fit mobile screens */
+.details-intro img, 
+.details-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 8px;
+}
+
+/* 2. Ensures bullet points and numbered lists have proper spacing */
+.details-intro ul, .details-intro ol,
+.details-content ul, .details-content ol {
+  padding-left: 25px;
+  margin-bottom: 15px;
+}
+
+/* 3. Adds spacing to paragraphs inside the editor */
+.details-intro p, 
+.details-content p {
+  margin-bottom: 15px;
+}
