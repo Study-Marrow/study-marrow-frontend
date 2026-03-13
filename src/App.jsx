@@ -166,7 +166,7 @@ function Footer() {
               <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad_footer" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad_footer)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
             </a>
 
-            {/* X (TWITTER) */}
+            {/* X (TWITTER) - Changed fill to #FFFFFF so it shows on dark footer */}
             <a href="#" className="official-social-link x" data-name="X (Twitter)">
               <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
@@ -272,10 +272,12 @@ function PublicPage({ jobs }) {
                   <div className="logo-placeholder-bottom">{job.company.substring(0,10)}</div>
                 </div>
                 
+                {/* 📝 NEW: Removed clunky text, added icons and spacing! */}
                 <div className="job-text-content">
-                  <p>
-                    <strong>{job.company}.</strong> Last Date: {job.deadline}.<br/><br/>
-                    <strong>{job.company} {job.location ? `(${job.location})` : ''}</strong> has released an employment notification for the recruitment of {job.title} vacancies. {stripHtml(job.description).substring(0, 130)}...
+                  <p style={{ margin: '0 0 15px 0', color: '#334155', lineHeight: '1.6' }}>
+                    <strong>🏢 Organization:</strong> {job.company} {job.location ? `(${job.location})` : ''}<br/>
+                    <strong>⏳ Last Date:</strong> {job.deadline}<br/><br/>
+                    {stripHtml(job.description).substring(0, 180)}...
                   </p>
                   <Link to={`/job/${job._id}`} className="read-more-link">Read more »</Link>
                   <div className="job-meta">
@@ -342,8 +344,9 @@ function JobDetailsPage({ jobs }) {
             Home » {job.category || 'General'} » {job.company}
           </div>
 
+          {/* 📝 NEW: Cleaned up the redundant "Vacancy, Online Apply" from the title */}
           <h1 className="details-main-title">
-            {job.company} Recruitment 2026 – {job.title} Vacancy, Online Apply
+            {job.company} Recruitment 2026 – {job.title}
           </h1>
 
           <div className="details-meta">
@@ -351,7 +354,6 @@ function JobDetailsPage({ jobs }) {
             <strong>Last Date: {job.deadline}</strong></p>
           </div>
 
-          {/* 📝 NEW: Rendering the Rich Text safely! */}
           <div 
             className="details-intro" 
             style={{ marginBottom: '30px', fontSize: '1.05rem', lineHeight: '1.6' }}
@@ -366,7 +368,6 @@ function JobDetailsPage({ jobs }) {
               return (
                 <div key={num}>
                   {heading && <h2 className="gradient-header">{heading}</h2>}
-                  {/* 📝 NEW: Rendering the Section Text safely! */}
                   {details && (
                     <div className="details-content" style={{lineHeight: '1.6'}}>
                       <div dangerouslySetInnerHTML={{ __html: details }}></div>
@@ -584,7 +585,6 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // 📝 NEW: Custom Handler for React Quill! 
   const handleQuillChange = (value, name) => {
     setFormData({ ...formData, [name]: value });
   };
@@ -775,7 +775,6 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
         
         <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
         
-        {/* 📝 NEW: Replace textarea with ReactQuill */}
         <div style={{ backgroundColor: 'white', marginBottom: '40px' }}>
           <ReactQuill 
             theme="snow" 
@@ -801,7 +800,6 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
                 onChange={handleChange} 
                 style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }}
               />
-              {/* 📝 NEW: Replace textareas in sections with ReactQuill */}
               <div style={{ backgroundColor: 'white', marginBottom: '40px' }}>
                 <ReactQuill 
                   theme="snow" 
