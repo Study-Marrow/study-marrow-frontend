@@ -170,7 +170,7 @@ function Footer() {
 
         </div>
         <div className="footer-right">
-          <h3>Subscribe to This Blog</h3>
+          <h3>Never Miss an Update 🔔</h3>
           <form className="subscribe-form" onSubmit={handleSubscribe}>
             <input 
               type="email" 
