@@ -99,7 +99,7 @@ function Sidebar() {
       </div>
 
       <div className="sidebar-box">
-        <h3>🔥 Trending Topics</h3>
+        <h3>📌 Notice Board</h3>
         <ul className="trending-list">
           {/* We have removed the hardcoded list! Ready for the backend. */}
         </ul>
