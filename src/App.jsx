@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom'
+import ReactQuill from 'react-quill'; // 📝 NEW: Rich Text Editor
+import 'react-quill/dist/quill.snow.css'; // 📝 NEW: Editor Styles
 import './App.css'
+
+// 📝 NEW: Helper function to remove HTML tags for the short preview text on the Home page
+const stripHtml = (html) => {
+  if (!html) return "";
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || "";
+};
 
 // ==========================================
 // 1. SHARED COMPONENTS (Header, Sidebar, Footer)
@@ -157,7 +166,7 @@ function Footer() {
               <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad_footer" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad_footer)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
             </a>
 
-            {/* X (TWITTER) - Changed fill to #FFFFFF so it shows on dark footer */}
+            {/* X (TWITTER) */}
             <a href="#" className="official-social-link x" data-name="X (Twitter)">
               <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
@@ -266,7 +275,7 @@ function PublicPage({ jobs }) {
                 <div className="job-text-content">
                   <p>
                     <strong>{job.company}.</strong> Last Date: {job.deadline}.<br/><br/>
-                    <strong>{job.company} {job.location ? `(${job.location})` : ''}</strong> has released an employment notification for the recruitment of {job.title} vacancies. {job.description.substring(0, 130)}...
+                    <strong>{job.company} {job.location ? `(${job.location})` : ''}</strong> has released an employment notification for the recruitment of {job.title} vacancies. {stripHtml(job.description).substring(0, 130)}...
                   </p>
                   <Link to={`/job/${job._id}`} className="read-more-link">Read more »</Link>
                   <div className="job-meta">
@@ -342,9 +351,12 @@ function JobDetailsPage({ jobs }) {
             <strong>Last Date: {job.deadline}</strong></p>
           </div>
 
-          <div className="details-intro" style={{ whiteSpace: 'pre-wrap', marginBottom: '30px', fontSize: '1.05rem', lineHeight: '1.6' }}>
-            {job.description}
-          </div>
+          {/* 📝 NEW: Rendering the Rich Text safely! */}
+          <div 
+            className="details-intro" 
+            style={{ marginBottom: '30px', fontSize: '1.05rem', lineHeight: '1.6' }}
+            dangerouslySetInnerHTML={{ __html: job.description }}
+          ></div>
 
           {[1, 2, 3, 4].map((num) => {
             const heading = job[`section${num}Heading`];
@@ -354,9 +366,10 @@ function JobDetailsPage({ jobs }) {
               return (
                 <div key={num}>
                   {heading && <h2 className="gradient-header">{heading}</h2>}
+                  {/* 📝 NEW: Rendering the Section Text safely! */}
                   {details && (
-                    <div className="details-content">
-                      <p style={{ whiteSpace: 'pre-wrap' }}>{details}</p>
+                    <div className="details-content" style={{lineHeight: '1.6'}}>
+                      <div dangerouslySetInnerHTML={{ __html: details }}></div>
                     </div>
                   )}
                 </div>
@@ -519,7 +532,6 @@ const defaultFormState = {
 // 6. SECURE ADMIN VIEW
 // ==========================================
 function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, contacts }) {
-  // 🔐 Security Updates: Store the JWT Token
   const [token, setToken] = useState(localStorage.getItem('adminToken') || '');
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
   const [passwordInput, setPasswordInput] = useState('');
@@ -532,7 +544,6 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
   const [editContactId, setEditContactId] = useState(null);
   const [contactForm, setContactForm] = useState({ platform: '', value: '', isLink: false });
 
-  // 🔐 Security Headers helper
   const getAuthHeaders = () => ({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
@@ -555,7 +566,7 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
       if (data.success) {
         setToken(data.token);
         setIsAuthenticated(true);
-        localStorage.setItem('adminToken', data.token); // Save key in browser
+        localStorage.setItem('adminToken', data.token); 
       } else {
         alert('❌ Incorrect Password! Access Denied.');
         setPasswordInput('');
@@ -572,6 +583,11 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
   };
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  // 📝 NEW: Custom Handler for React Quill! 
+  const handleQuillChange = (value, name) => {
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleEditClick = (job) => {
     setEditJobId(job._id);
@@ -605,7 +621,7 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
     try {
       const response = await fetch(url, {
         method: method,
-        headers: getAuthHeaders(), // 🔐 Pass the Key
+        headers: getAuthHeaders(), 
         body: JSON.stringify(formData)
       });
       if (response.status === 401) return alert('Session expired! Please log out and back in.');
@@ -624,7 +640,7 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
       try {
         const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { 
           method: 'DELETE',
-          headers: getDeleteHeaders() // 🔐 Pass the Key
+          headers: getDeleteHeaders() 
         });
         if (response.status === 401) return alert('Session expired! Please log out and back in.');
         if (response.ok) fetchJobs();
@@ -637,7 +653,7 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
     try {
       const response = await fetch('https://study-marrow-backend.onrender.com/api/implinks', {
         method: 'POST',
-        headers: getAuthHeaders(), // 🔐 Pass the Key
+        headers: getAuthHeaders(), 
         body: JSON.stringify(impLinkForm)
       });
       if (response.status === 401) return alert('Session expired! Please log out and back in.');
@@ -654,7 +670,7 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
       try {
         const response = await fetch(`https://study-marrow-backend.onrender.com/api/implinks/${id}`, { 
           method: 'DELETE',
-          headers: getDeleteHeaders() // 🔐 Pass the Key
+          headers: getDeleteHeaders() 
         });
         if (response.status === 401) return alert('Session expired! Please log out and back in.');
         if (response.ok) fetchImpLinks();
@@ -669,7 +685,7 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
     try {
       const response = await fetch(url, { 
         method: method, 
-        headers: getAuthHeaders(), // 🔐 Pass the Key
+        headers: getAuthHeaders(), 
         body: JSON.stringify(contactForm) 
       });
       if (response.status === 401) return alert('Session expired! Please log out and back in.');
@@ -690,7 +706,7 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
     if (window.confirm("Delete this contact info?")) { 
       const response = await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${id}`, { 
         method: 'DELETE',
-        headers: getDeleteHeaders() // 🔐 Pass the Key
+        headers: getDeleteHeaders() 
       }); 
       if (response.status === 401) return alert('Session expired! Please log out and back in.');
       fetchContacts(); 
@@ -709,7 +725,6 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
       newContacts[index + 1].order = temp;
     } else return; 
 
-    // 🔐 Pass the Key to both calls
     await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${newContacts[index]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: newContacts[index].order }) });
     await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${direction === 'up' ? newContacts[index-1]._id : newContacts[index+1]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: direction === 'up' ? newContacts[index-1].order : newContacts[index+1].order }) });
     
@@ -759,15 +774,25 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
         <input type="text" name="location" placeholder="Location (Optional)" value={formData.location} onChange={handleChange} style={{padding: '10px'}}/>
         
         <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
-        <textarea name="description" placeholder="Write the introductory paragraph here..." value={formData.description} onChange={handleChange} required style={{padding: '10px', height: '80px'}}/>
-        <input type="date" name="deadline" value={formData.deadline} onChange={handleChange} required style={{padding: '10px'}}/>
+        
+        {/* 📝 NEW: Replace textarea with ReactQuill */}
+        <div style={{ backgroundColor: 'white', marginBottom: '40px' }}>
+          <ReactQuill 
+            theme="snow" 
+            value={formData.description || ''} 
+            onChange={(val) => handleQuillChange(val, 'description')} 
+            style={{ height: '150px' }}
+          />
+        </div>
+
+        <input type="date" name="deadline" value={formData.deadline} onChange={handleChange} required style={{padding: '10px', marginTop: '30px'}}/>
 
         <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
           <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections</h3>
-          <p style={{fontSize: '0.9rem', color: '#64748b', marginTop: 0}}>You can rename these headings for Scholarships/Admissions, or leave details blank to hide the section.</p>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginTop: 0}}>Use the rich text editor to bold text, add bullet points, etc.</p>
           
           {[1, 2, 3, 4].map((num) => (
-            <div key={num} style={{ marginBottom: '15px', borderBottom: num !== 4 ? '1px solid #cbd5e1' : 'none', paddingBottom: '10px' }}>
+            <div key={num} style={{ marginBottom: '60px', borderBottom: num !== 4 ? '1px solid #cbd5e1' : 'none', paddingBottom: '20px' }}>
               <input 
                 type="text" 
                 name={`section${num}Heading`} 
@@ -776,13 +801,15 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
                 onChange={handleChange} 
                 style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }}
               />
-              <textarea 
-                name={`section${num}Details`} 
-                placeholder={`Type the details for section ${num} here...`} 
-                value={formData[`section${num}Details`]} 
-                onChange={handleChange} 
-                style={{ width: '100%', padding: '10px', height: '100px', boxSizing: 'border-box' }}
-              />
+              {/* 📝 NEW: Replace textareas in sections with ReactQuill */}
+              <div style={{ backgroundColor: 'white', marginBottom: '40px' }}>
+                <ReactQuill 
+                  theme="snow" 
+                  value={formData[`section${num}Details`] || ''} 
+                  onChange={(val) => handleQuillChange(val, `section${num}Details`)} 
+                  style={{ height: '150px' }}
+                />
+              </div>
             </div>
           ))}
         </div>
