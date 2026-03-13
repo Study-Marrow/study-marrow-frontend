@@ -313,7 +313,6 @@ function JobDetailsPage({ jobs }) {
     );
   }
 
-  // 📝 NEW: Automatically clean up any hidden superglue formatting before it renders
   const cleanDescription = job.description ? job.description.replace(/&nbsp;|\u00A0/g, ' ') : '';
 
   return (
@@ -346,7 +345,6 @@ function JobDetailsPage({ jobs }) {
             <strong>Last Date: {job.deadline}</strong></p>
           </div>
 
-          {/* 📝 NEW: Enforced strict CSS word wrapping rules here */}
           <div 
             className="details-intro" 
             style={{ 
@@ -364,7 +362,6 @@ function JobDetailsPage({ jobs }) {
             const heading = job[`section${num}Heading`];
             const details = job[`section${num}Details`];
             
-            // 📝 NEW: Clean the details section too
             const cleanDetails = details ? details.replace(/&nbsp;|\u00A0/g, ' ') : '';
 
             if (heading || details) {
@@ -377,7 +374,7 @@ function JobDetailsPage({ jobs }) {
                       wordWrap: 'break-word', 
                       overflowWrap: 'break-word', 
                       whiteSpace: 'normal',
-                      overflowX: 'auto' // Prevents wide tables from breaking the page
+                      overflowX: 'auto'
                     }}>
                       <div dangerouslySetInnerHTML={{ __html: cleanDetails }}></div>
                     </div>
@@ -592,30 +589,57 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
     setIsAuthenticated(false);
   };
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const handleQuillChange = (value, name) => {
-    setFormData({ ...formData, [name]: value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({ ...prevData, [name]: value }));
   };
 
+  const handleQuillChange = (value, name) => {
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+  };
+
+  // 🔥 THE ULTIMATE BULLETPROOF FIX: Cannot crash silently anymore
   const handleEditClick = (job) => {
-    setEditJobId(job._id);
-    setFormData({
-      title: job.title || '', company: job.company || '', imageUrl: job.imageUrl || '', location: job.location || '', description: job.description || '',
-      deadline: job.deadline || '', category: job.category || 'General',
-      section1Heading: job.section1Heading || '', section1Details: job.section1Details || '',
-      section2Heading: job.section2Heading || '', section2Details: job.section2Details || '',
-      section3Heading: job.section3Heading || '', section3Details: job.section3Details || '',
-      section4Heading: job.section4Heading || '', section4Details: job.section4Details || '',
-      link1Name: job.link1Name || '', link1Url: job.link1Url || '',
-      link2Name: job.link2Name || '', link2Url: job.link2Url || '',
-      link3Name: job.link3Name || '', link3Url: job.link3Url || '',
-      link4Name: job.link4Name || '', link4Url: job.link4Url || '',
-      link5Name: job.link5Name || '', link5Url: job.link5Url || '',
-      link6Name: job.link6Name || '', link6Url: job.link6Url || '',
-      link7Name: job.link7Name || '', link7Url: job.link7Url || ''
-    });
-    window.scrollTo(0, 0);
+    try {
+      setEditJobId(job._id);
+      
+      // Safety Net 1: Force whatever date exists to safely parse into a string
+      let safeDeadline = '';
+      if (job.deadline) {
+        const dateStr = String(job.deadline);
+        if (dateStr.includes('T')) {
+          safeDeadline = dateStr.split('T')[0];
+        } else {
+          safeDeadline = dateStr;
+        }
+      }
+
+      // Safety Net 2: Apply the safe data
+      setFormData({
+        title: job.title || '', company: job.company || '', imageUrl: job.imageUrl || '', location: job.location || '', description: job.description || '',
+        deadline: safeDeadline, category: job.category || 'General',
+        section1Heading: job.section1Heading || '', section1Details: job.section1Details || '',
+        section2Heading: job.section2Heading || '', section2Details: job.section2Details || '',
+        section3Heading: job.section3Heading || '', section3Details: job.section3Details || '',
+        section4Heading: job.section4Heading || '', section4Details: job.section4Details || '',
+        link1Name: job.link1Name || '', link1Url: job.link1Url || '',
+        link2Name: job.link2Name || '', link2Url: job.link2Url || '',
+        link3Name: job.link3Name || '', link3Url: job.link3Url || '',
+        link4Name: job.link4Name || '', link4Url: job.link4Url || '',
+        link5Name: job.link5Name || '', link5Url: job.link5Url || '',
+        link6Name: job.link6Name || '', link6Url: job.link6Url || '',
+        link7Name: job.link7Name || '', link7Url: job.link7Url || ''
+      });
+      
+      // Safety Net 3: Small delay to ensure state updates before forcefully scrolling to the top
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+
+    } catch (error) {
+      console.error("Error setting edit data:", error);
+      alert("Something went wrong while trying to edit this post! Check the console.");
+    }
   };
 
   const handleCancelEdit = () => {
