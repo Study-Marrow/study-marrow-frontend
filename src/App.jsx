@@ -12,6 +12,19 @@ const stripHtml = (html) => {
   return text.replace(/\u00A0/g, " "); 
 };
 
+// 📝 NEW: Advanced Toolbar for Tables, Colors, and Alignments
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, 4, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'align': [] }],
+    ['link', 'image'],
+    ['clean']
+  ]
+};
+
 // ==========================================
 // 1. SHARED COMPONENTS (Header, Sidebar, Footer)
 // ==========================================
@@ -73,7 +86,8 @@ function SharedHeader() {
   );
 }
 
-function Sidebar() {
+// 📝 NEW: Sidebar now accepts `notices` data to build the stack
+function Sidebar({ notices = [] }) {
   return (
     <div className="sidebar-column">
       
@@ -105,8 +119,19 @@ function Sidebar() {
 
       <div className="sidebar-box">
         <h3>📌 Notice Board</h3>
-        <ul className="trending-list">
-          {/* We have removed the hardcoded list! Ready for the backend. */}
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {notices && notices.map(notice => (
+            <li key={notice._id} style={{ marginBottom: '8px' }}>
+              <Link to={`/notice/${notice._id}`} style={{
+                display: 'block', padding: '10px', backgroundColor: '#fff',
+                border: '1px solid #737373', color: '#b91c1c', 
+                textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
+                fontWeight: 'bold', borderRadius: '4px'
+              }}>
+                {notice.title}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
@@ -195,7 +220,7 @@ function Footer() {
 // ==========================================
 // 2. PUBLIC HOME PAGE
 // ==========================================
-function PublicPage({ jobs }) {
+function PublicPage({ jobs, notices }) {
   const { categoryName } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -290,7 +315,7 @@ function PublicPage({ jobs }) {
             </div>
           )}
         </div>
-        <Sidebar />
+        <Sidebar notices={notices} />
       </div>
       <Footer />
     </div>
@@ -300,7 +325,7 @@ function PublicPage({ jobs }) {
 // ==========================================
 // 3. INDIVIDUAL JOB DETAILS PAGE
 // ==========================================
-function JobDetailsPage({ jobs }) {
+function JobDetailsPage({ jobs, notices }) {
   const { id } = useParams();
   const job = jobs.find((j) => j._id === id);
 
@@ -346,7 +371,7 @@ function JobDetailsPage({ jobs }) {
           </div>
 
           <div 
-            className="details-intro" 
+            className="details-intro quill-content" 
             style={{ 
               marginBottom: '30px', 
               fontSize: '1.05rem', 
@@ -369,7 +394,7 @@ function JobDetailsPage({ jobs }) {
                 <div key={num}>
                   {heading && <h2 className="gradient-header">{heading}</h2>}
                   {details && (
-                    <div className="details-content" style={{
+                    <div className="details-content quill-content" style={{
                       lineHeight: '1.6',
                       wordWrap: 'break-word', 
                       overflowWrap: 'break-word', 
@@ -419,7 +444,7 @@ function JobDetailsPage({ jobs }) {
           </div>
         </div>
 
-        <Sidebar />
+        <Sidebar notices={notices} />
       </div>
 
       <Footer />
@@ -428,9 +453,105 @@ function JobDetailsPage({ jobs }) {
 }
 
 // ==========================================
+// 📝 NEW: NOTICE DETAILS PAGE
+// ==========================================
+function NoticeDetailsPage({ notices }) {
+  const { id } = useParams();
+  const notice = notices.find((n) => n._id === id);
+
+  if (!notice) {
+    return (
+      <div className="site-wrapper">
+        <SharedHeader />
+        <div style={{ padding: '50px', textAlign: 'center' }}><h2>Loading Notice...</h2></div>
+      </div>
+    );
+  }
+
+  const cleanDescription = notice.description ? notice.description.replace(/&nbsp;|\u00A0/g, ' ') : '';
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          
+          <div className="breadcrumb">
+            Home » Notice Board » {notice.topicName}
+          </div>
+
+          <h1 className="details-main-title" style={{ color: '#b91c1c' }}>
+            {notice.title}
+          </h1>
+
+          <div 
+            className="details-intro quill-content" 
+            style={{ 
+              marginBottom: '30px', 
+              fontSize: '1.05rem', 
+              lineHeight: '1.6',
+              wordWrap: 'break-word', 
+              overflowWrap: 'break-word', 
+              whiteSpace: 'normal' 
+            }}
+            dangerouslySetInnerHTML={{ __html: cleanDescription }}
+          ></div>
+
+          {[1, 2, 3, 4, 5, 6, 7].map((num) => {
+            const heading = notice[`section${num}Heading`];
+            const details = notice[`section${num}Details`];
+            const cleanDetails = details ? details.replace(/&nbsp;|\u00A0/g, ' ') : '';
+
+            if (heading || details) {
+              return (
+                <div key={`n-${num}`}>
+                  {heading && <h2 className="gradient-header" style={{ backgroundImage: 'linear-gradient(90deg, #b91c1c, #ef4444)' }}>{heading}</h2>}
+                  {details && (
+                    <div className="details-content quill-content" style={{
+                      lineHeight: '1.6', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal', overflowX: 'auto'
+                    }}>
+                      <div dangerouslySetInnerHTML={{ __html: cleanDetails }}></div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return null;
+          })}
+
+          <h2 className="gradient-header" style={{ backgroundImage: 'linear-gradient(90deg, #b91c1c, #ef4444)' }}>Important Web-Links</h2>
+          <table className="links-table">
+            <tbody>
+              {[1, 2, 3, 4, 5, 6, 7].map((num) => {
+                const linkName = notice[`link${num}Name`];
+                const linkUrl = notice[`link${num}Url`];
+                if (linkName && linkUrl) {
+                  return (
+                    <tr key={num}>
+                      <td><strong>{linkName}</strong></td>
+                      <td style={{ textAlign: 'center', width: '150px' }}>
+                        <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn" style={{backgroundColor: '#b91c1c'}}>Click Here</a>
+                      </td>
+                    </tr>
+                  );
+                }
+                return null; 
+              })}
+            </tbody>
+          </table>
+
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
 // 4. IMPORTANT LINKS PAGE
 // ==========================================
-function ImpLinksPage({ impLinks }) {
+function ImpLinksPage({ impLinks, notices }) {
   return (
     <div className="site-wrapper">
       <SharedHeader />
@@ -466,7 +587,7 @@ function ImpLinksPage({ impLinks }) {
           )}
 
         </div>
-        <Sidebar />
+        <Sidebar notices={notices} />
       </div>
       <Footer />
     </div>
@@ -476,7 +597,7 @@ function ImpLinksPage({ impLinks }) {
 // ==========================================
 // 5. DEDICATED CONTACT US PAGE
 // ==========================================
-function ContactPage({ contacts }) {
+function ContactPage({ contacts, notices }) {
   return (
     <div className="site-wrapper">
       <SharedHeader />
@@ -514,7 +635,7 @@ function ContactPage({ contacts }) {
             </tbody>
           </table>
         </div>
-        <Sidebar />
+        <Sidebar notices={notices} />
       </div>
       <Footer />
     </div>
@@ -522,7 +643,7 @@ function ContactPage({ contacts }) {
 }
 
 // ==========================================
-// DEFAULT FORM BLANK STATE 
+// DEFAULT FORM BLANK STATES 
 // ==========================================
 const defaultFormState = { 
   title: '', company: '', imageUrl: '', location: '', description: '', deadline: '', category: 'General',
@@ -530,239 +651,140 @@ const defaultFormState = {
   section2Heading: 'Eligibility Criteria', section2Details: '',
   section3Heading: 'How to Apply', section3Details: '',
   section4Heading: 'Important Dates', section4Details: '',
-  link1Name: 'Online Application Form', link1Url: '',
-  link2Name: '', link2Url: '', link3Name: '', link3Url: '', link4Name: '', link4Url: '',
-  link5Name: '', link5Url: '', link6Name: '', link6Url: '', link7Name: '', link7Url: ''
+  link1Name: 'Online Application Form', link1Url: '', link2Name: '', link2Url: '', link3Name: '', link3Url: '', link4Name: '', link4Url: '', link5Name: '', link5Url: '', link6Name: '', link6Url: '', link7Name: '', link7Url: ''
+};
+
+const defaultNoticeState = { 
+  title: '', topicName: '', description: '',
+  section1Heading: 'Details', section1Details: '', section2Heading: '', section2Details: '', section3Heading: '', section3Details: '', section4Heading: '', section4Details: '', section5Heading: '', section5Details: '', section6Heading: '', section6Details: '', section7Heading: '', section7Details: '',
+  link1Name: 'Download Notice', link1Url: '', link2Name: '', link2Url: '', link3Name: '', link3Url: '', link4Name: '', link4Url: '', link5Name: '', link5Url: '', link6Name: '', link6Url: '', link7Name: '', link7Url: ''
 };
 
 // ==========================================
 // 6. SECURE ADMIN VIEW
 // ==========================================
-function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, contacts }) {
+function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impLinks, fetchContacts, contacts }) {
   const [token, setToken] = useState(localStorage.getItem('adminToken') || '');
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
   const [passwordInput, setPasswordInput] = useState('');
   
+  // 📝 NEW: Tab State
+  const [activeTab, setActiveTab] = useState('jobs'); // 'jobs', 'notices', or 'links'
+
   const [editJobId, setEditJobId] = useState(null); 
   const [formData, setFormData] = useState(defaultFormState);
 
-  const [impLinkForm, setImpLinkForm] = useState({ name: '', url: '' });
+  const [editNoticeId, setEditNoticeId] = useState(null); 
+  const [noticeData, setNoticeData] = useState(defaultNoticeState);
 
+  const [impLinkForm, setImpLinkForm] = useState({ name: '', url: '' });
   const [editContactId, setEditContactId] = useState(null);
   const [contactForm, setContactForm] = useState({ platform: '', value: '', isLink: false });
 
-  const getAuthHeaders = () => ({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  });
-
-  const getDeleteHeaders = () => ({
-    'Authorization': `Bearer ${token}`
-  });
+  const getAuthHeaders = () => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` });
+  const getDeleteHeaders = () => ({ 'Authorization': `Bearer ${token}` });
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await fetch('https://study-marrow-backend.onrender.com/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: passwordInput })
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: passwordInput })
       });
       const data = await res.json();
-      
       if (data.success) {
-        setToken(data.token);
-        setIsAuthenticated(true);
-        localStorage.setItem('adminToken', data.token); 
-      } else {
-        alert('❌ Incorrect Password! Access Denied.');
-        setPasswordInput('');
-      }
-    } catch (err) {
-      alert('❌ Server error. Make sure your backend is live!');
-    }
+        setToken(data.token); setIsAuthenticated(true); localStorage.setItem('adminToken', data.token); 
+      } else { alert('❌ Incorrect Password! Access Denied.'); setPasswordInput(''); }
+    } catch (err) { alert('❌ Server error. Make sure your backend is live!'); }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    setToken('');
-    setIsAuthenticated(false);
-  };
+  const handleLogout = () => { localStorage.removeItem('adminToken'); setToken(''); setIsAuthenticated(false); };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevData => ({ ...prevData, [name]: value }));
-  };
-
-  const handleQuillChange = (value, name) => {
-    setFormData(prevData => ({ ...prevData, [name]: value }));
-  };
-
-  // 🔥 THE ULTIMATE BULLETPROOF FIX: Cannot crash silently anymore
-  const handleEditClick = (job) => {
-    try {
-      setEditJobId(job._id);
-      
-      // Safety Net 1: Force whatever date exists to safely parse into a string
-      let safeDeadline = '';
-      if (job.deadline) {
-        const dateStr = String(job.deadline);
-        if (dateStr.includes('T')) {
-          safeDeadline = dateStr.split('T')[0];
-        } else {
-          safeDeadline = dateStr;
-        }
-      }
-
-      // Safety Net 2: Apply the safe data
-      setFormData({
-        title: job.title || '', company: job.company || '', imageUrl: job.imageUrl || '', location: job.location || '', description: job.description || '',
-        deadline: safeDeadline, category: job.category || 'General',
-        section1Heading: job.section1Heading || '', section1Details: job.section1Details || '',
-        section2Heading: job.section2Heading || '', section2Details: job.section2Details || '',
-        section3Heading: job.section3Heading || '', section3Details: job.section3Details || '',
-        section4Heading: job.section4Heading || '', section4Details: job.section4Details || '',
-        link1Name: job.link1Name || '', link1Url: job.link1Url || '',
-        link2Name: job.link2Name || '', link2Url: job.link2Url || '',
-        link3Name: job.link3Name || '', link3Url: job.link3Url || '',
-        link4Name: job.link4Name || '', link4Url: job.link4Url || '',
-        link5Name: job.link5Name || '', link5Url: job.link5Url || '',
-        link6Name: job.link6Name || '', link6Url: job.link6Url || '',
-        link7Name: job.link7Name || '', link7Url: job.link7Url || ''
-      });
-      
-      // Safety Net 3: Small delay to ensure state updates before forcefully scrolling to the top
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 100);
-
-    } catch (error) {
-      console.error("Error setting edit data:", error);
-      alert("Something went wrong while trying to edit this post! Check the console.");
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditJobId(null);
-    setFormData(defaultFormState);
-  };
-
-  const handleSubmit = async (e) => {
+  // --- JOB HANDLERS ---
+  const handleJobSubmit = async (e) => {
     e.preventDefault();
     const method = editJobId ? 'PUT' : 'POST';
     const url = editJobId ? `https://study-marrow-backend.onrender.com/api/jobs/${editJobId}` : 'https://study-marrow-backend.onrender.com/api/jobs';
     try {
-      const response = await fetch(url, {
-        method: method,
-        headers: getAuthHeaders(), 
-        body: JSON.stringify(formData)
-      });
+      const response = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(formData) });
       if (response.status === 401) return alert('Session expired! Please log out and back in.');
-      
-      if (response.ok) {
-        alert(editJobId ? 'Post updated successfully!' : 'Post published successfully!');
-        setFormData(defaultFormState);
-        setEditJobId(null); 
-        fetchJobs(); 
-      }
-    } catch (error) { console.error("Error posting/updating job:", error); }
+      if (response.ok) { alert(editJobId ? 'Post updated!' : 'Post published!'); setFormData(defaultFormState); setEditJobId(null); fetchJobs(); }
+    } catch (error) { console.error(error); }
   };
 
-  const handleDelete = async (id) => {
+  const handleEditJobClick = (job) => {
+    try {
+      setEditJobId(job._id);
+      let safeDeadline = '';
+      if (job.deadline) {
+        const dateStr = String(job.deadline);
+        if (dateStr.includes('T')) safeDeadline = dateStr.split('T')[0];
+        else safeDeadline = dateStr;
+      }
+      setFormData({ ...defaultFormState, ...job, deadline: safeDeadline });
+      setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
+    } catch (error) { console.error(error); alert("Error editing post!"); }
+  };
+
+  const handleDeleteJob = async (id) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
-      try {
-        const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { 
-          method: 'DELETE',
-          headers: getDeleteHeaders() 
-        });
-        if (response.status === 401) return alert('Session expired! Please log out and back in.');
-        if (response.ok) fetchJobs();
-      } catch (error) { console.error("Error deleting job:", error); }
+      const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { method: 'DELETE', headers: getDeleteHeaders() });
+      if (response.ok) fetchJobs();
     }
   };
 
+  // --- NOTICE HANDLERS ---
+  const handleNoticeSubmit = async (e) => {
+    e.preventDefault();
+    const method = editNoticeId ? 'PUT' : 'POST';
+    const url = editNoticeId ? `https://study-marrow-backend.onrender.com/api/notices/${editNoticeId}` : 'https://study-marrow-backend.onrender.com/api/notices';
+    try {
+      const response = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(noticeData) });
+      if (response.status === 401) return alert('Session expired!');
+      if (response.ok) { alert(editNoticeId ? 'Notice updated!' : 'Notice published!'); setNoticeData(defaultNoticeState); setEditNoticeId(null); fetchNotices(); }
+    } catch (error) { console.error(error); }
+  };
+
+  const handleEditNoticeClick = (notice) => {
+    setEditNoticeId(notice._id);
+    setNoticeData({ ...defaultNoticeState, ...notice });
+    setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
+  };
+
+  const handleDeleteNotice = async (id) => {
+    if (window.confirm("Delete this notice?")) {
+      const response = await fetch(`https://study-marrow-backend.onrender.com/api/notices/${id}`, { method: 'DELETE', headers: getDeleteHeaders() });
+      if (response.ok) fetchNotices();
+    }
+  };
+
+  // --- LINKS & CONTACT HANDLERS ---
   const handleImpLinkSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch('https://study-marrow-backend.onrender.com/api/implinks', {
-        method: 'POST',
-        headers: getAuthHeaders(), 
-        body: JSON.stringify(impLinkForm)
-      });
-      if (response.status === 401) return alert('Session expired! Please log out and back in.');
-      if (response.ok) {
-        alert('Global Link Added!');
-        setImpLinkForm({ name: '', url: '' });
-        fetchImpLinks(); 
-      }
-    } catch (error) { console.error("Error adding link:", error); }
+    const res = await fetch('https://study-marrow-backend.onrender.com/api/implinks', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(impLinkForm) });
+    if (res.ok) { setImpLinkForm({ name: '', url: '' }); fetchImpLinks(); }
   };
-
   const handleImpLinkDelete = async (id) => {
-    if (window.confirm("Delete this link from the Download page?")) {
-      try {
-        const response = await fetch(`https://study-marrow-backend.onrender.com/api/implinks/${id}`, { 
-          method: 'DELETE',
-          headers: getDeleteHeaders() 
-        });
-        if (response.status === 401) return alert('Session expired! Please log out and back in.');
-        if (response.ok) fetchImpLinks();
-      } catch (error) { console.error("Error deleting link:", error); }
-    }
+    if (window.confirm("Delete this link?")) { await fetch(`https://study-marrow-backend.onrender.com/api/implinks/${id}`, { method: 'DELETE', headers: getDeleteHeaders() }); fetchImpLinks(); }
   };
-
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     const method = editContactId ? 'PUT' : 'POST';
     const url = editContactId ? `https://study-marrow-backend.onrender.com/api/contacts/${editContactId}` : 'https://study-marrow-backend.onrender.com/api/contacts';
-    try {
-      const response = await fetch(url, { 
-        method: method, 
-        headers: getAuthHeaders(), 
-        body: JSON.stringify(contactForm) 
-      });
-      if (response.status === 401) return alert('Session expired! Please log out and back in.');
-      if(response.ok) {
-        setContactForm({ platform: '', value: '', isLink: false });
-        setEditContactId(null);
-        fetchContacts(); 
-      }
-    } catch (error) { console.error("Error saving contact:", error); }
+    const res = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(contactForm) });
+    if (res.ok) { setContactForm({ platform: '', value: '', isLink: false }); setEditContactId(null); fetchContacts(); }
   };
-
-  const handleContactEdit = (c) => { 
-    setEditContactId(c._id); 
-    setContactForm({ platform: c.platform, value: c.value, isLink: c.isLink }); 
-  };
-  
-  const handleContactDelete = async (id) => { 
-    if (window.confirm("Delete this contact info?")) { 
-      const response = await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${id}`, { 
-        method: 'DELETE',
-        headers: getDeleteHeaders() 
-      }); 
-      if (response.status === 401) return alert('Session expired! Please log out and back in.');
-      fetchContacts(); 
-    } 
-  };
-
   const moveContact = async (index, direction) => {
     const newContacts = [...contacts];
     if (direction === 'up' && index > 0) {
-      const temp = newContacts[index].order;
-      newContacts[index].order = newContacts[index - 1].order;
-      newContacts[index - 1].order = temp;
+      const temp = newContacts[index].order; newContacts[index].order = newContacts[index - 1].order; newContacts[index - 1].order = temp;
     } else if (direction === 'down' && index < newContacts.length - 1) {
-      const temp = newContacts[index].order;
-      newContacts[index].order = newContacts[index + 1].order;
-      newContacts[index + 1].order = temp;
+      const temp = newContacts[index].order; newContacts[index].order = newContacts[index + 1].order; newContacts[index + 1].order = temp;
     } else return; 
-
     await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${newContacts[index]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: newContacts[index].order }) });
     await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${direction === 'up' ? newContacts[index-1]._id : newContacts[index+1]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: direction === 'up' ? newContacts[index-1].order : newContacts[index+1].order }) });
-    
     fetchContacts(); 
   };
+
 
   if (!isAuthenticated) {
     return (
@@ -785,156 +807,163 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
           <button onClick={handleLogout} style={{padding: '10px', cursor: 'pointer', backgroundColor: '#ef4444', color: 'white', border: 'none'}}>🔓 Logout</button>
         </div>
       </div>
-      
-      <h3 style={{color: editJobId ? '#3b82f6' : '#10b981', margin: '0 0 20px 0'}}>
-        {editJobId ? '✏️ Updating Existing Post' : '📝 Create New Post'}
-      </h3>
 
-      <form className="job-form" onSubmit={handleSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
-        
-        <select name="category" value={formData.category} onChange={handleChange} required style={{padding: '10px', fontSize: '1rem', border: '1px solid #cbd5e1', borderRadius: '4px'}}>
-          <option value="General">General (Main Feed Only)</option>
-          <option value="Admission">Admission</option>
-          <option value="Admit Card">Admit Card</option>
-          <option value="Private Job">Private Job</option>
-          <option value="Result">Result</option>
-          <option value="Scholarship">Scholarship</option>
-        </select>
+      {/* 📝 NEW: Tab Navigation */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
+        <button onClick={() => setActiveTab('jobs')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'jobs' ? '#2563eb' : '#cbd5e1', color: activeTab === 'jobs' ? 'white' : '#333' }}>💼 Manage Jobs</button>
+        <button onClick={() => setActiveTab('notices')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'notices' ? '#b91c1c' : '#cbd5e1', color: activeTab === 'notices' ? 'white' : '#333' }}>📌 Manage Notices</button>
+        <button onClick={() => setActiveTab('links')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'links' ? '#10b981' : '#cbd5e1', color: activeTab === 'links' ? 'white' : '#333' }}>🔗 Links & Contacts</button>
+      </div>
 
-        <input type="text" name="title" placeholder="Post Title (e.g. IDBI Bank Assistant Manager)" value={formData.title} onChange={handleChange} required style={{padding: '10px'}}/>
-        <input type="text" name="company" placeholder="Institution / Organization Name" value={formData.company} onChange={handleChange} required style={{padding: '10px'}}/>
-        <input type="url" name="imageUrl" placeholder="Logo Image URL (Optional: Paste link from internet)" value={formData.imageUrl} onChange={handleChange} style={{padding: '10px'}}/>
-        <input type="text" name="location" placeholder="Location (Optional)" value={formData.location} onChange={handleChange} style={{padding: '10px'}}/>
-        
-        <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
-        
-        <div style={{ backgroundColor: 'white', marginBottom: '40px' }}>
-          <ReactQuill 
-            theme="snow" 
-            value={formData.description || ''} 
-            onChange={(val) => handleQuillChange(val, 'description')} 
-            style={{ height: '150px' }}
-          />
+      {/* TAB 1: JOBS */}
+      {activeTab === 'jobs' && (
+        <div>
+          <h3 style={{color: '#2563eb', margin: '0 0 20px 0'}}>{editJobId ? '✏️ Updating Existing Job Post' : '📝 Create New Job Post'}</h3>
+          <form className="job-form" onSubmit={handleJobSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
+            <select name="category" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} required style={{padding: '10px', fontSize: '1rem', border: '1px solid #cbd5e1', borderRadius: '4px'}}>
+              <option value="General">General (Main Feed Only)</option> <option value="Admission">Admission</option> <option value="Admit Card">Admit Card</option> <option value="Private Job">Private Job</option> <option value="Result">Result</option> <option value="Scholarship">Scholarship</option>
+            </select>
+            <input type="text" placeholder="Post Title (e.g. IDBI Bank Assistant Manager)" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} required style={{padding: '10px'}}/>
+            <input type="text" placeholder="Institution / Organization Name" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} required style={{padding: '10px'}}/>
+            <input type="url" placeholder="Logo Image URL (Optional)" value={formData.imageUrl} onChange={(e) => setFormData({...formData, imageUrl: e.target.value})} style={{padding: '10px'}}/>
+            <input type="text" placeholder="Location (Optional)" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} style={{padding: '10px'}}/>
+            
+            <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
+            <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData.description || ''} onChange={(v) => setFormData({...formData, description: v})} style={{ height: '150px' }} /></div>
+
+            <input type="date" value={formData.deadline} onChange={(e) => setFormData({...formData, deadline: e.target.value})} required style={{padding: '10px', marginTop: '30px'}}/>
+
+            <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (You can paste tables here!)</h3>
+              {[1, 2, 3, 4].map((num) => (
+                <div key={`j-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 4 ? '1px solid #cbd5e1' : 'none', paddingBottom: '20px' }}>
+                  <input type="text" placeholder={`Section ${num} Heading`} value={formData[`section${num}Heading`]} onChange={(e) => setFormData({...formData, [`section${num}Heading`]: e.target.value})} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
+                  <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData[`section${num}Details`] || ''} onChange={(v) => setFormData({...formData, [`section${num}Details`]: v})} style={{ height: '150px' }} /></div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links (Fill up to 7)</h3>
+              {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                <div key={`jl-${num}`} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                  <input type="text" placeholder={`Link ${num} Name`} value={formData[`link${num}Name`]} onChange={(e) => setFormData({...formData, [`link${num}Name`]: e.target.value})} style={{flex: 1, padding: '8px'}} required={num === 1} />
+                  <input type="url" placeholder={`Link ${num} URL (https://...)`} value={formData[`link${num}Url`]} onChange={(e) => setFormData({...formData, [`link${num}Url`]: e.target.value})} style={{flex: 2, padding: '8px'}} required={num === 1} />
+                </div>
+              ))}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: '#2563eb', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{editJobId ? 'Update Post' : 'Publish Update'}</button>
+              {editJobId && (<button type="button" onClick={handleCancelEdit} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel</button>)}
+            </div>
+          </form>
+
+          <h2>Manage Active Jobs</h2>
+          {jobs.map((job) => (
+            <div key={job._id} style={{backgroundColor: 'white', padding: '15px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+              <div><strong style={{color: '#2563eb'}}>({job.category || 'Uncategorized'})</strong> {job.title} - {job.company}</div>
+              <div><button onClick={() => handleEditClick(job)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer'}}>Edit</button><button onClick={() => handleDeleteJob(job._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer'}}>Delete</button></div>
+            </div>
+          ))}
         </div>
+      )}
 
-        <input type="date" name="deadline" value={formData.deadline} onChange={handleChange} required style={{padding: '10px', marginTop: '30px'}}/>
+      {/* TAB 2: NOTICES */}
+      {activeTab === 'notices' && (
+        <div>
+          <h3 style={{color: '#b91c1c', margin: '0 0 20px 0'}}>{editNoticeId ? '✏️ Updating Notice' : '📌 Create New Notice'}</h3>
+          <form className="job-form" onSubmit={handleNoticeSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
+            
+            <input type="text" placeholder="Stack Display Title (e.g. ADRE Syllabus Updated)" value={noticeData.title} onChange={(e) => setNoticeData({...noticeData, title: e.target.value})} required style={{padding: '10px'}}/>
+            <input type="text" placeholder="Topic Name (e.g. Assam Direct Recruitment 2026)" value={noticeData.topicName} onChange={(e) => setNoticeData({...noticeData, topicName: e.target.value})} required style={{padding: '10px'}}/>
+            
+            <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Brief Introduction</p>
+            <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={noticeData.description || ''} onChange={(v) => setNoticeData({...noticeData, description: v})} style={{ height: '150px' }} /></div>
 
-        <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
-          <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections</h3>
-          <p style={{fontSize: '0.9rem', color: '#64748b', marginTop: 0}}>Use the rich text editor to bold text, add bullet points, etc.</p>
+            <div style={{ backgroundColor: '#fff1f2', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #fecdd3' }}>
+              <h3 style={{ margin: '0 0 15px 0', color: '#b91c1c' }}>Dynamic Content Sections (7 Sections)</h3>
+              {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                <div key={`n-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 7 ? '1px solid #fecdd3' : 'none', paddingBottom: '20px' }}>
+                  <input type="text" placeholder={`Section ${num} Heading`} value={noticeData[`section${num}Heading`]} onChange={(e) => setNoticeData({...noticeData, [`section${num}Heading`]: e.target.value})} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
+                  <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={noticeData[`section${num}Details`] || ''} onChange={(v) => setNoticeData({...noticeData, [`section${num}Details`]: v})} style={{ height: '150px' }} /></div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ backgroundColor: '#fff1f2', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #fecdd3' }}>
+              <h3 style={{ margin: '0 0 15px 0', color: '#b91c1c' }}>Custom Web Links (Fill up to 7)</h3>
+              {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                <div key={`nl-${num}`} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                  <input type="text" placeholder={`Link ${num} Name`} value={noticeData[`link${num}Name`]} onChange={(e) => setNoticeData({...noticeData, [`link${num}Name`]: e.target.value})} style={{flex: 1, padding: '8px'}} />
+                  <input type="url" placeholder={`Link ${num} URL (https://...)`} value={noticeData[`link${num}Url`]} onChange={(e) => setNoticeData({...noticeData, [`link${num}Url`]: e.target.value})} style={{flex: 2, padding: '8px'}} />
+                </div>
+              ))}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: '#b91c1c', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{editNoticeId ? 'Update Notice' : 'Publish Notice'}</button>
+              {editNoticeId && (<button type="button" onClick={() => {setEditNoticeId(null); setNoticeData(defaultNoticeState)}} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel</button>)}
+            </div>
+          </form>
+
+          <h2>Manage Active Notices</h2>
+          {notices.map((n) => (
+            <div key={n._id} style={{backgroundColor: 'white', padding: '15px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+              <div><strong style={{color: '#b91c1c'}}>📌 {n.title}</strong></div>
+              <div><button onClick={() => handleEditNoticeClick(n)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer'}}>Edit</button><button onClick={() => handleDeleteNotice(n._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer'}}>Delete</button></div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* TAB 3: LINKS & CONTACTS */}
+      {activeTab === 'links' && (
+        <div>
+          <h2 style={{color: '#10b981'}}>🔗 Manage "Imp Links" Page</h2>
+          <form onSubmit={handleImpLinkSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <input type="text" placeholder="Link Display Name" value={impLinkForm.name} onChange={(e) => setImpLinkForm({...impLinkForm, name: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
+            <input type="url" placeholder="URL (https://...)" value={impLinkForm.url} onChange={(e) => setImpLinkForm({...impLinkForm, url: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
+            <button type="submit" style={{padding: '10px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Add Link</button>
+          </form>
+          {impLinks.map((link) => (
+            <div key={link._id} style={{backgroundColor: '#f8fafc', padding: '10px 15px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #e2e8f0'}}>
+              <div><strong>{link.name}</strong> </div>
+              <button onClick={() => handleImpLinkDelete(link._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Delete</button>
+            </div>
+          ))}
+
+          <hr style={{ margin: '50px 0', border: '1px solid #ccc' }} />
           
-          {[1, 2, 3, 4].map((num) => (
-            <div key={num} style={{ marginBottom: '60px', borderBottom: num !== 4 ? '1px solid #cbd5e1' : 'none', paddingBottom: '20px' }}>
-              <input 
-                type="text" 
-                name={`section${num}Heading`} 
-                placeholder={`Section ${num} Heading`} 
-                value={formData[`section${num}Heading`]} 
-                onChange={handleChange} 
-                style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }}
-              />
-              <div style={{ backgroundColor: 'white', marginBottom: '40px' }}>
-                <ReactQuill 
-                  theme="snow" 
-                  value={formData[`section${num}Details`] || ''} 
-                  onChange={(val) => handleQuillChange(val, `section${num}Details`)} 
-                  style={{ height: '150px' }}
-                />
+          <h2 style={{color: '#10b981'}}>📞 Manage "Contact Us" Page</h2>
+          <form onSubmit={handleContactSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+            <h4 style={{margin: 0}}>{editContactId ? 'Editing Contact Info' : 'Add New Contact Info'}</h4>
+            <div style={{display: 'flex', gap: '10px'}}>
+              <input type="text" placeholder="Platform (e.g. Email, WhatsApp)" value={contactForm.platform} onChange={(e) => setContactForm({...contactForm, platform: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
+              <input type="text" placeholder="Details (e.g. editor@... OR https://...)" value={contactForm.value} onChange={(e) => setContactForm({...contactForm, value: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
+            </div>
+            <label style={{display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 'bold'}}>
+              <input type="checkbox" checked={contactForm.isLink} onChange={(e) => setContactForm({...contactForm, isLink: e.target.checked})} style={{width: '20px', height: '20px'}}/>
+              Check this box if the Details field is a Website URL
+            </label>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button type="submit" style={{padding: '10px 20px', backgroundColor: editContactId ? '#3b82f6' : '#10b981', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{editContactId ? 'Update Contact' : 'Add Contact'}</button>
+              {editContactId && (<button type="button" onClick={() => {setEditContactId(null); setContactForm({platform:'', value:'', isLink: false})}} style={{padding: '10px 20px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel Edit</button>)}
+            </div>
+          </form>
+          {contacts.map((c, index) => (
+            <div key={c._id} style={{backgroundColor: '#f8fafc', padding: '10px 15px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #e2e8f0'}}>
+              <div><strong>{c.platform}:</strong> {c.isLink ? '[Click Here Link]' : c.value}</div>
+              <div style={{display: 'flex', gap: '8px'}}>
+                <button type="button" onClick={() => moveContact(index, 'up')} disabled={index === 0} style={{padding: '6px 10px', cursor: index === 0 ? 'not-allowed' : 'pointer'}}>⬆️</button>
+                <button type="button" onClick={() => moveContact(index, 'down')} disabled={index === contacts.length - 1} style={{padding: '6px 10px', cursor: index === contacts.length - 1 ? 'not-allowed' : 'pointer'}}>⬇️</button>
+                <button type="button" onClick={() => {setEditContactId(c._id); setContactForm({ platform: c.platform, value: c.value, isLink: c.isLink });}} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Edit</button>
+                <button type="button" onClick={() => {if (window.confirm("Delete?")) { fetch(`https://study-marrow-backend.onrender.com/api/contacts/${c._id}`, { method: 'DELETE', headers: getDeleteHeaders() }).then(fetchContacts); }}} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Delete</button>
               </div>
             </div>
           ))}
         </div>
-
-        <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
-          <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links (Fill up to 7)</h3>
-          {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-            <div key={num} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-              <input type="text" name={`link${num}Name`} placeholder={`Link ${num} Name`} value={formData[`link${num}Name`]} onChange={handleChange} style={{flex: 1, padding: '8px'}} required={num === 1} />
-              <input type="url" name={`link${num}Url`} placeholder={`Link ${num} URL (https://...)`} value={formData[`link${num}Url`]} onChange={handleChange} style={{flex: 2, padding: '8px'}} required={num === 1} />
-            </div>
-          ))}
-        </div>
-        
-        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-          <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: editJobId ? '#3b82f6' : '#10b981', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>
-            {editJobId ? 'Update Post' : 'Publish Update'}
-          </button>
-          
-          {editJobId && (
-            <button type="button" onClick={handleCancelEdit} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>
-              Cancel Edit
-            </button>
-          )}
-        </div>
-      </form>
-
-      <h2>Manage Active Posts</h2>
-      {jobs.map((job) => (
-        <div key={job._id} style={{backgroundColor: 'white', padding: '15px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <div><strong style={{color: '#2563eb'}}>({job.category || 'Uncategorized'})</strong> {job.title} - {job.company}</div>
-          <div>
-            <button onClick={() => handleEditClick(job)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer'}}>Edit</button>
-            <button onClick={() => handleDelete(job._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer'}}>Delete</button>
-          </div>
-        </div>
-      ))}
-
-      <hr style={{ margin: '50px 0', border: '1px solid #ccc' }} />
-      <h2 style={{color: '#1e3a8a'}}>🔗 Manage "Imp Links" Page</h2>
-      
-      <form onSubmit={handleImpLinkSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', gap: '10px', marginBottom: '20px' }}>
-        <input type="text" placeholder="Link Display Name (e.g. Standard Form of Application)" value={impLinkForm.name} onChange={(e) => setImpLinkForm({...impLinkForm, name: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
-        <input type="url" placeholder="URL (https://...)" value={impLinkForm.url} onChange={(e) => setImpLinkForm({...impLinkForm, url: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
-        <button type="submit" style={{padding: '10px 20px', backgroundColor: '#2563eb', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Add to Imp Links</button>
-      </form>
-
-      {impLinks.map((link) => (
-        <div key={link._id} style={{backgroundColor: '#f8fafc', padding: '10px 15px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #e2e8f0'}}>
-          <div><strong>{link.name}</strong> </div>
-          <button onClick={() => handleImpLinkDelete(link._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Delete</button>
-        </div>
-      ))}
-
-      <hr style={{ margin: '50px 0', border: '1px solid #ccc' }} />
-      <h2 style={{color: '#1e3a8a'}}>📞 Manage "Contact Us" Page</h2>
-      
-      <form onSubmit={handleContactSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-        <h4 style={{margin: 0}}>{editContactId ? 'Editing Contact Info' : 'Add New Contact Info'}</h4>
-        <div style={{display: 'flex', gap: '10px'}}>
-          <input type="text" placeholder="Platform (e.g. Email, WhatsApp, Facebook)" value={contactForm.platform} onChange={(e) => setContactForm({...contactForm, platform: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
-          <input type="text" placeholder="Details (e.g. editor@... OR https://...)" value={contactForm.value} onChange={(e) => setContactForm({...contactForm, value: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
-        </div>
-        
-        <label style={{display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 'bold'}}>
-          <input type="checkbox" checked={contactForm.isLink} onChange={(e) => setContactForm({...contactForm, isLink: e.target.checked})} style={{width: '20px', height: '20px'}}/>
-          Check this box if the Details field is a Website URL (It will render as a blue "Click Here" button)
-        </label>
-        
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button type="submit" style={{padding: '10px 20px', backgroundColor: editContactId ? '#3b82f6' : '#22c55e', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>
-            {editContactId ? 'Update Contact' : 'Add Contact'}
-          </button>
-          {editContactId && (
-            <button type="button" onClick={() => {setEditContactId(null); setContactForm({platform:'', value:'', isLink: false})}} style={{padding: '10px 20px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>
-              Cancel Edit
-            </button>
-          )}
-        </div>
-      </form>
-
-      {contacts.map((c, index) => (
-        <div key={c._id} style={{backgroundColor: '#f8fafc', padding: '10px 15px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #e2e8f0'}}>
-          <div><strong>{c.platform}:</strong> {c.isLink ? '[Click Here Link]' : c.value}</div>
-          
-          <div style={{display: 'flex', gap: '8px'}}>
-            <button type="button" onClick={() => moveContact(index, 'up')} disabled={index === 0} style={{padding: '6px 10px', cursor: index === 0 ? 'not-allowed' : 'pointer'}}>⬆️</button>
-            <button type="button" onClick={() => moveContact(index, 'down')} disabled={index === contacts.length - 1} style={{padding: '6px 10px', cursor: index === contacts.length - 1 ? 'not-allowed' : 'pointer'}}>⬇️</button>
-            
-            <button type="button" onClick={() => handleContactEdit(c)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Edit</button>
-            <button type="button" onClick={() => handleContactDelete(c._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Delete</button>
-          </div>
-        </div>
-      ))}
+      )}
     </div>
   );
 }
@@ -944,32 +973,18 @@ function AdminPage({ fetchJobs, jobs, fetchImpLinks, impLinks, fetchContacts, co
 // ==========================================
 function App() {
   const [jobs, setJobs] = useState([]);
+  const [notices, setNotices] = useState([]); // 📝 NEW: Notices State
   const [impLinks, setImpLinks] = useState([]); 
   const [contacts, setContacts] = useState([]); 
 
-  const fetchJobs = () => {
-    fetch('https://study-marrow-backend.onrender.com/api/jobs')
-      .then(res => res.json())
-      .then(data => setJobs(data))
-      .catch(err => console.error(err));
-  };
+  const fetchJobs = () => { fetch('https://study-marrow-backend.onrender.com/api/jobs').then(res => res.json()).then(setJobs).catch(console.error); };
+  const fetchNotices = () => { fetch('https://study-marrow-backend.onrender.com/api/notices').then(res => res.json()).then(setNotices).catch(console.error); }; // 📝 NEW
+  const fetchImpLinks = () => { fetch('https://study-marrow-backend.onrender.com/api/implinks').then(res => res.json()).then(setImpLinks).catch(console.error); };
+  const fetchContacts = () => { fetch('https://study-marrow-backend.onrender.com/api/contacts').then(res => res.json()).then(setContacts).catch(console.error); };
 
-  const fetchImpLinks = () => {
-    fetch('https://study-marrow-backend.onrender.com/api/implinks')
-      .then(res => res.json())
-      .then(data => setImpLinks(data))
-      .catch(err => console.error(err));
-  };
-
-  const fetchContacts = () => { 
-    fetch('https://study-marrow-backend.onrender.com/api/contacts')
-      .then(res => res.json())
-      .then(data => setContacts(data))
-      .catch(err => console.error(err)); 
-  };
-
-  useEffect(() => {
-    fetchJobs();
+  useEffect(() => { 
+    fetchJobs(); 
+    fetchNotices(); // 📝 NEW
     fetchImpLinks(); 
     fetchContacts(); 
   }, []);
@@ -977,15 +992,17 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<PublicPage jobs={jobs} />} />
-        <Route path="/category/:categoryName" element={<PublicPage jobs={jobs} />} />
-        <Route path="/imp-links" element={<ImpLinksPage impLinks={impLinks} />} />
-        <Route path="/contact" element={<ContactPage contacts={contacts} />} />
-        <Route path="/job/:id" element={<JobDetailsPage jobs={jobs} />} />
+        <Route path="/" element={<PublicPage jobs={jobs} notices={notices} />} />
+        <Route path="/category/:categoryName" element={<PublicPage jobs={jobs} notices={notices} />} />
+        <Route path="/imp-links" element={<ImpLinksPage impLinks={impLinks} notices={notices} />} />
+        <Route path="/contact" element={<ContactPage contacts={contacts} notices={notices} />} />
+        <Route path="/job/:id" element={<JobDetailsPage jobs={jobs} notices={notices} />} />
+        <Route path="/notice/:id" element={<NoticeDetailsPage notices={notices} />} /> {/* 📝 NEW */}
         
         <Route path="/syn-world-23" element={
           <AdminPage 
             fetchJobs={fetchJobs} jobs={jobs} 
+            fetchNotices={fetchNotices} notices={notices} 
             fetchImpLinks={fetchImpLinks} impLinks={impLinks} 
             fetchContacts={fetchContacts} contacts={contacts} 
           />} 

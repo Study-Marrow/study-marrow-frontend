@@ -853,3 +853,21 @@ html, body {
 .details-content p {
   margin-bottom: 15px;
 }
+
+/* ==========================================
+   RICH TEXT EDITOR TABLE FIX
+   ========================================== */
+.quill-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+.quill-content th, .quill-content td {
+  border: 1px solid #cbd5e1;
+  padding: 10px;
+  text-align: left;
+}
+.quill-content th {
+  background-color: #f1f5f9;
+  font-weight: bold;
+}
