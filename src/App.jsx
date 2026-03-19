@@ -12,7 +12,7 @@ const stripHtml = (html) => {
   return text.replace(/\u00A0/g, " "); 
 };
 
-// 📝 NEW: Advanced Toolbar for Tables, Colors, and Alignments
+// 📝 Advanced Toolbar for Tables, Colors, and Alignments
 const quillModules = {
   toolbar: [
     [{ 'header': [1, 2, 3, 4, false] }],
@@ -86,7 +86,6 @@ function SharedHeader() {
   );
 }
 
-// 📝 NEW: Sidebar now accepts `notices` data to build the stack
 function Sidebar({ notices = [] }) {
   return (
     <div className="sidebar-column">
@@ -274,7 +273,7 @@ function PublicPage({ jobs, notices }) {
             <div key={job._id} className="list-job-card">
               <Link to={`/job/${job._id}`} style={{ textDecoration: 'none' }}>
                 <h2 className="list-job-title">
-                  {job.company} Recruitment 2026 - {job.title}
+                  {job.company} - {job.title}
                 </h2>
               </Link>
               
@@ -362,7 +361,7 @@ function JobDetailsPage({ jobs, notices }) {
           </div>
 
           <h1 className="details-main-title">
-            {job.company} Recruitment 2026 – {job.title}
+            {job.company} - {job.title}
           </h1>
 
           <div className="details-meta">
@@ -383,7 +382,8 @@ function JobDetailsPage({ jobs, notices }) {
             dangerouslySetInnerHTML={{ __html: cleanDescription }}
           ></div>
 
-          {[1, 2, 3, 4].map((num) => {
+          {/* 📝 FIX: Loop is now correctly 1 through 7 for Job Details! */}
+          {[1, 2, 3, 4, 5, 6, 7].map((num) => {
             const heading = job[`section${num}Heading`];
             const details = job[`section${num}Details`];
             
@@ -453,7 +453,7 @@ function JobDetailsPage({ jobs, notices }) {
 }
 
 // ==========================================
-// 📝 NEW: NOTICE DETAILS PAGE
+// NOTICE DETAILS PAGE
 // ==========================================
 function NoticeDetailsPage({ notices }) {
   const { id } = useParams();
@@ -651,6 +651,9 @@ const defaultFormState = {
   section2Heading: 'Eligibility Criteria', section2Details: '',
   section3Heading: 'How to Apply', section3Details: '',
   section4Heading: 'Important Dates', section4Details: '',
+  section5Heading: '', section5Details: '',
+  section6Heading: '', section6Details: '',
+  section7Heading: '', section7Details: '',
   link1Name: 'Online Application Form', link1Url: '', link2Name: '', link2Url: '', link3Name: '', link3Url: '', link4Name: '', link4Url: '', link5Name: '', link5Url: '', link6Name: '', link6Url: '', link7Name: '', link7Url: ''
 };
 
@@ -668,8 +671,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
   const [passwordInput, setPasswordInput] = useState('');
   
-  // 📝 NEW: Tab State
-  const [activeTab, setActiveTab] = useState('jobs'); // 'jobs', 'notices', or 'links'
+  const [activeTab, setActiveTab] = useState('jobs'); 
 
   const [editJobId, setEditJobId] = useState(null); 
   const [formData, setFormData] = useState(defaultFormState);
@@ -808,7 +810,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
         </div>
       </div>
 
-      {/* 📝 NEW: Tab Navigation */}
       <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
         <button onClick={() => setActiveTab('jobs')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'jobs' ? '#2563eb' : '#cbd5e1', color: activeTab === 'jobs' ? 'white' : '#333' }}>💼 Manage Jobs</button>
         <button onClick={() => setActiveTab('notices')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'notices' ? '#b91c1c' : '#cbd5e1', color: activeTab === 'notices' ? 'white' : '#333' }}>📌 Manage Notices</button>
@@ -834,9 +835,10 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
             <input type="date" value={formData.deadline} onChange={(e) => setFormData({...formData, deadline: e.target.value})} required style={{padding: '10px', marginTop: '30px'}}/>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
-              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (You can paste tables here!)</h3>
-              {[1, 2, 3, 4].map((num) => (
-                <div key={`j-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 4 ? '1px solid #cbd5e1' : 'none', paddingBottom: '20px' }}>
+              {/* 📝 FIX: Updated map to generate 7 dynamic sections in Admin panel */}
+              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (7 Sections Available)</h3>
+              {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                <div key={`j-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 7 ? '1px solid #cbd5e1' : 'none', paddingBottom: '20px' }}>
                   <input type="text" placeholder={`Section ${num} Heading`} value={formData[`section${num}Heading`]} onChange={(e) => setFormData({...formData, [`section${num}Heading`]: e.target.value})} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
                   <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData[`section${num}Details`] || ''} onChange={(v) => setFormData({...formData, [`section${num}Details`]: v})} style={{ height: '150px' }} /></div>
                 </div>
@@ -855,7 +857,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
             
             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
               <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: '#2563eb', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{editJobId ? 'Update Post' : 'Publish Update'}</button>
-              {editJobId && (<button type="button" onClick={handleCancelEdit} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel</button>)}
+              {editJobId && (<button type="button" onClick={handleCancelEdit} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel Edit</button>)}
             </div>
           </form>
 
@@ -863,7 +865,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
           {jobs.map((job) => (
             <div key={job._id} style={{backgroundColor: 'white', padding: '15px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
               <div><strong style={{color: '#2563eb'}}>({job.category || 'Uncategorized'})</strong> {job.title} - {job.company}</div>
-              <div><button onClick={() => handleEditClick(job)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer'}}>Edit</button><button onClick={() => handleDeleteJob(job._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer'}}>Delete</button></div>
+              <div><button onClick={() => handleEditJobClick(job)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer'}}>Edit</button><button onClick={() => handleDeleteJob(job._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer'}}>Delete</button></div>
             </div>
           ))}
         </div>
@@ -973,18 +975,18 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
 // ==========================================
 function App() {
   const [jobs, setJobs] = useState([]);
-  const [notices, setNotices] = useState([]); // 📝 NEW: Notices State
+  const [notices, setNotices] = useState([]); 
   const [impLinks, setImpLinks] = useState([]); 
   const [contacts, setContacts] = useState([]); 
 
   const fetchJobs = () => { fetch('https://study-marrow-backend.onrender.com/api/jobs').then(res => res.json()).then(setJobs).catch(console.error); };
-  const fetchNotices = () => { fetch('https://study-marrow-backend.onrender.com/api/notices').then(res => res.json()).then(setNotices).catch(console.error); }; // 📝 NEW
+  const fetchNotices = () => { fetch('https://study-marrow-backend.onrender.com/api/notices').then(res => res.json()).then(setNotices).catch(console.error); }; 
   const fetchImpLinks = () => { fetch('https://study-marrow-backend.onrender.com/api/implinks').then(res => res.json()).then(setImpLinks).catch(console.error); };
   const fetchContacts = () => { fetch('https://study-marrow-backend.onrender.com/api/contacts').then(res => res.json()).then(setContacts).catch(console.error); };
 
   useEffect(() => { 
     fetchJobs(); 
-    fetchNotices(); // 📝 NEW
+    fetchNotices(); 
     fetchImpLinks(); 
     fetchContacts(); 
   }, []);
@@ -997,7 +999,7 @@ function App() {
         <Route path="/imp-links" element={<ImpLinksPage impLinks={impLinks} notices={notices} />} />
         <Route path="/contact" element={<ContactPage contacts={contacts} notices={notices} />} />
         <Route path="/job/:id" element={<JobDetailsPage jobs={jobs} notices={notices} />} />
-        <Route path="/notice/:id" element={<NoticeDetailsPage notices={notices} />} /> {/* 📝 NEW */}
+        <Route path="/notice/:id" element={<NoticeDetailsPage notices={notices} />} /> 
         
         <Route path="/syn-world-23" element={
           <AdminPage 
