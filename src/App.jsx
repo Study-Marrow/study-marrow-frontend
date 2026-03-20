@@ -540,7 +540,8 @@ function NoticeDetailsPage({ notices }) {
                     <tr key={num}>
                       <td><strong>{linkName}</strong></td>
                       <td style={{ textAlign: 'center', width: '150px' }}>
-                        <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn" style={{backgroundColor: '#2563eb'}}>Click Here</a>
+                        {/* 🔥 FIX: Removed inline styling so it uses your standard CSS click-here-btn class */}
+                        <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
                       </td>
                     </tr>
                   );
@@ -804,7 +805,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     }
   };
 
-  // 🔥 FIX: Notice reordering is now instant and glitch-free
   const moveNotice = async (index, direction) => {
     const newNotices = [...notices];
     
@@ -814,21 +814,18 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
       const temp = newNotices[index].order; 
       newNotices[index].order = newNotices[index - 1].order; 
       newNotices[index - 1].order = temp;
-      // Swap instantly in the UI
       const item = newNotices.splice(index, 1)[0];
       newNotices.splice(index - 1, 0, item);
     } else if (direction === 'down' && index < newNotices.length - 1) {
       const temp = newNotices[index].order; 
       newNotices[index].order = newNotices[index + 1].order; 
       newNotices[index + 1].order = temp;
-      // Swap instantly in the UI
       const item = newNotices.splice(index, 1)[0];
       newNotices.splice(index + 1, 0, item);
     } else return; 
 
-    setNotices(newNotices); // Update React state immediately to prevent visual stutter
+    setNotices(newNotices); 
 
-    // Then quietly update the database in the background
     await fetch(`https://study-marrow-backend.onrender.com/api/notices/${newNotices[direction === 'up' ? index : index].order === undefined ? newNotices[index]._id : newNotices[direction === 'up' ? index : index]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: newNotices[direction === 'up' ? index : index].order }) });
     fetchNotices(); 
   };
