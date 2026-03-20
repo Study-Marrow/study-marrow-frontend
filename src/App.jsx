@@ -475,6 +475,17 @@ function NoticeDetailsPage({ notices }) {
       <div className="content-wrapper">
         <div className="main-column" style={{ padding: '20px' }}>
           
+          <div className="quick-updates-box" style={{ marginBottom: '15px' }}>
+            <div className="update-row">
+              <strong>WhatsApp Channel</strong>
+              <button className="join-btn">Join Now</button>
+            </div>
+            <div className="update-row">
+              <strong>Telegram Channel</strong>
+              <button className="check-btn">Join Now</button>
+            </div>
+          </div>
+
           <div className="breadcrumb">
             Home » Notice Board » {notice.topicName}
           </div>
@@ -538,6 +549,17 @@ function NoticeDetailsPage({ notices }) {
               })}
             </tbody>
           </table>
+
+          <div className="bottom-social-box">
+            <div className="social-row" style={{ backgroundColor: '#e6f4ea' }}>
+              <strong>WhatsApp Channel</strong>
+              <button className="join-btn">Join Now</button>
+            </div>
+            <div className="social-row" style={{ backgroundColor: '#e0e7ff' }}>
+              <strong>Telegram Channel</strong>
+              <button className="check-btn" style={{ backgroundColor: '#2563eb' }}>Join Now</button>
+            </div>
+          </div>
 
         </div>
         <Sidebar notices={notices} />
@@ -665,7 +687,7 @@ const defaultNoticeState = {
 // ==========================================
 // 6. SECURE ADMIN VIEW
 // ==========================================
-function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impLinks, fetchContacts, contacts }) {
+function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchImpLinks, impLinks, fetchContacts, contacts }) {
   const [token, setToken] = useState(localStorage.getItem('adminToken') || '');
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
   const [passwordInput, setPasswordInput] = useState('');
@@ -700,7 +722,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
 
   const handleLogout = () => { localStorage.removeItem('adminToken'); setToken(''); setIsAuthenticated(false); };
 
-  // 🔥 THE FIX: Using Strict Queueing + Standard Change Handlers + Render Blockers
   const handleJobChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -708,7 +729,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
 
   const handleJobQuillChange = (value, fieldName) => {
     setFormData(prev => {
-      // 🛡️ Safety layer: Prevents ReactQuill from phantom-updating if nothing changed
       if (prev[fieldName] === value) return prev;
       return { ...prev, [fieldName]: value };
     });
@@ -721,7 +741,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
 
   const handleNoticeQuillChange = (value, fieldName) => {
     setNoticeData(prev => {
-      // 🛡️ Safety layer: Prevents ReactQuill from phantom-updating if nothing changed
       if (prev[fieldName] === value) return prev;
       return { ...prev, [fieldName]: value };
     });
@@ -785,26 +804,32 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
     }
   };
 
-  // 🔥 NEW: Move Notice UP or DOWN
+  // 🔥 FIX: Notice reordering is now instant and glitch-free
   const moveNotice = async (index, direction) => {
     const newNotices = [...notices];
     
-    // Give them a starting order if they don't have one
     if (newNotices[index].order === undefined) newNotices.forEach((n, i) => n.order = i);
 
     if (direction === 'up' && index > 0) {
       const temp = newNotices[index].order; 
       newNotices[index].order = newNotices[index - 1].order; 
       newNotices[index - 1].order = temp;
+      // Swap instantly in the UI
+      const item = newNotices.splice(index, 1)[0];
+      newNotices.splice(index - 1, 0, item);
     } else if (direction === 'down' && index < newNotices.length - 1) {
       const temp = newNotices[index].order; 
       newNotices[index].order = newNotices[index + 1].order; 
       newNotices[index + 1].order = temp;
+      // Swap instantly in the UI
+      const item = newNotices.splice(index, 1)[0];
+      newNotices.splice(index + 1, 0, item);
     } else return; 
 
-    await fetch(`https://study-marrow-backend.onrender.com/api/notices/${newNotices[index]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: newNotices[index].order }) });
-    await fetch(`https://study-marrow-backend.onrender.com/api/notices/${direction === 'up' ? newNotices[index-1]._id : newNotices[index+1]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: direction === 'up' ? newNotices[index-1].order : newNotices[index+1].order }) });
-    
+    setNotices(newNotices); // Update React state immediately to prevent visual stutter
+
+    // Then quietly update the database in the background
+    await fetch(`https://study-marrow-backend.onrender.com/api/notices/${newNotices[direction === 'up' ? index : index].order === undefined ? newNotices[index]._id : newNotices[direction === 'up' ? index : index]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: newNotices[direction === 'up' ? index : index].order }) });
     fetchNotices(); 
   };
 
@@ -1058,7 +1083,7 @@ function App() {
         <Route path="/syn-world-23" element={
           <AdminPage 
             fetchJobs={fetchJobs} jobs={jobs} 
-            fetchNotices={fetchNotices} notices={notices} 
+            fetchNotices={fetchNotices} notices={notices} setNotices={setNotices} 
             fetchImpLinks={fetchImpLinks} impLinks={impLinks} 
             fetchContacts={fetchContacts} contacts={contacts} 
           />} 
