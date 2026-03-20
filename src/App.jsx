@@ -123,7 +123,7 @@ function Sidebar({ notices = [] }) {
             <li key={notice._id} style={{ marginBottom: '8px' }}>
               <Link to={`/notice/${notice._id}`} style={{
                 display: 'block', padding: '10px', backgroundColor: '#fff',
-                border: '1px solid #737373', color: '#b91c1c', 
+                border: '1px solid #737373', color: '#1e3a8a', 
                 textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
                 fontWeight: 'bold', borderRadius: '4px'
               }}>
@@ -479,7 +479,7 @@ function NoticeDetailsPage({ notices }) {
             Home » Notice Board » {notice.topicName}
           </div>
 
-          <h1 className="details-main-title" style={{ color: '#b91c1c' }}>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>
             {notice.title}
           </h1>
 
@@ -504,7 +504,7 @@ function NoticeDetailsPage({ notices }) {
             if (heading || details) {
               return (
                 <div key={`n-${num}`}>
-                  {heading && <h2 className="gradient-header" style={{ backgroundImage: 'linear-gradient(90deg, #b91c1c, #ef4444)' }}>{heading}</h2>}
+                  {heading && <h2 className="gradient-header" style={{ backgroundImage: 'linear-gradient(90deg, #1e3a8a, #2563eb)' }}>{heading}</h2>}
                   {details && (
                     <div className="details-content quill-content" style={{
                       lineHeight: '1.6', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal', overflowX: 'auto'
@@ -518,7 +518,7 @@ function NoticeDetailsPage({ notices }) {
             return null;
           })}
 
-          <h2 className="gradient-header" style={{ backgroundImage: 'linear-gradient(90deg, #b91c1c, #ef4444)' }}>Important Web-Links</h2>
+          <h2 className="gradient-header" style={{ backgroundImage: 'linear-gradient(90deg, #1e3a8a, #2563eb)' }}>Important Web-Links</h2>
           <table className="links-table">
             <tbody>
               {[1, 2, 3, 4, 5, 6, 7].map((num) => {
@@ -529,7 +529,7 @@ function NoticeDetailsPage({ notices }) {
                     <tr key={num}>
                       <td><strong>{linkName}</strong></td>
                       <td style={{ textAlign: 'center', width: '150px' }}>
-                        <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn" style={{backgroundColor: '#b91c1c'}}>Click Here</a>
+                        <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn" style={{backgroundColor: '#2563eb'}}>Click Here</a>
                       </td>
                     </tr>
                   );
@@ -700,14 +700,18 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
 
   const handleLogout = () => { localStorage.removeItem('adminToken'); setToken(''); setIsAuthenticated(false); };
 
-  // 🔥 THE FIX: Using Strict Queueing + Standard Change Handlers
+  // 🔥 THE FIX: Using Strict Queueing + Standard Change Handlers + Render Blockers
   const handleJobChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleJobQuillChange = (value, fieldName) => {
-    setFormData(prev => ({ ...prev, [fieldName]: value }));
+    setFormData(prev => {
+      // 🛡️ Safety layer: Prevents ReactQuill from phantom-updating if nothing changed
+      if (prev[fieldName] === value) return prev;
+      return { ...prev, [fieldName]: value };
+    });
   };
 
   const handleNoticeChange = (e) => {
@@ -716,7 +720,11 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
   };
 
   const handleNoticeQuillChange = (value, fieldName) => {
-    setNoticeData(prev => ({ ...prev, [fieldName]: value }));
+    setNoticeData(prev => {
+      // 🛡️ Safety layer: Prevents ReactQuill from phantom-updating if nothing changed
+      if (prev[fieldName] === value) return prev;
+      return { ...prev, [fieldName]: value };
+    });
   };
 
   // --- JOB HANDLERS ---
@@ -777,6 +785,30 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
     }
   };
 
+  // 🔥 NEW: Move Notice UP or DOWN
+  const moveNotice = async (index, direction) => {
+    const newNotices = [...notices];
+    
+    // Give them a starting order if they don't have one
+    if (newNotices[index].order === undefined) newNotices.forEach((n, i) => n.order = i);
+
+    if (direction === 'up' && index > 0) {
+      const temp = newNotices[index].order; 
+      newNotices[index].order = newNotices[index - 1].order; 
+      newNotices[index - 1].order = temp;
+    } else if (direction === 'down' && index < newNotices.length - 1) {
+      const temp = newNotices[index].order; 
+      newNotices[index].order = newNotices[index + 1].order; 
+      newNotices[index + 1].order = temp;
+    } else return; 
+
+    await fetch(`https://study-marrow-backend.onrender.com/api/notices/${newNotices[index]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: newNotices[index].order }) });
+    await fetch(`https://study-marrow-backend.onrender.com/api/notices/${direction === 'up' ? newNotices[index-1]._id : newNotices[index+1]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: direction === 'up' ? newNotices[index-1].order : newNotices[index+1].order }) });
+    
+    fetchNotices(); 
+  };
+
+
   // --- LINKS & CONTACT HANDLERS ---
   const handleImpLinkSubmit = async (e) => {
     e.preventDefault();
@@ -830,7 +862,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
 
       <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
         <button onClick={() => setActiveTab('jobs')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'jobs' ? '#2563eb' : '#cbd5e1', color: activeTab === 'jobs' ? 'white' : '#333' }}>💼 Manage Jobs</button>
-        <button onClick={() => setActiveTab('notices')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'notices' ? '#b91c1c' : '#cbd5e1', color: activeTab === 'notices' ? 'white' : '#333' }}>📌 Manage Notices</button>
+        <button onClick={() => setActiveTab('notices')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'notices' ? '#1e3a8a' : '#cbd5e1', color: activeTab === 'notices' ? 'white' : '#333' }}>📌 Manage Notices</button>
         <button onClick={() => setActiveTab('links')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'links' ? '#10b981' : '#cbd5e1', color: activeTab === 'links' ? 'white' : '#333' }}>🔗 Links & Contacts</button>
       </div>
 
@@ -891,7 +923,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
       {/* TAB 2: NOTICES */}
       {activeTab === 'notices' && (
         <div>
-          <h3 style={{color: '#b91c1c', margin: '0 0 20px 0'}}>{editNoticeId ? '✏️ Updating Notice' : '📌 Create New Notice'}</h3>
+          <h3 style={{color: '#1e3a8a', margin: '0 0 20px 0'}}>{editNoticeId ? '✏️ Updating Notice' : '📌 Create New Notice'}</h3>
           <form className="job-form" onSubmit={handleNoticeSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
             
             <input type="text" name="title" placeholder="Stack Display Title (e.g. ADRE Syllabus Updated)" value={noticeData.title || ''} onChange={handleNoticeChange} required style={{padding: '10px'}}/>
@@ -900,18 +932,18 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
             <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Brief Introduction</p>
             <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={noticeData.description || ''} onChange={(v) => handleNoticeQuillChange(v, 'description')} style={{ height: '150px' }} /></div>
 
-            <div style={{ backgroundColor: '#fff1f2', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #fecdd3' }}>
-              <h3 style={{ margin: '0 0 15px 0', color: '#b91c1c' }}>Dynamic Content Sections (7 Sections)</h3>
+            <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (7 Sections)</h3>
               {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                <div key={`n-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 7 ? '1px solid #fecdd3' : 'none', paddingBottom: '20px' }}>
+                <div key={`n-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 7 ? '1px solid #e2e8f0' : 'none', paddingBottom: '20px' }}>
                   <input type="text" name={`section${num}Heading`} placeholder={`Section ${num} Heading`} value={noticeData[`section${num}Heading`] || ''} onChange={handleNoticeChange} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
                   <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={noticeData[`section${num}Details`] || ''} onChange={(v) => handleNoticeQuillChange(v, `section${num}Details`)} style={{ height: '150px' }} /></div>
                 </div>
               ))}
             </div>
 
-            <div style={{ backgroundColor: '#fff1f2', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #fecdd3' }}>
-              <h3 style={{ margin: '0 0 15px 0', color: '#b91c1c' }}>Custom Web Links (Fill up to 7)</h3>
+            <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links (Fill up to 7)</h3>
               {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                 <div key={`nl-${num}`} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
                   <input type="text" name={`link${num}Name`} placeholder={`Link ${num} Name`} value={noticeData[`link${num}Name`] || ''} onChange={handleNoticeChange} style={{flex: 1, padding: '8px'}} />
@@ -921,16 +953,21 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
             </div>
             
             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-              <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: '#b91c1c', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{editNoticeId ? 'Update Notice' : 'Publish Notice'}</button>
+              <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: '#1e3a8a', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{editNoticeId ? 'Update Notice' : 'Publish Notice'}</button>
               {editNoticeId && (<button type="button" onClick={() => {setEditNoticeId(null); setNoticeData(defaultNoticeState)}} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel Edit</button>)}
             </div>
           </form>
 
           <h2>Manage Active Notices</h2>
-          {notices.map((n) => (
+          {notices.map((n, index) => (
             <div key={n._id} style={{backgroundColor: 'white', padding: '15px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-              <div><strong style={{color: '#b91c1c'}}>📌 {n.title}</strong></div>
-              <div><button onClick={() => handleEditNoticeClick(n)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer'}}>Edit</button><button onClick={() => handleDeleteNotice(n._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer'}}>Delete</button></div>
+              <div><strong style={{color: '#1e3a8a'}}>📌 {n.title}</strong></div>
+              <div style={{display: 'flex', gap: '8px'}}>
+                <button type="button" onClick={() => moveNotice(index, 'up')} disabled={index === 0} style={{padding: '6px 10px', cursor: index === 0 ? 'not-allowed' : 'pointer'}}>⬆️</button>
+                <button type="button" onClick={() => moveNotice(index, 'down')} disabled={index === notices.length - 1} style={{padding: '6px 10px', cursor: index === notices.length - 1 ? 'not-allowed' : 'pointer'}}>⬇️</button>
+                <button onClick={() => handleEditNoticeClick(n)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Edit</button>
+                <button onClick={() => handleDeleteNotice(n._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Delete</button>
+              </div>
             </div>
           ))}
         </div>
