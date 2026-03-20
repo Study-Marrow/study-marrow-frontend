@@ -382,7 +382,6 @@ function JobDetailsPage({ jobs, notices }) {
             dangerouslySetInnerHTML={{ __html: cleanDescription }}
           ></div>
 
-          {/* 📝 FIX: Loop is now correctly 1 through 7 for Job Details! */}
           {[1, 2, 3, 4, 5, 6, 7].map((num) => {
             const heading = job[`section${num}Heading`];
             const details = job[`section${num}Details`];
@@ -821,25 +820,24 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
         <div>
           <h3 style={{color: '#2563eb', margin: '0 0 20px 0'}}>{editJobId ? '✏️ Updating Existing Job Post' : '📝 Create New Job Post'}</h3>
           <form className="job-form" onSubmit={handleJobSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
-            <select name="category" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} required style={{padding: '10px', fontSize: '1rem', border: '1px solid #cbd5e1', borderRadius: '4px'}}>
+            <select value={formData.category || 'General'} onChange={(e) => setFormData({...formData, category: e.target.value})} required style={{padding: '10px', fontSize: '1rem', border: '1px solid #cbd5e1', borderRadius: '4px'}}>
               <option value="General">General (Main Feed Only)</option> <option value="Admission">Admission</option> <option value="Admit Card">Admit Card</option> <option value="Private Job">Private Job</option> <option value="Result">Result</option> <option value="Scholarship">Scholarship</option>
             </select>
-            <input type="text" placeholder="Post Title (e.g. IDBI Bank Assistant Manager)" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} required style={{padding: '10px'}}/>
-            <input type="text" placeholder="Institution / Organization Name" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} required style={{padding: '10px'}}/>
-            <input type="url" placeholder="Logo Image URL (Optional)" value={formData.imageUrl} onChange={(e) => setFormData({...formData, imageUrl: e.target.value})} style={{padding: '10px'}}/>
-            <input type="text" placeholder="Location (Optional)" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} style={{padding: '10px'}}/>
+            <input type="text" placeholder="Post Title (e.g. IDBI Bank Assistant Manager)" value={formData.title || ''} onChange={(e) => setFormData({...formData, title: e.target.value})} required style={{padding: '10px'}}/>
+            <input type="text" placeholder="Institution / Organization Name" value={formData.company || ''} onChange={(e) => setFormData({...formData, company: e.target.value})} required style={{padding: '10px'}}/>
+            <input type="url" placeholder="Logo Image URL (Optional)" value={formData.imageUrl || ''} onChange={(e) => setFormData({...formData, imageUrl: e.target.value})} style={{padding: '10px'}}/>
+            <input type="text" placeholder="Location (Optional)" value={formData.location || ''} onChange={(e) => setFormData({...formData, location: e.target.value})} style={{padding: '10px'}}/>
             
             <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
             <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData.description || ''} onChange={(v) => setFormData({...formData, description: v})} style={{ height: '150px' }} /></div>
 
-            <input type="date" value={formData.deadline} onChange={(e) => setFormData({...formData, deadline: e.target.value})} required style={{padding: '10px', marginTop: '30px'}}/>
+            <input type="date" value={formData.deadline || ''} onChange={(e) => setFormData({...formData, deadline: e.target.value})} required style={{padding: '10px', marginTop: '30px'}}/>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
-              {/* 📝 FIX: Updated map to generate 7 dynamic sections in Admin panel */}
               <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (7 Sections Available)</h3>
               {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                 <div key={`j-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 7 ? '1px solid #cbd5e1' : 'none', paddingBottom: '20px' }}>
-                  <input type="text" placeholder={`Section ${num} Heading`} value={formData[`section${num}Heading`]} onChange={(e) => setFormData({...formData, [`section${num}Heading`]: e.target.value})} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
+                  <input type="text" placeholder={`Section ${num} Heading`} value={formData[`section${num}Heading`] || ''} onChange={(e) => setFormData({...formData, [`section${num}Heading`]: e.target.value})} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
                   <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData[`section${num}Details`] || ''} onChange={(v) => setFormData({...formData, [`section${num}Details`]: v})} style={{ height: '150px' }} /></div>
                 </div>
               ))}
@@ -849,15 +847,15 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
               <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links (Fill up to 7)</h3>
               {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                 <div key={`jl-${num}`} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-                  <input type="text" placeholder={`Link ${num} Name`} value={formData[`link${num}Name`]} onChange={(e) => setFormData({...formData, [`link${num}Name`]: e.target.value})} style={{flex: 1, padding: '8px'}} required={num === 1} />
-                  <input type="url" placeholder={`Link ${num} URL (https://...)`} value={formData[`link${num}Url`]} onChange={(e) => setFormData({...formData, [`link${num}Url`]: e.target.value})} style={{flex: 2, padding: '8px'}} required={num === 1} />
+                  <input type="text" placeholder={`Link ${num} Name`} value={formData[`link${num}Name`] || ''} onChange={(e) => setFormData({...formData, [`link${num}Name`]: e.target.value})} style={{flex: 1, padding: '8px'}} required={num === 1} />
+                  <input type="url" placeholder={`Link ${num} URL (https://...)`} value={formData[`link${num}Url`] || ''} onChange={(e) => setFormData({...formData, [`link${num}Url`]: e.target.value})} style={{flex: 2, padding: '8px'}} required={num === 1} />
                 </div>
               ))}
             </div>
             
             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
               <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: '#2563eb', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{editJobId ? 'Update Post' : 'Publish Update'}</button>
-              {editJobId && (<button type="button" onClick={handleCancelEdit} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel Edit</button>)}
+              {editJobId && (<button type="button" onClick={() => {setEditJobId(null); setFormData(defaultFormState)}} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel Edit</button>)}
             </div>
           </form>
 
@@ -877,8 +875,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
           <h3 style={{color: '#b91c1c', margin: '0 0 20px 0'}}>{editNoticeId ? '✏️ Updating Notice' : '📌 Create New Notice'}</h3>
           <form className="job-form" onSubmit={handleNoticeSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
             
-            <input type="text" placeholder="Stack Display Title (e.g. ADRE Syllabus Updated)" value={noticeData.title} onChange={(e) => setNoticeData({...noticeData, title: e.target.value})} required style={{padding: '10px'}}/>
-            <input type="text" placeholder="Topic Name (e.g. Assam Direct Recruitment 2026)" value={noticeData.topicName} onChange={(e) => setNoticeData({...noticeData, topicName: e.target.value})} required style={{padding: '10px'}}/>
+            <input type="text" placeholder="Stack Display Title (e.g. ADRE Syllabus Updated)" value={noticeData.title || ''} onChange={(e) => setNoticeData({...noticeData, title: e.target.value})} required style={{padding: '10px'}}/>
+            <input type="text" placeholder="Topic Name (e.g. Assam Direct Recruitment 2026)" value={noticeData.topicName || ''} onChange={(e) => setNoticeData({...noticeData, topicName: e.target.value})} required style={{padding: '10px'}}/>
             
             <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Brief Introduction</p>
             <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={noticeData.description || ''} onChange={(v) => setNoticeData({...noticeData, description: v})} style={{ height: '150px' }} /></div>
@@ -887,7 +885,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
               <h3 style={{ margin: '0 0 15px 0', color: '#b91c1c' }}>Dynamic Content Sections (7 Sections)</h3>
               {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                 <div key={`n-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 7 ? '1px solid #fecdd3' : 'none', paddingBottom: '20px' }}>
-                  <input type="text" placeholder={`Section ${num} Heading`} value={noticeData[`section${num}Heading`]} onChange={(e) => setNoticeData({...noticeData, [`section${num}Heading`]: e.target.value})} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
+                  <input type="text" placeholder={`Section ${num} Heading`} value={noticeData[`section${num}Heading`] || ''} onChange={(e) => setNoticeData({...noticeData, [`section${num}Heading`]: e.target.value})} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
                   <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={noticeData[`section${num}Details`] || ''} onChange={(v) => setNoticeData({...noticeData, [`section${num}Details`]: v})} style={{ height: '150px' }} /></div>
                 </div>
               ))}
@@ -897,8 +895,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
               <h3 style={{ margin: '0 0 15px 0', color: '#b91c1c' }}>Custom Web Links (Fill up to 7)</h3>
               {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                 <div key={`nl-${num}`} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-                  <input type="text" placeholder={`Link ${num} Name`} value={noticeData[`link${num}Name`]} onChange={(e) => setNoticeData({...noticeData, [`link${num}Name`]: e.target.value})} style={{flex: 1, padding: '8px'}} />
-                  <input type="url" placeholder={`Link ${num} URL (https://...)`} value={noticeData[`link${num}Url`]} onChange={(e) => setNoticeData({...noticeData, [`link${num}Url`]: e.target.value})} style={{flex: 2, padding: '8px'}} />
+                  <input type="text" placeholder={`Link ${num} Name`} value={noticeData[`link${num}Name`] || ''} onChange={(e) => setNoticeData({...noticeData, [`link${num}Name`]: e.target.value})} style={{flex: 1, padding: '8px'}} />
+                  <input type="url" placeholder={`Link ${num} URL (https://...)`} value={noticeData[`link${num}Url`] || ''} onChange={(e) => setNoticeData({...noticeData, [`link${num}Url`]: e.target.value})} style={{flex: 2, padding: '8px'}} />
                 </div>
               ))}
             </div>
@@ -924,8 +922,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
         <div>
           <h2 style={{color: '#10b981'}}>🔗 Manage "Imp Links" Page</h2>
           <form onSubmit={handleImpLinkSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <input type="text" placeholder="Link Display Name" value={impLinkForm.name} onChange={(e) => setImpLinkForm({...impLinkForm, name: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
-            <input type="url" placeholder="URL (https://...)" value={impLinkForm.url} onChange={(e) => setImpLinkForm({...impLinkForm, url: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
+            <input type="text" placeholder="Link Display Name" value={impLinkForm.name || ''} onChange={(e) => setImpLinkForm({...impLinkForm, name: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
+            <input type="url" placeholder="URL (https://...)" value={impLinkForm.url || ''} onChange={(e) => setImpLinkForm({...impLinkForm, url: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
             <button type="submit" style={{padding: '10px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Add Link</button>
           </form>
           {impLinks.map((link) => (
@@ -941,8 +939,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, fetchImpLinks, impL
           <form onSubmit={handleContactSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
             <h4 style={{margin: 0}}>{editContactId ? 'Editing Contact Info' : 'Add New Contact Info'}</h4>
             <div style={{display: 'flex', gap: '10px'}}>
-              <input type="text" placeholder="Platform (e.g. Email, WhatsApp)" value={contactForm.platform} onChange={(e) => setContactForm({...contactForm, platform: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
-              <input type="text" placeholder="Details (e.g. editor@... OR https://...)" value={contactForm.value} onChange={(e) => setContactForm({...contactForm, value: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
+              <input type="text" placeholder="Platform (e.g. Email, WhatsApp)" value={contactForm.platform || ''} onChange={(e) => setContactForm({...contactForm, platform: e.target.value})} required style={{flex: 1, padding: '10px'}}/>
+              <input type="text" placeholder="Details (e.g. editor@... OR https://...)" value={contactForm.value || ''} onChange={(e) => setContactForm({...contactForm, value: e.target.value})} required style={{flex: 2, padding: '10px'}}/>
             </div>
             <label style={{display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 'bold'}}>
               <input type="checkbox" checked={contactForm.isLink} onChange={(e) => setContactForm({...contactForm, isLink: e.target.checked})} style={{width: '20px', height: '20px'}}/>
