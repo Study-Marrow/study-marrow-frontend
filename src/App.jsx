@@ -184,7 +184,7 @@ function Footer() {
             </a>
 
             <a href="#" className="official-social-link x" data-name="X (Twitter)">
-              <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
 
             <a href="#" className="official-social-link yt" data-name="YouTube">
@@ -540,7 +540,6 @@ function NoticeDetailsPage({ notices }) {
                     <tr key={num}>
                       <td><strong>{linkName}</strong></td>
                       <td style={{ textAlign: 'center', width: '150px' }}>
-                        {/* 🔥 FIX: Removed inline styling so it uses your standard CSS click-here-btn class */}
                         <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
                       </td>
                     </tr>
@@ -688,7 +687,7 @@ const defaultNoticeState = {
 // ==========================================
 // 6. SECURE ADMIN VIEW
 // ==========================================
-function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchImpLinks, impLinks, fetchContacts, contacts }) {
+function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchImpLinks, impLinks, fetchContacts, contacts, setContacts }) {
   const [token, setToken] = useState(localStorage.getItem('adminToken') || '');
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
   const [passwordInput, setPasswordInput] = useState('');
@@ -806,28 +805,43 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   };
 
   const moveNotice = async (index, direction) => {
-    const newNotices = [...notices];
-    
-    if (newNotices[index].order === undefined) newNotices.forEach((n, i) => n.order = i);
+    let currentList = [...notices];
 
-    if (direction === 'up' && index > 0) {
-      const temp = newNotices[index].order; 
-      newNotices[index].order = newNotices[index - 1].order; 
-      newNotices[index - 1].order = temp;
-      const item = newNotices.splice(index, 1)[0];
-      newNotices.splice(index - 1, 0, item);
-    } else if (direction === 'down' && index < newNotices.length - 1) {
-      const temp = newNotices[index].order; 
-      newNotices[index].order = newNotices[index + 1].order; 
-      newNotices[index + 1].order = temp;
-      const item = newNotices.splice(index, 1)[0];
-      newNotices.splice(index + 1, 0, item);
-    } else return; 
+    // Initialize missing orders
+    const needsInit = !currentList.some(item => item.order > 0);
+    if (needsInit) {
+        currentList.forEach((item, i) => item.order = i + 1);
+    }
 
-    setNotices(newNotices); 
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === currentList.length - 1) return;
 
-    await fetch(`https://study-marrow-backend.onrender.com/api/notices/${newNotices[direction === 'up' ? index : index].order === undefined ? newNotices[index]._id : newNotices[direction === 'up' ? index : index]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: newNotices[direction === 'up' ? index : index].order }) });
-    fetchNotices(); 
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+    // Swap numbers
+    const tempOrder = currentList[index].order;
+    currentList[index].order = currentList[targetIndex].order;
+    currentList[targetIndex].order = tempOrder;
+
+    // Swap array positions for INSTANT UI feedback
+    const itemToMove = currentList[index];
+    currentList[index] = currentList[targetIndex];
+    currentList[targetIndex] = itemToMove;
+
+    setNotices([...currentList]); // Force instant React re-render
+
+    // Send to Database
+    try {
+        await Promise.all([
+            fetch(`https://study-marrow-backend.onrender.com/api/notices/${currentList[index]._id}`, { 
+                method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: currentList[index].order }) 
+            }),
+            fetch(`https://study-marrow-backend.onrender.com/api/notices/${currentList[targetIndex]._id}`, { 
+                method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: currentList[targetIndex].order }) 
+            })
+        ]);
+        fetchNotices(); // final sync
+    } catch (err) { console.error(err); }
   };
 
 
@@ -847,16 +861,45 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     const res = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(contactForm) });
     if (res.ok) { setContactForm({ platform: '', value: '', isLink: false }); setEditContactId(null); fetchContacts(); }
   };
+  
   const moveContact = async (index, direction) => {
-    const newContacts = [...contacts];
-    if (direction === 'up' && index > 0) {
-      const temp = newContacts[index].order; newContacts[index].order = newContacts[index - 1].order; newContacts[index - 1].order = temp;
-    } else if (direction === 'down' && index < newContacts.length - 1) {
-      const temp = newContacts[index].order; newContacts[index].order = newContacts[index + 1].order; newContacts[index + 1].order = temp;
-    } else return; 
-    await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${newContacts[index]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: newContacts[index].order }) });
-    await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${direction === 'up' ? newContacts[index-1]._id : newContacts[index+1]._id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: direction === 'up' ? newContacts[index-1].order : newContacts[index+1].order }) });
-    fetchContacts(); 
+    let currentList = [...contacts];
+
+    // Initialize missing orders
+    const needsInit = !currentList.some(item => item.order > 0);
+    if (needsInit) {
+        currentList.forEach((item, i) => item.order = i + 1);
+    }
+
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === currentList.length - 1) return;
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+    // Swap numbers
+    const tempOrder = currentList[index].order;
+    currentList[index].order = currentList[targetIndex].order;
+    currentList[targetIndex].order = tempOrder;
+
+    // Swap array positions for INSTANT UI feedback
+    const itemToMove = currentList[index];
+    currentList[index] = currentList[targetIndex];
+    currentList[targetIndex] = itemToMove;
+
+    setContacts([...currentList]); // Force instant React re-render
+
+    // Send to Database
+    try {
+        await Promise.all([
+            fetch(`https://study-marrow-backend.onrender.com/api/contacts/${currentList[index]._id}`, { 
+                method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: currentList[index].order }) 
+            }),
+            fetch(`https://study-marrow-backend.onrender.com/api/contacts/${currentList[targetIndex]._id}`, { 
+                method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: currentList[targetIndex].order }) 
+            })
+        ]);
+        fetchContacts(); // final sync
+    } catch (err) { console.error(err); }
   };
 
 
@@ -1082,7 +1125,7 @@ function App() {
             fetchJobs={fetchJobs} jobs={jobs} 
             fetchNotices={fetchNotices} notices={notices} setNotices={setNotices} 
             fetchImpLinks={fetchImpLinks} impLinks={impLinks} 
-            fetchContacts={fetchContacts} contacts={contacts} 
+            fetchContacts={fetchContacts} contacts={contacts} setContacts={setContacts}
           />} 
         />
       </Routes>
