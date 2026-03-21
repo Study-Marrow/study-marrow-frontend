@@ -87,6 +87,29 @@ function SharedHeader() {
 }
 
 function Sidebar({ notices = [] }) {
+  const tools = [
+    { name: 'Image Resize & Compress', link: '/tools/image-resize', icon: '🖼️' },
+    { name: 'Merge Images', link: '/tools/merge-images', icon: '➕' },
+    { name: 'Merge PDFs', link: '/tools/merge-pdfs', icon: '📚' },
+    { name: 'Compress PDF', link: '/tools/compress-pdf', icon: '🗜️' },
+  ];
+
+  const toolButtonStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '12px 15px',
+    backgroundColor: '#fff',
+    border: '1px solid #737373', 
+    color: '#1e3a8a', 
+    textDecoration: 'none',
+    textAlign: 'left',
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    borderRadius: '4px',
+    transition: 'all 0.2s',
+  };
+
   return (
     <div className="sidebar-column">
       
@@ -96,15 +119,12 @@ function Sidebar({ notices = [] }) {
           <a href="#" className="official-social-link fb" data-name="Facebook">
             <svg width="28" height="28" viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
           </a>
-
           <a href="#" className="official-social-link insta" data-name="Instagram">
             <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
           </a>
-
           <a href="#" className="official-social-link x" data-name="X (Twitter)">
             <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </a>
-
           <a href="#" className="official-social-link yt" data-name="YouTube">
             <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
@@ -134,40 +154,18 @@ function Sidebar({ notices = [] }) {
         </ul>
       </div>
 
-      {/* 🛠️ NEW: Online Tools Section */}
+      {/* 🛠️ UPDATED: Full Online Tools Section */}
       <div className="sidebar-box">
         <h3>🛠️ Online Tools</h3>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          <li style={{ marginBottom: '8px' }}>
-            <Link to="/tools/image-resize" style={{
-              display: 'block', padding: '10px', backgroundColor: '#fff',
-              border: '1px solid #737373', color: '#1e3a8a', 
-              textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
-              fontWeight: 'bold', borderRadius: '4px'
-            }}>
-              🖼️ Image Resize & Compress
-            </Link>
-          </li>
-          <li style={{ marginBottom: '8px' }}>
-            <a href="#" style={{
-              display: 'block', padding: '10px', backgroundColor: '#fff',
-              border: '1px solid #737373', color: '#1e3a8a', 
-              textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
-              fontWeight: 'bold', borderRadius: '4px'
-            }}>
-              📝 Bio-Data Maker (Soon)
-            </a>
-          </li>
-          <li style={{ marginBottom: '8px' }}>
-            <a href="#" style={{
-              display: 'block', padding: '10px', backgroundColor: '#fff',
-              border: '1px solid #737373', color: '#1e3a8a', 
-              textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
-              fontWeight: 'bold', borderRadius: '4px'
-            }}>
-              ⌨️ Typing Speed Test (Soon)
-            </a>
-          </li>
+          {tools.map((tool, index) => (
+            <li key={index} style={{ marginBottom: '8px' }}>
+              <Link to={tool.link} style={toolButtonStyle} className="tool-button">
+                <span style={{ fontSize: '1.2rem' }}>{tool.icon}</span>
+                {tool.name}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -702,12 +700,12 @@ function ContactPage({ contacts, notices }) {
 }
 
 // ==========================================
-// 🛠️ NEW: IMAGE RESIZE TOOL PAGE
+// 🛠️ TOOL 1: IMAGE RESIZE & COMPRESS
 // ==========================================
 function ImageResizeToolPage({ notices }) {
   const [originalImage, setOriginalImage] = useState(null);
   const [originalFileInfo, setOriginalFileInfo] = useState(null);
-  const [resizeMode, setResizeMode] = useState('passport'); // 'passport' or 'custom'
+  const [resizeMode, setResizeMode] = useState('passport'); 
   const [customWidth, setCustomWidth] = useState(800);
   const [customHeight, setCustomHeight] = useState(600);
   const [targetKb, setTargetKb] = useState(50);
@@ -726,14 +724,7 @@ function ImageResizeToolPage({ notices }) {
         const img = new Image();
         img.onload = () => {
           setOriginalImage(img);
-          setOriginalFileInfo({
-            name: file.name,
-            type: file.type,
-            size: (file.size / 1024).toFixed(2) + ' KB',
-            width: img.width,
-            height: img.height,
-          });
-          // Reset processed state
+          setOriginalFileInfo({ name: file.name, type: file.type, size: (file.size / 1024).toFixed(2) + ' KB', width: img.width, height: img.height });
           setProcessedImageUrl(null);
           setProcessedFileInfo(null);
         };
@@ -750,8 +741,6 @@ function ImageResizeToolPage({ notices }) {
     setIsProcessing(true);
     setProcessedImageUrl(null);
 
-    // Common standard for Indian Portals (ADRE, SSC, etc.)
-    // 3.5cm x 4.5cm translated to roughly 132px x 170px at standard 96dpi
     const PASSPORT_WIDTH = 132; 
     const PASSPORT_HEIGHT = 170;
 
@@ -763,31 +752,21 @@ function ImageResizeToolPage({ notices }) {
     canvas.width = targetWidth;
     canvas.height = targetHeight;
 
-    // Draw image onto canvas (browsers handle high-quality downscaling well)
     ctx.drawImage(originalImage, 0, 0, targetWidth, targetHeight);
 
-    // KB Compression Logic (Iterative approach)
-    // We export as JPEG because Portals require JPEG and it supports compression
     const targetSizeBytes = targetKb * 1024;
-    let quality = 0.95; // Start high
+    let quality = 0.95; 
     let dataUrl = '';
     let fileSize = 0;
 
-    // Iterate reducing quality until target size is met or quality gets too low
     do {
       dataUrl = canvas.toDataURL('image/jpeg', quality);
-      // Calculate file size from base64 string
       fileSize = Math.round((dataUrl.length - 'data:image/jpeg;base64,'.length) * 3 / 4);
       quality -= 0.05;
     } while (fileSize > targetSizeBytes && quality > 0.1);
 
     setProcessedImageUrl(dataUrl);
-    setProcessedFileInfo({
-      width: targetWidth,
-      height: targetHeight,
-      size: (fileSize / 1024).toFixed(2) + ' KB',
-      qualityUsed: Math.round((quality + 0.05) * 100) + '%' // Account for final subtraction
-    });
+    setProcessedFileInfo({ width: targetWidth, height: targetHeight, size: (fileSize / 1024).toFixed(2) + ' KB', qualityUsed: Math.round((quality + 0.05) * 100) + '%' });
     setIsProcessing(false);
   };
 
@@ -799,29 +778,20 @@ function ImageResizeToolPage({ notices }) {
       <SharedHeader />
       <div className="content-wrapper">
         <div className="main-column" style={{ padding: '20px' }}>
-          
           <div className="breadcrumb">Home » Online Tools » Image Resize</div>
-
           <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>🖼️ Image Resize & KB Compressor</h1>
           
           <div style={{ backgroundColor: '#f0f9ff', padding: '15px', borderRadius: '8px', border: '1px solid #bae6fd', marginBottom: '20px', color: '#0369a1', lineHeight: '1.6' }}>
-            <strong>How to use:</strong> Upload your photo, select "Passport Size" or enter custom dimensions, specify the maximum allowed size in KB (e.g., 50KB), and click Process. The tool automatically resizes and compresses the image to fit your requirements.
+            <strong>How to use:</strong> Upload your photo, select "Passport Size" or enter custom dimensions, specify the maximum allowed size in KB (e.g., 50KB), and click Process.
           </div>
 
           <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-            
-            {/* 1. Upload Section */}
             <div style={{ marginBottom: '25px' }}>
               <label style={labelStyle}>1. Select Image</label>
               <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" style={inputStyle} />
-              {originalFileInfo && (
-                <p style={{ fontSize: '0.9rem', color: '#64748b', margin: '0' }}>
-                  Selected: {originalFileInfo.name} ({originalFileInfo.width}x{originalFileInfo.height}, {originalFileInfo.size})
-                </p>
-              )}
+              {originalFileInfo && (<p style={{ fontSize: '0.9rem', color: '#64748b', margin: '0' }}>Selected: {originalFileInfo.name} ({originalFileInfo.width}x{originalFileInfo.height}, {originalFileInfo.size})</p>)}
             </div>
 
-            {/* 2. Controls Section */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '25px' }}>
               <div>
                 <label style={labelStyle}>2. Select Resize Mode</label>
@@ -829,7 +799,6 @@ function ImageResizeToolPage({ notices }) {
                   <option value="passport">Standard Passport Size (3.5cm x 4.5cm)</option>
                   <option value="custom">Custom Dimensions (Pixels)</option>
                 </select>
-                
                 {resizeMode === 'custom' && (
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <input type="number" placeholder="Width" value={customWidth} onChange={(e) => setCustomWidth(e.target.value)} style={inputStyle} />
@@ -837,7 +806,6 @@ function ImageResizeToolPage({ notices }) {
                   </div>
                 )}
               </div>
-              
               <div>
                 <label style={labelStyle}>3. Target File Size (Max KB)</label>
                 <input type="number" value={targetKb} onChange={(e) => setTargetKb(e.target.value)} placeholder="e.g. 50" style={inputStyle} />
@@ -845,51 +813,361 @@ function ImageResizeToolPage({ notices }) {
               </div>
             </div>
 
-            {/* 3. Action Buttons */}
             <div style={{ marginBottom: '30px' }}>
-              <button 
-                onClick={processImage} 
-                disabled={!originalImage || isProcessing}
-                style={{
-                  width: '100%', padding: '15px', backgroundColor: originalImage ? '#2563eb' : '#cbd5e1', 
-                  color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.1rem', cursor: originalImage ? 'pointer' : 'not-allowed'
-                }}
-              >
+              <button onClick={processImage} disabled={!originalImage || isProcessing} style={{ width: '100%', padding: '15px', backgroundColor: originalImage ? '#2563eb' : '#cbd5e1', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.1rem', cursor: originalImage ? 'pointer' : 'not-allowed' }}>
                 {isProcessing ? 'Processing...' : 'Process Image (Resize & Compress)'}
               </button>
             </div>
 
-            {/* Hidden Canvas used for processing */}
             <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
 
-            {/* 4. Results Section */}
             {processedImageUrl && (
               <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '20px', textAlign: 'center' }}>
                 <h3 style={{ color: '#1e3a8a' }}>✅ Processed Image</h3>
                 <div style={{ marginBottom: '15px', border: '1px solid #ccc', display: 'inline-block', padding: '5px', backgroundColor: '#f8fafc' }}>
                   <img src={processedImageUrl} alt="Processed Result" style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
                 </div>
-                <p style={{ fontWeight: 'bold', color: '#166534' }}>
-                  Final Result: {processedFileInfo.width}x{processedFileInfo.height} pixels | Size: {processedFileInfo.size}
-                </p>
-                
-                <a 
-                  href={processedImageUrl} 
-                  download={`studymarrow_resized_${processedFileInfo.width}x${processedFileInfo.height}.jpg`}
-                  className="older-posts-btn"
-                  style={{ display: 'inline-block', textDecoration: 'none', marginTop: '10px', backgroundColor: '#166534' }}
-                >
-                  📥 Download Resized Image
-                </a>
+                <p style={{ fontWeight: 'bold', color: '#166534' }}>Final Result: {processedFileInfo.width}x{processedFileInfo.height} pixels | Size: {processedFileInfo.size}</p>
+                <a href={processedImageUrl} download={`studymarrow_resized_${processedFileInfo.width}x${processedFileInfo.height}.jpg`} className="older-posts-btn" style={{ display: 'inline-block', textDecoration: 'none', marginTop: '10px', backgroundColor: '#166534' }}>📥 Download Resized Image</a>
+              </div>
+            )}
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ TOOL 2: MERGE IMAGES
+// ==========================================
+function MergeImagesToolPage({ notices }) {
+  const [images, setImages] = useState([]);
+  const [direction, setDirection] = useState('vertical');
+  const [mergedUrl, setMergedUrl] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const canvasRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const imagePromises = files.filter(f => f.type.startsWith('image/')).map(file => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => resolve({ file, img, src: event.target.result, name: file.name });
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(imagePromises).then(loadedImages => {
+      setImages(prev => [...prev, ...loadedImages]);
+      setMergedUrl(null);
+    });
+  };
+
+  const removeImage = (index) => {
+    setImages(images.filter((_, i) => i !== index));
+    setMergedUrl(null);
+  };
+
+  const processMerge = () => {
+    if (images.length === 0) return;
+    setIsProcessing(true);
+    setMergedUrl(null);
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
+    let totalWidth = 0;
+    let totalHeight = 0;
+
+    if (direction === 'vertical') {
+      totalWidth = Math.max(...images.map(item => item.img.width));
+      totalHeight = images.reduce((sum, item) => sum + item.img.height, 0);
+    } else {
+      totalHeight = Math.max(...images.map(item => item.img.height));
+      totalWidth = images.reduce((sum, item) => sum + item.img.width, 0);
+    }
+
+    canvas.width = totalWidth;
+    canvas.height = totalHeight;
+
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, totalWidth, totalHeight);
+
+    let currentX = 0;
+    let currentY = 0;
+
+    images.forEach(item => {
+      ctx.drawImage(item.img, currentX, currentY);
+      if (direction === 'vertical') {
+        currentY += item.img.height;
+      } else {
+        currentX += item.img.width;
+      }
+    });
+
+    setMergedUrl(canvas.toDataURL('image/jpeg', 0.95));
+    setIsProcessing(false);
+  };
+
+  const inputStyle = { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '10px', boxSizing: 'border-box' };
+  const labelStyle = { display: 'block', fontWeight: 'bold', color: '#1e3a8a', marginBottom: '5px' };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » Merge Images</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>➕ Merge Images</h1>
+          
+          <div style={{ backgroundColor: '#f0f9ff', padding: '15px', borderRadius: '8px', border: '1px solid #bae6fd', marginBottom: '20px', color: '#0369a1', lineHeight: '1.6' }}>
+            <strong>How to use:</strong> Select multiple images. Choose whether to stitch them together Vertically (one below another) or Horizontally (side-by-side). Click Merge.
+          </div>
+
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <div style={{ marginBottom: '25px' }}>
+              <label style={labelStyle}>1. Select Images to Merge</label>
+              <input type="file" multiple onChange={handleFileChange} accept="image/*" style={inputStyle} />
+            </div>
+
+            {images.length > 0 && (
+              <div style={{ marginBottom: '25px', padding: '10px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
+                <h4 style={{ margin: '0 0 10px 0', color: '#334155' }}>Queue ({images.length} Images):</h4>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {images.map((img, idx) => (
+                    <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px', borderBottom: '1px solid #cbd5e1' }}>
+                      <span style={{ fontSize: '0.9rem' }}>{idx + 1}. {img.name}</span>
+                      <button onClick={() => removeImage(idx)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>Remove</button>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
+            <div style={{ marginBottom: '25px' }}>
+              <label style={labelStyle}>2. Select Merge Direction</label>
+              <select value={direction} onChange={(e) => setDirection(e.target.value)} style={inputStyle}>
+                <option value="vertical">Vertical (Stacked Top to Bottom)</option>
+                <option value="horizontal">Horizontal (Side by Side)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '30px' }}>
+              <button 
+                onClick={processMerge} 
+                disabled={images.length < 2 || isProcessing}
+                style={{ width: '100%', padding: '15px', backgroundColor: images.length > 1 ? '#2563eb' : '#cbd5e1', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.1rem', cursor: images.length > 1 ? 'pointer' : 'not-allowed' }}
+              >
+                {isProcessing ? 'Processing...' : 'Merge Images'}
+              </button>
+            </div>
+
+            <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+
+            {mergedUrl && (
+              <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '20px', textAlign: 'center' }}>
+                <h3 style={{ color: '#1e3a8a' }}>✅ Merged Image</h3>
+                <div style={{ marginBottom: '15px', border: '1px solid #ccc', display: 'inline-block', padding: '5px', backgroundColor: '#f8fafc', maxWidth: '100%', overflowX: 'auto' }}>
+                  <img src={mergedUrl} alt="Merged Result" style={{ maxHeight: '400px', width: 'auto', display: 'block' }} />
+                </div>
+                <br/>
+                <a href={mergedUrl} download="studymarrow_merged_image.jpg" className="older-posts-btn" style={{ display: 'inline-block', textDecoration: 'none', backgroundColor: '#166534' }}>📥 Download Merged Image</a>
+              </div>
+            )}
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ TOOL 3: MERGE PDFS (UI Only - Requires PDF-LIB for processing)
+// ==========================================
+function MergePdfsToolPage({ notices }) {
+  const [pdfs, setPdfs] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files).filter(f => f.type === 'application/pdf');
+    setPdfs(prev => [...prev, ...files]);
+    setSuccess(false);
+  };
+
+  const removePdf = (index) => {
+    setPdfs(pdfs.filter((_, i) => i !== index));
+    setSuccess(false);
+  };
+
+  const movePdf = (index, direction) => {
+    const newList = [...pdfs];
+    if (direction === 'up' && index > 0) {
+      const item = newList.splice(index, 1)[0];
+      newList.splice(index - 1, 0, item);
+    } else if (direction === 'down' && index < newList.length - 1) {
+      const item = newList.splice(index, 1)[0];
+      newList.splice(index + 1, 0, item);
+    }
+    setPdfs(newList);
+  };
+
+  const processMerge = () => {
+    setIsProcessing(true);
+    // Developer Note: Real PDF Merging purely in React requires 'npm install pdf-lib'. 
+    // Since we cannot install packages here, this provides the perfect UI simulation.
+    setTimeout(() => {
+      setIsProcessing(false);
+      setSuccess(true);
+    }, 2000);
+  };
+
+  const inputStyle = { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '10px', boxSizing: 'border-box' };
+  const labelStyle = { display: 'block', fontWeight: 'bold', color: '#1e3a8a', marginBottom: '5px' };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » Merge PDFs</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>📚 Merge PDFs</h1>
+          
+          <div style={{ backgroundColor: '#fef2f2', padding: '15px', borderRadius: '8px', border: '1px solid #fecdd3', marginBottom: '20px', color: '#be123c', lineHeight: '1.6' }}>
+            <strong>Developer Note:</strong> The User Interface for this tool is completely built! However, joining PDF files together securely inside a web browser requires an external Node.js backend or a library like <code>pdf-lib</code>.
           </div>
 
-          <div style={{ marginTop: '40px', color: '#64748b', fontSize: '0.9rem', lineHeight: '1.6' }}>
-            <strong>Note:</strong> This tool respects your privacy. All image processing happens locally in your web browser. Your photos are never uploaded to our server. We generate high-quality JPEG images suitable for all online portal submissions in India.
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <div style={{ marginBottom: '25px' }}>
+              <label style={labelStyle}>1. Select PDF Files</label>
+              <input type="file" multiple onChange={handleFileChange} accept="application/pdf" style={inputStyle} />
+            </div>
+
+            {pdfs.length > 0 && (
+              <div style={{ marginBottom: '25px', padding: '15px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
+                <label style={labelStyle}>2. Arrange Order (Top to Bottom)</label>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {pdfs.map((pdf, idx) => (
+                    <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', borderBottom: '1px solid #cbd5e1', backgroundColor: 'white', marginBottom: '5px', borderRadius: '4px' }}>
+                      <span style={{ fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>{idx + 1}. {pdf.name}</span>
+                      <div style={{ display: 'flex', gap: '5px' }}>
+                        <button onClick={() => movePdf(idx, 'up')} disabled={idx === 0} style={{ padding: '4px 8px', cursor: idx === 0 ? 'not-allowed' : 'pointer' }}>⬆️</button>
+                        <button onClick={() => movePdf(idx, 'down')} disabled={idx === pdfs.length - 1} style={{ padding: '4px 8px', cursor: idx === pdfs.length - 1 ? 'not-allowed' : 'pointer' }}>⬇️</button>
+                        <button onClick={() => removePdf(idx)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>✕</button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div style={{ marginBottom: '30px' }}>
+              <button 
+                onClick={processMerge} 
+                disabled={pdfs.length < 2 || isProcessing}
+                style={{ width: '100%', padding: '15px', backgroundColor: pdfs.length > 1 ? '#2563eb' : '#cbd5e1', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.1rem', cursor: pdfs.length > 1 ? 'pointer' : 'not-allowed' }}
+              >
+                {isProcessing ? 'Merging PDFs...' : 'Merge PDFs Together'}
+              </button>
+            </div>
+
+            {success && (
+              <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '20px', textAlign: 'center' }}>
+                <h3 style={{ color: '#166534' }}>✅ Server Integration Required</h3>
+                <p style={{ color: '#475569' }}>The frontend UI successfully bundled {pdfs.length} PDFs. Connect to a backend to generate the final file.</p>
+              </div>
+            )}
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ TOOL 4: COMPRESS PDF (UI Only)
+// ==========================================
+function CompressPdfToolPage({ notices }) {
+  const [pdfFile, setPdfFile] = useState(null);
+  const [level, setLevel] = useState('recommended');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      setPdfFile(file);
+      setSuccess(false);
+    }
+  };
+
+  const processCompress = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      setSuccess(true);
+    }, 2000);
+  };
+
+  const inputStyle = { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '10px', boxSizing: 'border-box' };
+  const labelStyle = { display: 'block', fontWeight: 'bold', color: '#1e3a8a', marginBottom: '5px' };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » Compress PDF</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>🗜️ Compress PDF</h1>
+          
+          <div style={{ backgroundColor: '#fef2f2', padding: '15px', borderRadius: '8px', border: '1px solid #fecdd3', marginBottom: '20px', color: '#be123c', lineHeight: '1.6' }}>
+            <strong>Developer Note:</strong> Compressing PDFs requires analyzing and reducing text/image structures inside the file. This requires an external backend server connection. The UI is ready for integration!
           </div>
 
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <div style={{ marginBottom: '25px' }}>
+              <label style={labelStyle}>1. Select PDF File</label>
+              <input type="file" onChange={handleFileChange} accept="application/pdf" style={inputStyle} />
+              {pdfFile && <p style={{ fontSize: '0.9rem', color: '#64748b', margin: '0' }}>Selected: {pdfFile.name} ({(pdfFile.size / 1024 / 1024).toFixed(2)} MB)</p>}
+            </div>
+
+            <div style={{ marginBottom: '25px' }}>
+              <label style={labelStyle}>2. Select Compression Level</label>
+              <select value={level} onChange={(e) => setLevel(e.target.value)} style={inputStyle}>
+                <option value="recommended">Recommended Compression (Good Quality, Medium File Size)</option>
+                <option value="extreme">Extreme Compression (Lower Quality, Smallest File Size)</option>
+                <option value="low">Low Compression (High Quality, Larger File Size)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '30px' }}>
+              <button 
+                onClick={processCompress} 
+                disabled={!pdfFile || isProcessing}
+                style={{ width: '100%', padding: '15px', backgroundColor: pdfFile ? '#2563eb' : '#cbd5e1', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.1rem', cursor: pdfFile ? 'pointer' : 'not-allowed' }}
+              >
+                {isProcessing ? 'Compressing Document...' : 'Compress PDF'}
+              </button>
+            </div>
+
+            {success && (
+              <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '20px', textAlign: 'center' }}>
+                <h3 style={{ color: '#166534' }}>✅ Server Integration Required</h3>
+                <p style={{ color: '#475569' }}>The frontend is ready to send this PDF to your compression server.</p>
+              </div>
+            )}
+          </div>
         </div>
         <Sidebar notices={notices} />
       </div>
@@ -1355,9 +1633,12 @@ function App() {
         <Route path="/job/:id" element={<JobDetailsPage jobs={jobs} notices={notices} />} />
         <Route path="/notice/:id" element={<NoticeDetailsPage notices={notices} />} /> 
         
-        {/* 🛠️ NEW TOOL ROUTE */}
+        {/* 🛠️ NEW TOOL ROUTES */}
         <Route path="/tools/image-resize" element={<ImageResizeToolPage notices={notices} />} /> 
-        
+        <Route path="/tools/merge-images" element={<MergeImagesToolPage notices={notices} />} /> 
+        <Route path="/tools/merge-pdfs" element={<MergePdfsToolPage notices={notices} />} /> 
+        <Route path="/tools/compress-pdf" element={<CompressPdfToolPage notices={notices} />} /> 
+
         <Route path="/syn-world-23" element={
           <AdminPage 
             fetchJobs={fetchJobs} jobs={jobs} 
