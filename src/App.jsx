@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import ReactQuill from 'react-quill-new'; 
 import 'react-quill-new/dist/quill.snow.css';
@@ -134,18 +134,28 @@ function Sidebar({ notices = [] }) {
         </ul>
       </div>
 
-      {/* 🛠️ ONLINE TOOLS SECTION */}
+      {/* 🛠️ NEW: Online Tools Section */}
       <div className="sidebar-box">
         <h3>🛠️ Online Tools</h3>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           <li style={{ marginBottom: '8px' }}>
+            <Link to="/tools/image-resize" style={{
+              display: 'block', padding: '10px', backgroundColor: '#fff',
+              border: '1px solid #737373', color: '#1e3a8a', 
+              textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
+              fontWeight: 'bold', borderRadius: '4px'
+            }}>
+              🖼️ Image Resize & Compress
+            </Link>
+          </li>
+          <li style={{ marginBottom: '8px' }}>
             <a href="#" style={{
               display: 'block', padding: '10px', backgroundColor: '#fff',
               border: '1px solid #737373', color: '#1e3a8a', 
               textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
               fontWeight: 'bold', borderRadius: '4px'
             }}>
-              Resume Builder (Soon)
+              📝 Bio-Data Maker (Soon)
             </a>
           </li>
           <li style={{ marginBottom: '8px' }}>
@@ -155,17 +165,7 @@ function Sidebar({ notices = [] }) {
               textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
               fontWeight: 'bold', borderRadius: '4px'
             }}>
-              Photo Compressor (Soon)
-            </a>
-          </li>
-          <li style={{ marginBottom: '8px' }}>
-            <a href="#" style={{
-              display: 'block', padding: '10px', backgroundColor: '#fff',
-              border: '1px solid #737373', color: '#1e3a8a', 
-              textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
-              fontWeight: 'bold', borderRadius: '4px'
-            }}>
-              Typing Speed Test (Soon)
+              ⌨️ Typing Speed Test (Soon)
             </a>
           </li>
         </ul>
@@ -578,7 +578,6 @@ function NoticeDetailsPage({ notices }) {
                     <tr key={num}>
                       <td><strong>{linkName}</strong></td>
                       <td style={{ textAlign: 'center', width: '150px' }}>
-                        {/* 🔥 FINAL FIX: No inline styles. It uses the exact same class as Job Posts! */}
                         <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
                       </td>
                     </tr>
@@ -694,6 +693,203 @@ function ContactPage({ contacts, notices }) {
               ))}
             </tbody>
           </table>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ NEW: IMAGE RESIZE TOOL PAGE
+// ==========================================
+function ImageResizeToolPage({ notices }) {
+  const [originalImage, setOriginalImage] = useState(null);
+  const [originalFileInfo, setOriginalFileInfo] = useState(null);
+  const [resizeMode, setResizeMode] = useState('passport'); // 'passport' or 'custom'
+  const [customWidth, setCustomWidth] = useState(800);
+  const [customHeight, setCustomHeight] = useState(600);
+  const [targetKb, setTargetKb] = useState(50);
+  const [processedImageUrl, setProcessedImageUrl] = useState(null);
+  const [processedFileInfo, setProcessedFileInfo] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  const fileInputRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          setOriginalImage(img);
+          setOriginalFileInfo({
+            name: file.name,
+            type: file.type,
+            size: (file.size / 1024).toFixed(2) + ' KB',
+            width: img.width,
+            height: img.height,
+          });
+          // Reset processed state
+          setProcessedImageUrl(null);
+          setProcessedFileInfo(null);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please select a valid image file (JPEG, PNG).');
+    }
+  };
+
+  const processImage = () => {
+    if (!originalImage) return;
+    setIsProcessing(true);
+    setProcessedImageUrl(null);
+
+    // Common standard for Indian Portals (ADRE, SSC, etc.)
+    // 3.5cm x 4.5cm translated to roughly 132px x 170px at standard 96dpi
+    const PASSPORT_WIDTH = 132; 
+    const PASSPORT_HEIGHT = 170;
+
+    const targetWidth = resizeMode === 'passport' ? PASSPORT_WIDTH : parseInt(customWidth, 10);
+    const targetHeight = resizeMode === 'passport' ? PASSPORT_HEIGHT : parseInt(customHeight, 10);
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+
+    // Draw image onto canvas (browsers handle high-quality downscaling well)
+    ctx.drawImage(originalImage, 0, 0, targetWidth, targetHeight);
+
+    // KB Compression Logic (Iterative approach)
+    // We export as JPEG because Portals require JPEG and it supports compression
+    const targetSizeBytes = targetKb * 1024;
+    let quality = 0.95; // Start high
+    let dataUrl = '';
+    let fileSize = 0;
+
+    // Iterate reducing quality until target size is met or quality gets too low
+    do {
+      dataUrl = canvas.toDataURL('image/jpeg', quality);
+      // Calculate file size from base64 string
+      fileSize = Math.round((dataUrl.length - 'data:image/jpeg;base64,'.length) * 3 / 4);
+      quality -= 0.05;
+    } while (fileSize > targetSizeBytes && quality > 0.1);
+
+    setProcessedImageUrl(dataUrl);
+    setProcessedFileInfo({
+      width: targetWidth,
+      height: targetHeight,
+      size: (fileSize / 1024).toFixed(2) + ' KB',
+      qualityUsed: Math.round((quality + 0.05) * 100) + '%' // Account for final subtraction
+    });
+    setIsProcessing(false);
+  };
+
+  const inputStyle = { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '10px', boxSizing: 'border-box' };
+  const labelStyle = { display: 'block', fontWeight: 'bold', color: '#1e3a8a', marginBottom: '5px' };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          
+          <div className="breadcrumb">Home » Online Tools » Image Resize</div>
+
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>🖼️ Image Resize & KB Compressor</h1>
+          
+          <div style={{ backgroundColor: '#f0f9ff', padding: '15px', borderRadius: '8px', border: '1px solid #bae6fd', marginBottom: '20px', color: '#0369a1', lineHeight: '1.6' }}>
+            <strong>How to use:</strong> Upload your photo, select "Passport Size" or enter custom dimensions, specify the maximum allowed size in KB (e.g., 50KB), and click Process. The tool automatically resizes and compresses the image to fit your requirements.
+          </div>
+
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            
+            {/* 1. Upload Section */}
+            <div style={{ marginBottom: '25px' }}>
+              <label style={labelStyle}>1. Select Image</label>
+              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" style={inputStyle} />
+              {originalFileInfo && (
+                <p style={{ fontSize: '0.9rem', color: '#64748b', margin: '0' }}>
+                  Selected: {originalFileInfo.name} ({originalFileInfo.width}x{originalFileInfo.height}, {originalFileInfo.size})
+                </p>
+              )}
+            </div>
+
+            {/* 2. Controls Section */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '25px' }}>
+              <div>
+                <label style={labelStyle}>2. Select Resize Mode</label>
+                <select value={resizeMode} onChange={(e) => setResizeMode(e.target.value)} style={inputStyle}>
+                  <option value="passport">Standard Passport Size (3.5cm x 4.5cm)</option>
+                  <option value="custom">Custom Dimensions (Pixels)</option>
+                </select>
+                
+                {resizeMode === 'custom' && (
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <input type="number" placeholder="Width" value={customWidth} onChange={(e) => setCustomWidth(e.target.value)} style={inputStyle} />
+                    <input type="number" placeholder="Height" value={customHeight} onChange={(e) => setCustomHeight(e.target.value)} style={inputStyle} />
+                  </div>
+                )}
+              </div>
+              
+              <div>
+                <label style={labelStyle}>3. Target File Size (Max KB)</label>
+                <input type="number" value={targetKb} onChange={(e) => setTargetKb(e.target.value)} placeholder="e.g. 50" style={inputStyle} />
+                <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '0' }}>Typical limits: 20KB to 100KB</p>
+              </div>
+            </div>
+
+            {/* 3. Action Buttons */}
+            <div style={{ marginBottom: '30px' }}>
+              <button 
+                onClick={processImage} 
+                disabled={!originalImage || isProcessing}
+                style={{
+                  width: '100%', padding: '15px', backgroundColor: originalImage ? '#2563eb' : '#cbd5e1', 
+                  color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.1rem', cursor: originalImage ? 'pointer' : 'not-allowed'
+                }}
+              >
+                {isProcessing ? 'Processing...' : 'Process Image (Resize & Compress)'}
+              </button>
+            </div>
+
+            {/* Hidden Canvas used for processing */}
+            <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+
+            {/* 4. Results Section */}
+            {processedImageUrl && (
+              <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '20px', textAlign: 'center' }}>
+                <h3 style={{ color: '#1e3a8a' }}>✅ Processed Image</h3>
+                <div style={{ marginBottom: '15px', border: '1px solid #ccc', display: 'inline-block', padding: '5px', backgroundColor: '#f8fafc' }}>
+                  <img src={processedImageUrl} alt="Processed Result" style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
+                </div>
+                <p style={{ fontWeight: 'bold', color: '#166534' }}>
+                  Final Result: {processedFileInfo.width}x{processedFileInfo.height} pixels | Size: {processedFileInfo.size}
+                </p>
+                
+                <a 
+                  href={processedImageUrl} 
+                  download={`studymarrow_resized_${processedFileInfo.width}x${processedFileInfo.height}.jpg`}
+                  className="older-posts-btn"
+                  style={{ display: 'inline-block', textDecoration: 'none', marginTop: '10px', backgroundColor: '#166534' }}
+                >
+                  📥 Download Resized Image
+                </a>
+              </div>
+            )}
+
+          </div>
+
+          <div style={{ marginTop: '40px', color: '#64748b', fontSize: '0.9rem', lineHeight: '1.6' }}>
+            <strong>Note:</strong> This tool respects your privacy. All image processing happens locally in your web browser. Your photos are never uploaded to our server. We generate high-quality JPEG images suitable for all online portal submissions in India.
+          </div>
+
         </div>
         <Sidebar notices={notices} />
       </div>
@@ -1158,6 +1354,9 @@ function App() {
         <Route path="/contact" element={<ContactPage contacts={contacts} notices={notices} />} />
         <Route path="/job/:id" element={<JobDetailsPage jobs={jobs} notices={notices} />} />
         <Route path="/notice/:id" element={<NoticeDetailsPage notices={notices} />} /> 
+        
+        {/* 🛠️ NEW TOOL ROUTE */}
+        <Route path="/tools/image-resize" element={<ImageResizeToolPage notices={notices} />} /> 
         
         <Route path="/syn-world-23" element={
           <AdminPage 
