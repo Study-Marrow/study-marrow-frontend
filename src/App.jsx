@@ -133,6 +133,44 @@ function Sidebar({ notices = [] }) {
           ))}
         </ul>
       </div>
+
+      {/* 🛠️ NEW: Online Tools Section */}
+      <div className="sidebar-box">
+        <h3>🛠️ Online Tools</h3>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          <li style={{ marginBottom: '8px' }}>
+            <a href="#" style={{
+              display: 'block', padding: '10px', backgroundColor: '#fff',
+              border: '1px solid #737373', color: '#1e3a8a', 
+              textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
+              fontWeight: 'bold', borderRadius: '4px'
+            }}>
+              Resume Builder (Soon)
+            </a>
+          </li>
+          <li style={{ marginBottom: '8px' }}>
+            <a href="#" style={{
+              display: 'block', padding: '10px', backgroundColor: '#fff',
+              border: '1px solid #737373', color: '#1e3a8a', 
+              textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
+              fontWeight: 'bold', borderRadius: '4px'
+            }}>
+              Photo Compressor (Soon)
+            </a>
+          </li>
+          <li style={{ marginBottom: '8px' }}>
+            <a href="#" style={{
+              display: 'block', padding: '10px', backgroundColor: '#fff',
+              border: '1px solid #737373', color: '#1e3a8a', 
+              textDecoration: 'none', textAlign: 'center', fontSize: '1rem',
+              fontWeight: 'bold', borderRadius: '4px'
+            }}>
+              Typing Speed Test (Soon)
+            </a>
+          </li>
+        </ul>
+      </div>
+
     </div>
   );
 }
@@ -540,6 +578,7 @@ function NoticeDetailsPage({ notices }) {
                     <tr key={num}>
                       <td><strong>{linkName}</strong></td>
                       <td style={{ textAlign: 'center', width: '150px' }}>
+                        {/* 🔥 FIX: Removed inline styling so it uses your standard CSS click-here-btn class */}
                         <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
                       </td>
                     </tr>
