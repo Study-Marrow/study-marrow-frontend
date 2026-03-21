@@ -134,7 +134,7 @@ function Sidebar({ notices = [] }) {
         </ul>
       </div>
 
-      {/* 🛠️ NEW: Online Tools Section */}
+      {/* 🛠️ ONLINE TOOLS SECTION */}
       <div className="sidebar-box">
         <h3>🛠️ Online Tools</h3>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -578,7 +578,7 @@ function NoticeDetailsPage({ notices }) {
                     <tr key={num}>
                       <td><strong>{linkName}</strong></td>
                       <td style={{ textAlign: 'center', width: '150px' }}>
-                        {/* 🔥 FIX: Removed inline styling so it uses your standard CSS click-here-btn class */}
+                        {/* 🔥 FINAL FIX: No inline styles. It uses the exact same class as Job Posts! */}
                         <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
                       </td>
                     </tr>
