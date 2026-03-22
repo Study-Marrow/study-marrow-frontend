@@ -134,7 +134,7 @@ function Sidebar({ notices = [] }) {
       </div>
 
       <div className="sidebar-box bookstore-banner">
-        <h2>BOOK STORE</h2>
+        <h2>SHOPPING STORE</h2>
         <p>Coming Soon</p>
       </div>
 
