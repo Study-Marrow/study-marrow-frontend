@@ -1712,10 +1712,23 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     e.preventDefault();
     const method = editNoticeId ? 'PUT' : 'POST';
     const url = editNoticeId ? `https://study-marrow-backend.onrender.com/api/notices/${editNoticeId}` : 'https://study-marrow-backend.onrender.com/api/notices';
+
+    // Assign an order immediately if it's a completely new Notice
+    const payload = { ...noticeData };
+    if (!editNoticeId) {
+        const maxOrder = notices.reduce((max, n) => Math.max(max, n.order || 0), 0);
+        payload.order = maxOrder + 1;
+    }
+
     try {
-      const response = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(noticeData) });
+      const response = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) });
       if (response.status === 401) return alert('Session expired!');
-      if (response.ok) { alert(editNoticeId ? 'Notice updated!' : 'Notice published!'); setNoticeData(defaultNoticeState); setEditNoticeId(null); fetchNotices(); }
+      if (response.ok) { 
+        alert(editNoticeId ? 'Notice updated!' : 'Notice published!'); 
+        setNoticeData(defaultNoticeState); 
+        setEditNoticeId(null); 
+        fetchNotices(); 
+      }
     } catch (error) { console.error(error); }
   };
 
@@ -1735,30 +1748,29 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   const moveNotice = async (index, direction) => {
     let currentList = [...notices];
 
-    // BUG FIX: Check if ANY item is missing an order
-    const hasMissingOrders = currentList.some(item => item.order === undefined || item.order === null);
-    if (hasMissingOrders) {
-        currentList.forEach((item, i) => item.order = i + 1);
-    }
-
     if (direction === 'up' && index === 0) return;
     if (direction === 'down' && index === currentList.length - 1) return;
 
+    // Safety fallback: ensure every item has a baseline order to swap mathematically 
+    currentList.forEach((item, i) => {
+        if (item.order === undefined || item.order === null) item.order = i + 1;
+    });
+
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
-    // Swap numbers
+    // Swap numbers locally
     const tempOrder = currentList[index].order;
     currentList[index].order = currentList[targetIndex].order;
     currentList[targetIndex].order = tempOrder;
 
-    // Swap array positions for INSTANT UI feedback
+    // Swap position in array so the UI moves instantly
     const itemToMove = currentList[index];
     currentList[index] = currentList[targetIndex];
     currentList[targetIndex] = itemToMove;
 
-    setNotices([...currentList]); // Force instant React re-render
+    setNotices([...currentList]); 
 
-    // Send to Database
+    // Send the two updated orders to the DB
     try {
         await Promise.all([
             fetch(`https://study-marrow-backend.onrender.com/api/notices/${currentList[index]._id}`, { 
@@ -1768,7 +1780,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
                 method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: currentList[targetIndex].order }) 
             })
         ]);
-        fetchNotices(); // final sync
+        fetchNotices(); // Sync to verify
     } catch (err) { console.error(err); }
   };
 
@@ -1786,37 +1798,45 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     e.preventDefault();
     const method = editContactId ? 'PUT' : 'POST';
     const url = editContactId ? `https://study-marrow-backend.onrender.com/api/contacts/${editContactId}` : 'https://study-marrow-backend.onrender.com/api/contacts';
-    const res = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(contactForm) });
-    if (res.ok) { setContactForm({ platform: '', value: '', isLink: false }); setEditContactId(null); fetchContacts(); }
+
+    // Assign an order immediately if it's a completely new Contact
+    const payload = { ...contactForm };
+    if (!editContactId) {
+        const maxOrder = contacts.reduce((max, c) => Math.max(max, c.order || 0), 0);
+        payload.order = maxOrder + 1;
+    }
+
+    const res = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) });
+    if (res.ok) { 
+        setContactForm({ platform: '', value: '', isLink: false }); 
+        setEditContactId(null); 
+        fetchContacts(); 
+    }
   };
   
   const moveContact = async (index, direction) => {
     let currentList = [...contacts];
 
-    // BUG FIX: Check if ANY item is missing an order
-    const hasMissingOrders = currentList.some(item => item.order === undefined || item.order === null);
-    if (hasMissingOrders) {
-        currentList.forEach((item, i) => item.order = i + 1);
-    }
-
     if (direction === 'up' && index === 0) return;
     if (direction === 'down' && index === currentList.length - 1) return;
 
+    // Safety fallback
+    currentList.forEach((item, i) => {
+        if (item.order === undefined || item.order === null) item.order = i + 1;
+    });
+
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
-    // Swap numbers
     const tempOrder = currentList[index].order;
     currentList[index].order = currentList[targetIndex].order;
     currentList[targetIndex].order = tempOrder;
 
-    // Swap array positions for INSTANT UI feedback
     const itemToMove = currentList[index];
     currentList[index] = currentList[targetIndex];
     currentList[targetIndex] = itemToMove;
 
-    setContacts([...currentList]); // Force instant React re-render
+    setContacts([...currentList]); 
 
-    // Send to Database
     try {
         await Promise.all([
             fetch(`https://study-marrow-backend.onrender.com/api/contacts/${currentList[index]._id}`, { 
@@ -1826,7 +1846,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
                 method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: currentList[targetIndex].order }) 
             })
         ]);
-        fetchContacts(); // final sync
+        fetchContacts();
     } catch (err) { console.error(err); }
   };
 
@@ -2026,10 +2046,29 @@ function App() {
   const [impLinks, setImpLinks] = useState([]); 
   const [contacts, setContacts] = useState([]); 
 
+  // Force sort data immediately on fetch to prevent sorting reset
   const fetchJobs = () => { fetch('https://study-marrow-backend.onrender.com/api/jobs').then(res => res.json()).then(setJobs).catch(console.error); };
-  const fetchNotices = () => { fetch('https://study-marrow-backend.onrender.com/api/notices').then(res => res.json()).then(setNotices).catch(console.error); }; 
+  
+  const fetchNotices = () => { 
+    fetch('https://study-marrow-backend.onrender.com/api/notices')
+      .then(res => res.json())
+      .then(data => {
+        // Sort by order safely. If order is undefined/missing, it falls to the bottom (99999)
+        const sorted = data.sort((a, b) => (a.order ?? 99999) - (b.order ?? 99999));
+        setNotices(sorted);
+      }).catch(console.error); 
+  }; 
+  
   const fetchImpLinks = () => { fetch('https://study-marrow-backend.onrender.com/api/implinks').then(res => res.json()).then(setImpLinks).catch(console.error); };
-  const fetchContacts = () => { fetch('https://study-marrow-backend.onrender.com/api/contacts').then(res => res.json()).then(setContacts).catch(console.error); };
+  
+  const fetchContacts = () => { 
+    fetch('https://study-marrow-backend.onrender.com/api/contacts')
+      .then(res => res.json())
+      .then(data => {
+        const sorted = data.sort((a, b) => (a.order ?? 99999) - (b.order ?? 99999));
+        setContacts(sorted);
+      }).catch(console.error); 
+  };
 
   useEffect(() => { 
     fetchJobs(); 
