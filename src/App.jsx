@@ -1735,9 +1735,9 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   const moveNotice = async (index, direction) => {
     let currentList = [...notices];
 
-    // Initialize missing orders
-    const needsInit = !currentList.some(item => item.order > 0);
-    if (needsInit) {
+    // BUG FIX: Check if ANY item is missing an order
+    const hasMissingOrders = currentList.some(item => item.order === undefined || item.order === null);
+    if (hasMissingOrders) {
         currentList.forEach((item, i) => item.order = i + 1);
     }
 
@@ -1793,9 +1793,9 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   const moveContact = async (index, direction) => {
     let currentList = [...contacts];
 
-    // Initialize missing orders
-    const needsInit = !currentList.some(item => item.order > 0);
-    if (needsInit) {
+    // BUG FIX: Check if ANY item is missing an order
+    const hasMissingOrders = currentList.some(item => item.order === undefined || item.order === null);
+    if (hasMissingOrders) {
         currentList.forEach((item, i) => item.order = i + 1);
     }
 
