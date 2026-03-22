@@ -91,7 +91,6 @@ function Sidebar({ notices = [] }) {
     { name: 'Image Resize & Compress', link: '/tools/image-resize', icon: '🖼️' },
     { name: 'Merge Images', link: '/tools/merge-images', icon: '➕' },
     { name: 'Merge PDFs', link: '/tools/merge-pdfs', icon: '📚' },
-    { name: 'Compress PDF', link: '/tools/compress-pdf', icon: '🗜️' },
   ];
 
   const toolButtonStyle = {
@@ -119,12 +118,15 @@ function Sidebar({ notices = [] }) {
           <a href="#" className="official-social-link fb" data-name="Facebook">
             <svg width="28" height="28" viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
           </a>
+
           <a href="#" className="official-social-link insta" data-name="Instagram">
             <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
           </a>
+
           <a href="#" className="official-social-link x" data-name="X (Twitter)">
             <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </a>
+
           <a href="#" className="official-social-link yt" data-name="YouTube">
             <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
@@ -1108,99 +1110,6 @@ function MergePdfsToolPage({ notices }) {
 }
 
 // ==========================================
-// 🛠️ TOOL 4: COMPRESS PDF
-// ==========================================
-function CompressPdfToolPage({ notices }) {
-  const [pdfFile, setPdfFile] = useState(null);
-  const [level, setLevel] = useState('recommended');
-  const [customKb, setCustomKb] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [compressedPdfUrl, setCompressedPdfUrl] = useState(null);
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type === 'application/pdf') {
-      setPdfFile(file);
-      setCompressedPdfUrl(null);
-    }
-  };
-
-  const processCompress = () => {
-    setIsProcessing(true);
-    // Note: True PDF compression to an exact KB size requires a backend server.
-    // This simulates the process so the UI functions as intended.
-    setTimeout(() => {
-      const url = URL.createObjectURL(pdfFile);
-      setCompressedPdfUrl(url);
-      setIsProcessing(false);
-    }, 2000);
-  };
-
-  const inputStyle = { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '10px', boxSizing: 'border-box' };
-  const labelStyle = { display: 'block', fontWeight: 'bold', color: '#1e3a8a', marginBottom: '5px' };
-
-  return (
-    <div className="site-wrapper">
-      <SharedHeader />
-      <div className="content-wrapper">
-        <div className="main-column" style={{ padding: '20px' }}>
-          <div className="breadcrumb">Home » Online Tools » Compress PDF</div>
-          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>🗜️ Compress PDF</h1>
-          
-          <div style={{ backgroundColor: '#f0f9ff', padding: '15px', borderRadius: '8px', border: '1px solid #bae6fd', marginBottom: '20px', color: '#0369a1', lineHeight: '1.6' }}>
-            <strong>How to use:</strong> Select a PDF file, choose your required compression level (or enter a custom KB size), and compress the document for easy online uploads.
-          </div>
-
-          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-            <div style={{ marginBottom: '25px' }}>
-              <label style={labelStyle}>1. Select PDF File</label>
-              <input type="file" onChange={handleFileChange} accept="application/pdf" style={inputStyle} />
-              {pdfFile && <p style={{ fontSize: '0.9rem', color: '#64748b', margin: '0' }}>Selected: {pdfFile.name} ({(pdfFile.size / 1024 / 1024).toFixed(2)} MB)</p>}
-            </div>
-
-            <div style={{ marginBottom: '25px' }}>
-              <label style={labelStyle}>2. Select Compression Level</label>
-              <select value={level} onChange={(e) => setLevel(e.target.value)} style={inputStyle}>
-                <option value="recommended">Recommended Compression (Good Quality)</option>
-                <option value="extreme">Extreme Compression (Smallest File Size)</option>
-                <option value="low">Low Compression (High Quality)</option>
-                <option value="custom">Custom Target Size (KB)</option>
-              </select>
-              
-              {level === 'custom' && (
-                <div style={{ marginTop: '10px' }}>
-                  <label style={labelStyle}>Enter Max Allowed Size (KB)</label>
-                  <input type="number" value={customKb} onChange={(e) => setCustomKb(e.target.value)} placeholder="e.g. 500" style={inputStyle} />
-                </div>
-              )}
-            </div>
-
-            <div style={{ marginBottom: '30px' }}>
-              <button 
-                onClick={processCompress} 
-                disabled={!pdfFile || isProcessing || (level === 'custom' && !customKb)}
-                style={{ width: '100%', padding: '15px', backgroundColor: pdfFile ? '#2563eb' : '#cbd5e1', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.1rem', cursor: pdfFile ? 'pointer' : 'not-allowed' }}
-              >
-                {isProcessing ? 'Compressing Document...' : 'Compress PDF'}
-              </button>
-            </div>
-
-            {compressedPdfUrl && (
-              <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '20px', textAlign: 'center' }}>
-                <h3 style={{ color: '#166534' }}>✅ Compression Complete</h3>
-                <a href={compressedPdfUrl} download={`compressed_${pdfFile.name}`} className="older-posts-btn" style={{ display: 'inline-block', textDecoration: 'none', backgroundColor: '#166534', marginTop: '10px' }}>📥 Download Compressed PDF</a>
-              </div>
-            )}
-          </div>
-        </div>
-        <Sidebar notices={notices} />
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
-// ==========================================
 // DEFAULT FORM BLANK STATES 
 // ==========================================
 const defaultFormState = { 
@@ -1661,7 +1570,6 @@ function App() {
         <Route path="/tools/image-resize" element={<ImageResizeToolPage notices={notices} />} /> 
         <Route path="/tools/merge-images" element={<MergeImagesToolPage notices={notices} />} /> 
         <Route path="/tools/merge-pdfs" element={<MergePdfsToolPage notices={notices} />} /> 
-        <Route path="/tools/compress-pdf" element={<CompressPdfToolPage notices={notices} />} /> 
 
         <Route path="/syn-world-23" element={
           <AdminPage 
