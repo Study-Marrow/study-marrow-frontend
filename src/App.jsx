@@ -90,7 +90,10 @@ function Sidebar({ notices = [] }) {
   const tools = [
     { name: 'Image Resize & Compress', link: '/tools/image-resize', icon: '🖼️' },
     { name: 'Merge Images', link: '/tools/merge-images', icon: '➕' },
+    { name: 'Image to PDF', link: '/tools/image-to-pdf', icon: '📸' },
     { name: 'Merge PDFs', link: '/tools/merge-pdfs', icon: '📚' },
+    { name: 'Age Calculator', link: '/tools/age-calculator', icon: '📅' },
+    { name: 'Bio-Data Generator', link: '/tools/bio-data-maker', icon: '📝' },
   ];
 
   const toolButtonStyle = {
@@ -118,15 +121,12 @@ function Sidebar({ notices = [] }) {
           <a href="#" className="official-social-link fb" data-name="Facebook">
             <svg width="28" height="28" viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
           </a>
-
           <a href="#" className="official-social-link insta" data-name="Instagram">
             <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
           </a>
-
           <a href="#" className="official-social-link x" data-name="X (Twitter)">
             <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </a>
-
           <a href="#" className="official-social-link yt" data-name="YouTube">
             <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
@@ -156,7 +156,6 @@ function Sidebar({ notices = [] }) {
         </ul>
       </div>
 
-      {/* 🛠️ Online Tools Section */}
       <div className="sidebar-box">
         <h3>🛠️ Online Tools</h3>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -216,20 +215,16 @@ function Footer() {
             <a href="#" className="official-social-link fb" data-name="Facebook">
               <svg width="28" height="28" viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
             </a>
-
             <a href="#" className="official-social-link insta" data-name="Instagram">
               <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad_footer" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad_footer)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
             </a>
-
             <a href="#" className="official-social-link x" data-name="X (Twitter)">
               <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
-
             <a href="#" className="official-social-link yt" data-name="YouTube">
               <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             </a>
           </div>
-
         </div>
         <div className="footer-right">
           <h3>Never Miss an Update 🔔</h3>
@@ -993,7 +988,132 @@ function MergeImagesToolPage({ notices }) {
 }
 
 // ==========================================
-// 🛠️ TOOL 3: MERGE PDFS
+// 🛠️ TOOL 3: IMAGE TO PDF (Fully Functional)
+// ==========================================
+function ImageToPdfToolPage({ notices }) {
+  const [images, setImages] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const imagePromises = files.filter(f => f.type.startsWith('image/')).map(file => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => resolve({ file, img, src: event.target.result, name: file.name });
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(imagePromises).then(loadedImages => {
+      setImages(prev => [...prev, ...loadedImages]);
+      setPdfUrl(null);
+    });
+  };
+
+  const removeImage = (index) => {
+    setImages(images.filter((_, i) => i !== index));
+    setPdfUrl(null);
+  };
+
+  const processConvert = async () => {
+    if (images.length === 0) return;
+    setIsProcessing(true);
+    try {
+      const { PDFDocument } = await import('pdf-lib');
+      const pdfDoc = await PDFDocument.create();
+
+      for (let item of images) {
+        const imageBytes = await item.file.arrayBuffer();
+        let pdfImage;
+        if (item.file.type === 'image/jpeg' || item.file.type === 'image/jpg') {
+          pdfImage = await pdfDoc.embedJpg(imageBytes);
+        } else if (item.file.type === 'image/png') {
+          pdfImage = await pdfDoc.embedPng(imageBytes);
+        } else {
+          continue; // Skip unsupported types
+        }
+        
+        const page = pdfDoc.addPage([pdfImage.width, pdfImage.height]);
+        page.drawImage(pdfImage, { x: 0, y: 0, width: pdfImage.width, height: pdfImage.height });
+      }
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      setPdfUrl(URL.createObjectURL(blob));
+    } catch (error) {
+      alert("Error converting to PDF. Ensure you ran 'npm install pdf-lib' in your terminal.");
+      console.error(error);
+    }
+    setIsProcessing(false);
+  };
+
+  const inputStyle = { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '10px', boxSizing: 'border-box' };
+  const labelStyle = { display: 'block', fontWeight: 'bold', color: '#1e3a8a', marginBottom: '5px' };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » Image to PDF</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>📸 Image to PDF Converter</h1>
+          
+          <div style={{ backgroundColor: '#f0f9ff', padding: '15px', borderRadius: '8px', border: '1px solid #bae6fd', marginBottom: '20px', color: '#0369a1', lineHeight: '1.6' }}>
+            <strong>How to use:</strong> Select one or more JPEG/PNG images. Click convert, and we will package them into a single PDF document.
+          </div>
+
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <div style={{ marginBottom: '25px' }}>
+              <label style={labelStyle}>1. Select Images</label>
+              <input type="file" multiple onChange={handleFileChange} accept="image/png, image/jpeg" style={inputStyle} />
+            </div>
+
+            {images.length > 0 && (
+              <div style={{ marginBottom: '25px', padding: '10px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
+                <h4 style={{ margin: '0 0 10px 0', color: '#334155' }}>Queue ({images.length} Images):</h4>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {images.map((img, idx) => (
+                    <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px', borderBottom: '1px solid #cbd5e1' }}>
+                      <span style={{ fontSize: '0.9rem' }}>{idx + 1}. {img.name}</span>
+                      <button onClick={() => removeImage(idx)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>Remove</button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div style={{ marginBottom: '30px' }}>
+              <button 
+                onClick={processConvert} 
+                disabled={images.length === 0 || isProcessing}
+                style={{ width: '100%', padding: '15px', backgroundColor: images.length > 0 ? '#2563eb' : '#cbd5e1', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.1rem', cursor: images.length > 0 ? 'pointer' : 'not-allowed' }}
+              >
+                {isProcessing ? 'Converting...' : 'Convert to PDF'}
+              </button>
+            </div>
+
+            {pdfUrl && (
+              <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '20px', textAlign: 'center' }}>
+                <h3 style={{ color: '#166534' }}>✅ PDF Created!</h3>
+                <a href={pdfUrl} download="studymarrow_images.pdf" className="older-posts-btn" style={{ display: 'inline-block', textDecoration: 'none', backgroundColor: '#166534', marginTop: '10px' }}>📥 Download PDF</a>
+              </div>
+            )}
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ TOOL 4: MERGE PDFS
 // ==========================================
 function MergePdfsToolPage({ notices }) {
   const [pdfs, setPdfs] = useState([]);
@@ -1100,6 +1220,368 @@ function MergePdfsToolPage({ notices }) {
                 <a href={mergedPdfUrl} download="studymarrow_merged.pdf" className="older-posts-btn" style={{ display: 'inline-block', textDecoration: 'none', backgroundColor: '#166534', marginTop: '10px' }}>📥 Download Merged PDF</a>
               </div>
             )}
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ TOOL 5: AGE CALCULATOR (Fully Functional)
+// ==========================================
+function AgeCalculatorToolPage({ notices }) {
+  const [dob, setDob] = useState('');
+  const [targetDate, setTargetDate] = useState(new Date().toISOString().split('T')[0]);
+  const [result, setResult] = useState(null);
+
+  const calculateAge = () => {
+    if (!dob || !targetDate) return;
+
+    const birthDate = new Date(dob);
+    const compareDate = new Date(targetDate);
+
+    if (birthDate > compareDate) {
+      alert("Date of Birth cannot be after the Target Date.");
+      return;
+    }
+
+    let years = compareDate.getFullYear() - birthDate.getFullYear();
+    let months = compareDate.getMonth() - birthDate.getMonth();
+    let days = compareDate.getDate() - birthDate.getDate();
+
+    if (days < 0) {
+      months--;
+      // Get the number of days in the previous month
+      const lastMonth = new Date(compareDate.getFullYear(), compareDate.getMonth(), 0);
+      days += lastMonth.getDate();
+    }
+
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    setResult({ years, months, days });
+  };
+
+  const inputStyle = { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '10px', boxSizing: 'border-box' };
+  const labelStyle = { display: 'block', fontWeight: 'bold', color: '#1e3a8a', marginBottom: '5px' };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » Age Calculator</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>📅 Age Calculator</h1>
+          
+          <div style={{ backgroundColor: '#f0f9ff', padding: '15px', borderRadius: '8px', border: '1px solid #bae6fd', marginBottom: '20px', color: '#0369a1', lineHeight: '1.6' }}>
+            <strong>How to use:</strong> Enter your Date of Birth and the target date (like the application cutoff date). The calculator will show your exact age in Years, Months, and Days.
+          </div>
+
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '25px' }}>
+              <div>
+                <label style={labelStyle}>Date of Birth</label>
+                <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Calculate Age At Date</label>
+                <input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} style={inputStyle} />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '30px' }}>
+              <button 
+                onClick={calculateAge} 
+                disabled={!dob}
+                style={{ width: '100%', padding: '15px', backgroundColor: dob ? '#2563eb' : '#cbd5e1', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.1rem', cursor: dob ? 'pointer' : 'not-allowed' }}
+              >
+                Calculate Exact Age
+              </button>
+            </div>
+
+            {result && (
+              <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '20px', textAlign: 'center' }}>
+                <h3 style={{ color: '#1e3a8a', marginBottom: '10px' }}>Your Calculated Age</h3>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '15px' }}>
+                  <div style={{ backgroundColor: '#f8fafc', padding: '15px 25px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                    <span style={{ display: 'block', fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>{result.years}</span>
+                    <span style={{ color: '#64748b', textTransform: 'uppercase', fontSize: '0.8rem', fontWeight: 'bold' }}>Years</span>
+                  </div>
+                  <div style={{ backgroundColor: '#f8fafc', padding: '15px 25px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                    <span style={{ display: 'block', fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>{result.months}</span>
+                    <span style={{ color: '#64748b', textTransform: 'uppercase', fontSize: '0.8rem', fontWeight: 'bold' }}>Months</span>
+                  </div>
+                  <div style={{ backgroundColor: '#f8fafc', padding: '15px 25px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                    <span style={{ display: 'block', fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>{result.days}</span>
+                    <span style={{ color: '#64748b', textTransform: 'uppercase', fontSize: '0.8rem', fontWeight: 'bold' }}>Days</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ TOOL 6: BIO-DATA GENERATOR (Indian Format)
+// ==========================================
+function BioDataGeneratorToolPage({ notices }) {
+  const [personal, setPersonal] = useState({ name: '', fatherName: '', motherName: '', dob: '', gender: 'Male', maritalStatus: 'Unmarried', religion: '', nationality: 'Indian', caste: 'General' });
+  const [contact, setContact] = useState({ address: '', mobile: '', email: '' });
+  const [education, setEducation] = useState([{ exam: '', board: '', year: '', percentage: '' }]);
+  const [extra, setExtra] = useState({ experience: '', languages: '', skills: '' });
+  const [declaration, setDeclaration] = useState({ place: '', date: new Date().toISOString().split('T')[0] });
+  
+  // 📸 Added state for the uploaded photo
+  const [photoDataUrl, setPhotoDataUrl] = useState(null);
+
+  const printRef = useRef();
+
+  // 📸 Added function to handle photo upload and perfectly size it
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPhotoDataUrl(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleEducationChange = (index, field, value) => {
+    const newEdu = [...education];
+    newEdu[index][field] = value;
+    setEducation(newEdu);
+  };
+
+  const addEducationRow = () => setEducation([...education, { exam: '', board: '', year: '', percentage: '' }]);
+  const removeEducationRow = (index) => setEducation(education.filter((_, i) => i !== index));
+
+  const handlePrint = () => {
+    const printContent = printRef.current.innerHTML;
+    const printWindow = window.open('', '', 'width=800,height=900');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Bio-Data - ${personal.name || 'Generated'}</title>
+          <style>
+            body { font-family: 'Times New Roman', serif; padding: 40px; color: #000; }
+            .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+            .title-box { flex-grow: 1; text-align: center; }
+            h2 { text-decoration: underline; letter-spacing: 2px; margin: 0; }
+            .photo-box { width: 120px; height: 150px; border: 1px solid #000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+            .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+            .bio-row { display: flex; margin-bottom: 10px; font-size: 16px; }
+            .bio-label { width: 35%; font-weight: bold; }
+            .bio-separator { width: 5%; }
+            .bio-value { width: 60%; }
+            .section-title { font-weight: bold; margin-top: 25px; margin-bottom: 10px; text-decoration: underline; font-size: 18px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; }
+            th, td { border: 1px solid #000; padding: 10px; text-align: left; font-size: 15px; }
+            th { background-color: #f2f2f2; }
+            .declaration-text { margin-top: 30px; text-align: justify; font-style: italic; }
+            .signature-block { margin-top: 50px; display: flex; justify-content: space-between; }
+          </style>
+        </head>
+        <body>
+          ${printContent}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
+  };
+
+  const inputStyle = { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '10px', boxSizing: 'border-box' };
+  const labelStyle = { display: 'block', fontWeight: 'bold', color: '#1e3a8a', marginBottom: '5px' };
+  const sectionHeaderStyle = { backgroundColor: '#f1f5f9', padding: '10px', borderRadius: '4px', color: '#0f172a', marginBottom: '15px', borderLeft: '4px solid #2563eb' };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » Bio-Data Generator</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>📝 Professional Bio-Data Generator</h1>
+
+          <div style={{ backgroundColor: '#f0f9ff', padding: '15px', borderRadius: '8px', border: '1px solid #bae6fd', marginBottom: '20px', color: '#0369a1', lineHeight: '1.6' }}>
+            <strong>How to use:</strong> Fill out the form below. Upload a passport photo if required. As you type, the preview at the bottom will update instantly. When finished, click the <strong>Generate PDF / Print</strong> button.
+          </div>
+
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '30px' }}>
+            
+            <h3 style={sectionHeaderStyle}>Personal Details & Photo</h3>
+            
+            {/* 📸 Added Photo Upload Input */}
+            <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '4px' }}>
+              <label style={labelStyle}>Upload Passport Photo (Optional)</label>
+              <input type="file" accept="image/*" onChange={handlePhotoUpload} style={{ width: '100%' }} />
+              <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '5px 0 0 0' }}>Photo will be automatically placed in the top right corner of the generated Bio-Data.</p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+              <div><label style={labelStyle}>Full Name</label><input type="text" value={personal.name} onChange={e => setPersonal({...personal, name: e.target.value})} style={inputStyle} /></div>
+              <div><label style={labelStyle}>Date of Birth</label><input type="date" value={personal.dob} onChange={e => setPersonal({...personal, dob: e.target.value})} style={inputStyle} /></div>
+              <div><label style={labelStyle}>Father's Name</label><input type="text" value={personal.fatherName} onChange={e => setPersonal({...personal, fatherName: e.target.value})} style={inputStyle} /></div>
+              <div><label style={labelStyle}>Mother's Name</label><input type="text" value={personal.motherName} onChange={e => setPersonal({...personal, motherName: e.target.value})} style={inputStyle} /></div>
+              <div>
+                <label style={labelStyle}>Gender</label>
+                <select value={personal.gender} onChange={e => setPersonal({...personal, gender: e.target.value})} style={inputStyle}>
+                  <option>Male</option><option>Female</option><option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>Marital Status</label>
+                <select value={personal.maritalStatus} onChange={e => setPersonal({...personal, maritalStatus: e.target.value})} style={inputStyle}>
+                  <option>Unmarried</option><option>Married</option>
+                </select>
+              </div>
+              <div><label style={labelStyle}>Religion</label><input type="text" value={personal.religion} onChange={e => setPersonal({...personal, religion: e.target.value})} style={inputStyle} /></div>
+              <div>
+                <label style={labelStyle}>Category/Caste</label>
+                <select value={personal.caste} onChange={e => setPersonal({...personal, caste: e.target.value})} style={inputStyle}>
+                  <option>General</option><option>OBC</option><option>SC</option><option>ST</option><option>MOBC</option>
+                </select>
+              </div>
+            </div>
+
+            <h3 style={{...sectionHeaderStyle, marginTop: '20px'}}>Contact Information</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={labelStyle}>Full Postal Address</label>
+                <textarea value={contact.address} onChange={e => setContact({...contact, address: e.target.value})} style={{...inputStyle, height: '80px'}} />
+              </div>
+              <div><label style={labelStyle}>Mobile Number</label><input type="text" value={contact.mobile} onChange={e => setContact({...contact, mobile: e.target.value})} style={inputStyle} /></div>
+              <div><label style={labelStyle}>Email ID</label><input type="email" value={contact.email} onChange={e => setContact({...contact, email: e.target.value})} style={inputStyle} /></div>
+            </div>
+
+            <h3 style={{...sectionHeaderStyle, marginTop: '20px'}}>Educational Qualifications</h3>
+            {education.map((edu, index) => (
+              <div key={index} style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                <input type="text" placeholder="Exam Passed (e.g. HSLC)" value={edu.exam} onChange={e => handleEducationChange(index, 'exam', e.target.value)} style={inputStyle} />
+                <input type="text" placeholder="Board/University" value={edu.board} onChange={e => handleEducationChange(index, 'board', e.target.value)} style={inputStyle} />
+                <input type="text" placeholder="Year" value={edu.year} onChange={e => handleEducationChange(index, 'year', e.target.value)} style={inputStyle} />
+                <input type="text" placeholder="Percentage %" value={edu.percentage} onChange={e => handleEducationChange(index, 'percentage', e.target.value)} style={inputStyle} />
+                <button onClick={() => removeEducationRow(index)} disabled={education.length === 1} style={{ padding: '10px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: education.length === 1 ? 'not-allowed' : 'pointer' }}>✕</button>
+              </div>
+            ))}
+            <button onClick={addEducationRow} style={{ padding: '8px 15px', backgroundColor: '#e2e8f0', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ Add Qualification</button>
+
+            <h3 style={{...sectionHeaderStyle, marginTop: '20px'}}>Additional Details</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
+              <div><label style={labelStyle}>Work Experience (If any)</label><textarea value={extra.experience} onChange={e => setExtra({...extra, experience: e.target.value})} style={{...inputStyle, height: '60px'}} /></div>
+              <div><label style={labelStyle}>Languages Known</label><input type="text" placeholder="e.g. English, Hindi, Assamese" value={extra.languages} onChange={e => setExtra({...extra, languages: e.target.value})} style={inputStyle} /></div>
+              <div><label style={labelStyle}>Extra Skills / Hobbies</label><input type="text" value={extra.skills} onChange={e => setExtra({...extra, skills: e.target.value})} style={inputStyle} /></div>
+            </div>
+
+            <div style={{ marginTop: '30px' }}>
+              <button onClick={handlePrint} style={{ width: '100%', padding: '15px', backgroundColor: '#166534', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer' }}>
+                🖨️ Generate PDF / Print Bio-Data
+              </button>
+            </div>
+          </div>
+
+          {/* PREVIEW SECTION - Hidden during actual print, but copied to print window */}
+          <h2 style={{ borderBottom: '2px solid #2563eb', paddingBottom: '10px', color: '#1e3a8a', marginTop: '40px' }}>Live Preview</h2>
+          <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '8px', border: '1px solid #ccc', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+            
+            <div ref={printRef} style={{ fontFamily: 'Times New Roman, serif', color: 'black' }}>
+              
+              {/* 📸 UPDATED HEADER WITH PHOTO PLACEMENT */}
+              <div className="header-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '30px' }}>
+                <div style={{ width: '120px' }}></div> {/* Empty spacer to balance the photo */}
+                <div className="title-box" style={{ flexGrow: 1, textAlign: 'center' }}>
+                  <h2 style={{ textDecoration: 'underline', letterSpacing: '2px', margin: '0' }}>BIO-DATA</h2>
+                </div>
+                <div className="photo-box" style={{ width: '120px', height: '150px', border: '1px solid #000', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', backgroundColor: '#f8fafc' }}>
+                  {photoDataUrl ? (
+                    <img src={photoDataUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <span style={{ color: '#94a3b8', fontSize: '12px', textAlign: 'center' }}>Affix<br/>Passport<br/>Photo</span>
+                  )}
+                </div>
+              </div>
+              
+              {/* Personal Details */}
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Name</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{personal.name.toUpperCase()}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Father's Name</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{personal.fatherName}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Mother's Name</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{personal.motherName}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Date of Birth</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{personal.dob}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Gender</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{personal.gender}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Marital Status</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{personal.maritalStatus}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Religion</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{personal.religion}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Nationality</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{personal.nationality}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Category / Caste</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{personal.caste}</div></div>
+              
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Address</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%', whiteSpace: 'pre-wrap' }}>{contact.address}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Mobile Number</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{contact.mobile}</div></div>
+              <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Email ID</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{contact.email}</div></div>
+
+              {/* Education Table */}
+              <div className="section-title" style={{ fontWeight: 'bold', marginTop: '25px', marginBottom: '10px', textDecoration: 'underline', fontSize: '18px' }}>Educational Qualifications:</div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+                <thead>
+                  <tr>
+                    <th style={{ border: '1px solid #000', padding: '8px', backgroundColor: '#f2f2f2' }}>Examination Passed</th>
+                    <th style={{ border: '1px solid #000', padding: '8px', backgroundColor: '#f2f2f2' }}>Board / University</th>
+                    <th style={{ border: '1px solid #000', padding: '8px', backgroundColor: '#f2f2f2' }}>Year of Passing</th>
+                    <th style={{ border: '1px solid #000', padding: '8px', backgroundColor: '#f2f2f2' }}>Percentage (%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {education.map((edu, idx) => (
+                    <tr key={idx}>
+                      <td style={{ border: '1px solid #000', padding: '8px' }}>{edu.exam}</td>
+                      <td style={{ border: '1px solid #000', padding: '8px' }}>{edu.board}</td>
+                      <td style={{ border: '1px solid #000', padding: '8px' }}>{edu.year}</td>
+                      <td style={{ border: '1px solid #000', padding: '8px' }}>{edu.percentage}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Extra Details */}
+              {extra.experience && <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Work Experience</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%', whiteSpace: 'pre-wrap' }}>{extra.experience}</div></div>}
+              {extra.languages && <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Languages Known</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{extra.languages}</div></div>}
+              {extra.skills && <div className="bio-row" style={{ display: 'flex', marginBottom: '10px' }}><div style={{ width: '35%', fontWeight: 'bold' }}>Extra Skills</div><div style={{ width: '5%' }}>:</div><div style={{ width: '60%' }}>{extra.skills}</div></div>}
+
+              {/* Declaration */}
+              <div className="section-title" style={{ fontWeight: 'bold', marginTop: '25px', marginBottom: '10px', textDecoration: 'underline', fontSize: '18px' }}>Declaration:</div>
+              <div style={{ textAlign: 'justify', fontStyle: 'italic', marginBottom: '40px' }}>
+                I hereby declare that all the information provided above is true and correct to the best of my knowledge and belief.
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '50px' }}>
+                <div>
+                  <div><strong>Date:</strong> {declaration.date}</div>
+                  <div style={{ marginTop: '10px' }}>
+                    <strong>Place:</strong> 
+                    <input type="text" value={declaration.place} onChange={e => setDeclaration({...declaration, place: e.target.value})} style={{ border: 'none', borderBottom: '1px dotted #000', outline: 'none', marginLeft: '5px', fontFamily: 'inherit', fontSize: '16px' }} placeholder="Enter Place" />
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ width: '200px', borderBottom: '1px solid #000', marginBottom: '5px', height: '30px' }}></div>
+                  <strong>Signature</strong>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
         <Sidebar notices={notices} />
@@ -1566,10 +2048,13 @@ function App() {
         <Route path="/job/:id" element={<JobDetailsPage jobs={jobs} notices={notices} />} />
         <Route path="/notice/:id" element={<NoticeDetailsPage notices={notices} />} /> 
         
-        {/* 🛠️ NEW TOOL ROUTES */}
+        {/* 🛠️ ACTIVE TOOL ROUTES */}
         <Route path="/tools/image-resize" element={<ImageResizeToolPage notices={notices} />} /> 
         <Route path="/tools/merge-images" element={<MergeImagesToolPage notices={notices} />} /> 
+        <Route path="/tools/image-to-pdf" element={<ImageToPdfToolPage notices={notices} />} /> 
         <Route path="/tools/merge-pdfs" element={<MergePdfsToolPage notices={notices} />} /> 
+        <Route path="/tools/age-calculator" element={<AgeCalculatorToolPage notices={notices} />} /> 
+        <Route path="/tools/bio-data-maker" element={<BioDataGeneratorToolPage notices={notices} />} /> 
 
         <Route path="/syn-world-23" element={
           <AdminPage 
