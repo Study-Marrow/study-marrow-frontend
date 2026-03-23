@@ -12,6 +12,10 @@ const stripHtml = (html) => {
   return text.replace(/\u00A0/g, " "); 
 };
 
+// 🔗 UPDATE YOUR SOCIAL LINKS HERE - Change these to your actual channel URLs!
+const WHATSAPP_LINK = "https://whatsapp.com/channel/0029Vb7YQxt9mrGVSXiudu3i";
+const TELEGRAM_LINK = "https://t.me/sm_careers";
+
 // 📝 Advanced Toolbar for Tables, Colors, and Alignments
 const quillModules = {
   toolbar: [
@@ -87,6 +91,7 @@ function SharedHeader() {
 }
 
 function Sidebar({ notices = [] }) {
+  // 🛠️ FINAL CLEAN TOOLS LIST
   const tools = [
     { name: 'Image Resize & Compress', link: '/tools/image-resize', icon: '🖼️' },
     { name: 'Merge Images', link: '/tools/merge-images', icon: '➕' },
@@ -282,11 +287,11 @@ function PublicPage({ jobs, notices }) {
           <div className="quick-updates-box">
             <div className="update-row">
               <strong>WhatsApp Channel</strong>
-              <button className="join-btn">Join Now</button>
+              <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="join-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
             <div className="update-row">
               <strong>Telegram Channel</strong>
-              <button className="check-btn">Join Now</button>
+              <a href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer" className="check-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
           </div>
 
@@ -381,11 +386,11 @@ function JobDetailsPage({ jobs, notices }) {
           <div className="quick-updates-box" style={{ marginBottom: '15px' }}>
             <div className="update-row">
               <strong>WhatsApp Channel</strong>
-              <button className="join-btn">Join Now</button>
+              <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="join-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
             <div className="update-row">
               <strong>Telegram Channel</strong>
-              <button className="check-btn">Join Now</button>
+              <a href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer" className="check-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
           </div>
 
@@ -467,11 +472,11 @@ function JobDetailsPage({ jobs, notices }) {
           <div className="bottom-social-box">
             <div className="social-row" style={{ backgroundColor: '#e6f4ea' }}>
               <strong>WhatsApp Channel</strong>
-              <button className="join-btn">Join Now</button>
+              <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="join-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
             <div className="social-row" style={{ backgroundColor: '#e0e7ff' }}>
               <strong>Telegram Channel</strong>
-              <button className="check-btn" style={{ backgroundColor: '#2563eb' }}>Join Now</button>
+              <a href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer" className="check-btn" style={{ backgroundColor: '#2563eb', textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
           </div>
         </div>
@@ -511,11 +516,11 @@ function NoticeDetailsPage({ notices }) {
           <div className="quick-updates-box" style={{ marginBottom: '15px' }}>
             <div className="update-row">
               <strong>WhatsApp Channel</strong>
-              <button className="join-btn">Join Now</button>
+              <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="join-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
             <div className="update-row">
               <strong>Telegram Channel</strong>
-              <button className="check-btn">Join Now</button>
+              <a href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer" className="check-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
           </div>
 
@@ -586,11 +591,11 @@ function NoticeDetailsPage({ notices }) {
           <div className="bottom-social-box">
             <div className="social-row" style={{ backgroundColor: '#e6f4ea' }}>
               <strong>WhatsApp Channel</strong>
-              <button className="join-btn">Join Now</button>
+              <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="join-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
             <div className="social-row" style={{ backgroundColor: '#e0e7ff' }}>
               <strong>Telegram Channel</strong>
-              <button className="check-btn" style={{ backgroundColor: '#2563eb' }}>Join Now</button>
+              <a href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer" className="check-btn" style={{ backgroundColor: '#2563eb', textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a>
             </div>
           </div>
 
@@ -613,8 +618,8 @@ function ImpLinksPage({ impLinks, notices }) {
         <div className="main-column" style={{ padding: '20px' }}>
           
           <div className="quick-updates-box" style={{ marginBottom: '30px' }}>
-            <div className="update-row"><strong>WhatsApp Channel</strong><button className="join-btn">Join Now</button></div>
-            <div className="update-row"><strong>Telegram Channel</strong><button className="check-btn">Join Now</button></div>
+            <div className="update-row"><strong>WhatsApp Channel</strong><a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="join-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a></div>
+            <div className="update-row"><strong>Telegram Channel</strong><a href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer" className="check-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a></div>
           </div>
 
           <h2 style={{color: '#1e3a8a', fontSize: '2.2rem', margin: '0 0 15px 0'}}>Documents and Links</h2>
@@ -659,8 +664,8 @@ function ContactPage({ contacts, notices }) {
         <div className="main-column" style={{ padding: '20px' }}>
           
           <div className="quick-updates-box" style={{ marginBottom: '30px' }}>
-            <div className="update-row"><strong>WhatsApp Channel</strong><button className="join-btn">Join Now</button></div>
-            <div className="update-row"><strong>Telegram Channel</strong><button className="check-btn">Join Now</button></div>
+            <div className="update-row"><strong>WhatsApp Channel</strong><a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="join-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a></div>
+            <div className="update-row"><strong>Telegram Channel</strong><a href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer" className="check-btn" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center', boxSizing: 'border-box' }}>Join Now</a></div>
           </div>
 
           <h2 style={{color: '#1e3a8a', fontSize: '2.2rem', margin: '0 0 15px 0'}}>Contact Us</h2>
@@ -2046,14 +2051,11 @@ function App() {
   const [impLinks, setImpLinks] = useState([]); 
   const [contacts, setContacts] = useState([]); 
 
-  // Force sort data immediately on fetch to prevent sorting reset
   const fetchJobs = () => { fetch('https://study-marrow-backend.onrender.com/api/jobs').then(res => res.json()).then(setJobs).catch(console.error); };
-  
   const fetchNotices = () => { 
     fetch('https://study-marrow-backend.onrender.com/api/notices')
       .then(res => res.json())
       .then(data => {
-        // Sort by order safely. If order is undefined/missing, it falls to the bottom (99999)
         const sorted = data.sort((a, b) => (a.order ?? 99999) - (b.order ?? 99999));
         setNotices(sorted);
       }).catch(console.error); 
