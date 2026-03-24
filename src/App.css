@@ -58,26 +58,22 @@ html, body {
   padding: 0 20px;
 }
 
+/* 🛠️ FIXED: Removed scale(3.5), added absolute width/height and perfectly round borders */
 .site-logo {
-  height: 50px;
-  width: 50px;
-  object-fit: contain;
-  background-color: transparent !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  
-  transform: scale(3.5); 
-  transform-origin: center center;
-  margin-right: 60px; 
-  margin-left: 30px;
+  height: 65px !important;
+  width: 65px !important;
+  min-width: 65px !important;
+  object-fit: cover;
+  border-radius: 50% !important;
+  margin-right: 15px; 
+  background-color: white !important;
   
   animation: magicalGlow 3s infinite ease-in-out;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.3s ease;
 }
 
 .site-logo:hover {
-  transform: scale(3.8) rotate(-4deg); 
+  transform: scale(1.05) rotate(-2deg); 
 }
 
 .logo-area a {
@@ -678,20 +674,20 @@ html, body {
   padding: 60px 20px;
 }
 
+/* 🛠️ FIXED FOOTER LOGO: Removed bad scaling rules */
 .footer-logo-img {
-  height: 50px; 
-  width: 50px;
-  object-fit: contain;
-  background-color: transparent !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  
-  transform: scale(3.5);
-  transform-origin: center center;
-  margin-right: 60px;
-  margin-left: 30px;
+  height: 55px !important; 
+  width: 55px !important;
+  min-width: 55px !important;
+  object-fit: cover;
+  border-radius: 50% !important;
+  margin-right: 15px;
+  background-color: white !important;
   animation: magicalGlow 3s infinite ease-in-out;
+  transition: transform 0.3s ease;
+}
+.footer-logo-img:hover {
+  transform: scale(1.05) rotate(-2deg); 
 }
 
 .footer-logo {
@@ -706,7 +702,7 @@ html, body {
 .footer-social-icons {
   display: flex;
   gap: 15px;
-  margin-top: 100px !important; 
+  margin-top: 20px !important; 
   position: relative;
   z-index: 10;
 }
@@ -795,15 +791,15 @@ html, body {
   
   .logo-area a { justify-content: center; }
   
-  /* 🛠️ UPDATED: Fixed margin spacing to ensure title stays perfectly centered on mobile */
+  /* 🛠️ UPDATED: Clean mobile logo spacing, NO SCALING */
   .site-logo { 
-    height: 40px !important; 
-    width: auto !important;
-    transform: scale(2.5) !important; 
-    transform-origin: center center; 
-    margin-right: 25px;
-    margin-left: 20px;
+    height: 50px !important; 
+    width: 50px !important;
+    min-width: 50px !important;
+    margin-right: 15px;
+    margin-left: 0;
     margin-bottom: 5px;
+    transform: none !important; /* Forces off the old zoom */
   }
   
   .logo-area h1 { font-size: 1.8rem; text-align: center;}
@@ -842,7 +838,7 @@ html, body {
 
   .content-wrapper { flex-direction: column; }
   .footer-container { flex-direction: column; text-align: center; gap: 50px; }
-  .footer-social-icons { justify-content: center; }
+  .footer-social-icons { justify-content: center; margin-top: 0 !important; }
   .footer-bottom-bar { flex-direction: column; align-items: center; gap: 15px; text-align: center;}
   .list-job-body { flex-direction: column; align-items: center; text-align: center; }
 }
@@ -851,7 +847,6 @@ html, body {
    RICH TEXT EDITOR SAFETY RULES
    ========================================== */
 
-/* 1. Forces any image pasted into the editor to shrink to fit mobile screens */
 .details-intro img, 
 .details-content img {
   max-width: 100% !important;
@@ -859,14 +854,12 @@ html, body {
   border-radius: 8px;
 }
 
-/* 2. Ensures bullet points and numbered lists have proper spacing */
 .details-intro ul, .details-intro ol,
 .details-content ul, .details-content ol {
   padding-left: 25px;
   margin-bottom: 15px;
 }
 
-/* 3. Adds spacing to paragraphs inside the editor */
 .details-intro p, 
 .details-content p {
   margin-bottom: 15px;
