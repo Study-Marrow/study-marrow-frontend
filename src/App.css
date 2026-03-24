@@ -520,6 +520,23 @@ html, body {
 }
 .bookstore-banner h2 { margin: 0; font-weight: 800; font-size: 1.8rem; background: none; border: none; color: white;}
 
+/* 🛠️ UPDATED: Tool Buttons & Notice Board Link Hover and Alignment */
+.sidebar-box a:not(.official-social-link):not(.tool-button) {
+  text-align: left !important;
+  padding-left: 15px !important;
+}
+
+.sidebar-box a:hover { 
+  background-color: #eff6ff !important;
+  color: #2563eb !important;
+}
+
+.tool-button:hover {
+  background-color: #eff6ff !important;
+  color: #2563eb !important;
+  transform: translateX(3px);
+}
+
 .trending-list {
   list-style: none;
   padding: 0 20px 20px 20px; 
@@ -778,14 +795,15 @@ html, body {
   
   .logo-area a { justify-content: center; }
   
+  /* 🛠️ UPDATED: Fixed margin spacing to ensure title stays perfectly centered on mobile */
   .site-logo { 
-    height: 40px; 
-    width: 40px;
-    transform: scale(3); 
+    height: 40px !important; 
+    width: auto !important;
+    transform: scale(2.5) !important; 
     transform-origin: center center; 
-    margin-right: 30px;
-    margin-left: 30px;
-    margin-bottom: 10px;
+    margin-right: 25px;
+    margin-left: 20px;
+    margin-bottom: 5px;
   }
   
   .logo-area h1 { font-size: 1.8rem; text-align: center;}

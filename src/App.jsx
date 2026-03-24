@@ -55,8 +55,9 @@ function SharedHeader() {
         <div className="header-content">
           <div className="logo-area">
             <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <img src="/logo.png" alt="Study Marrow Logo" className="site-logo" />
-              <h1>Study Marrow Careers</h1>
+              {/* 🛠️ FIXED: Added hard height constraints to stop the logo from blowing up */}
+              <img src="/logo.png" alt="Study Marrow Logo" className="site-logo" style={{ height: '55px', width: 'auto', objectFit: 'contain', display: 'block' }} />
+              <h1 style={{ margin: 0 }}>Study Marrow Careers</h1>
             </Link>
           </div>
           <form className="search-area" onSubmit={handleSearch}>
@@ -91,7 +92,6 @@ function SharedHeader() {
 }
 
 function Sidebar({ notices = [] }) {
-  // 🛠️ FINAL CLEAN TOOLS LIST
   const tools = [
     { name: 'Image Resize & Compress', link: '/tools/image-resize', icon: '🖼️' },
     { name: 'Merge Images', link: '/tools/merge-images', icon: '➕' },
@@ -212,7 +212,8 @@ function Footer() {
       <div className="footer-container">
         <div className="footer-left">
           <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px'}}>
-            <img src="/logo.png" alt="Study Marrow Logo" className="footer-logo-img" />
+            {/* 🛠️ FIXED: Added hard height constraint to footer logo as well */}
+            <img src="/logo.png" alt="Study Marrow Logo" className="footer-logo-img" style={{ height: '40px', width: 'auto', objectFit: 'contain', display: 'block' }} />
             <h2 className="footer-logo" style={{margin: 0}}>Study Marrow Careers</h2>
           </div>
           
@@ -679,18 +680,22 @@ function ContactPage({ contacts, notices }) {
 
           <table className="links-table">
             <tbody>
-              {contacts.map((c) => (
-                <tr key={c._id}>
-                  <td style={{width: '30%'}}><strong>{c.platform}</strong></td>
-                  <td>
-                    {c.isLink ? (
-                      <a href={c.value} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
-                    ) : (
-                      <span>{c.value}</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {contacts.map((c) => {
+                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasn't checked by admin
+                const isUrl = c.isLink || String(c.value).trim().startsWith('http');
+                return (
+                  <tr key={c._id}>
+                    <td style={{width: '40%'}}><strong>{c.platform}</strong></td>
+                    <td style={isUrl ? { textAlign: 'center' } : {}}>
+                      {isUrl ? (
+                        <a href={c.value.trim()} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
+                      ) : (
+                        <span>{c.value}</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
