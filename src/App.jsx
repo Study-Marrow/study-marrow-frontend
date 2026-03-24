@@ -55,8 +55,8 @@ function SharedHeader() {
         <div className="header-content">
           <div className="logo-area">
             <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '15px' }}>
-              {/* 🛠️ UNBREAKABLE LOGO FIX: Forced absolute dimensions to prevent flex stretching */}
-              <img src="/logo.png" alt="Study Marrow Logo" className="site-logo" style={{ width: '65px', height: '65px', minWidth: '65px', objectFit: 'contain', flexShrink: 0, margin: '0 15px 0 0', display: 'block', background: 'transparent' }} />
+              {/* 🛠️ FIXED: Completely removed restrictive inline styles so it listens to CSS */}
+              <img src="/logo.png" alt="Study Marrow Logo" className="site-logo" />
               <h1 style={{ margin: 0 }}>Study Marrow Careers</h1>
             </Link>
           </div>
@@ -212,8 +212,8 @@ function Footer() {
       <div className="footer-container">
         <div className="footer-left">
           <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px'}}>
-            {/* 🛠️ UNBREAKABLE LOGO FIX */}
-            <img src="/logo.png" alt="Study Marrow Logo" className="footer-logo-img" style={{ width: '55px', height: '55px', minWidth: '55px', objectFit: 'contain', flexShrink: 0, margin: '0 15px 0 0', display: 'block', background: 'transparent' }} />
+            {/* 🛠️ FIXED: Completely removed restrictive inline styles so it listens to CSS */}
+            <img src="/logo.png" alt="Study Marrow Logo" className="footer-logo-img" />
             <h2 className="footer-logo" style={{margin: 0}}>Study Marrow Careers</h2>
           </div>
           

@@ -58,14 +58,14 @@ html, body {
   padding: 0 20px;
 }
 
-/* 🛠️ FIXED: Removed scale(3.5), added absolute width/height and perfectly round borders */
+/* 🛠️ FIXED: Increased to 100x100px for a massive, bold presence */
 .site-logo {
-  height: 65px !important;
-  width: 65px !important;
-  min-width: 65px !important;
+  height: 100px !important;
+  width: 100px !important;
+  min-width: 100px !important;
   object-fit: cover;
   border-radius: 50% !important;
-  margin-right: 15px; 
+  margin-right: 20px; 
   background-color: white !important;
   
   animation: magicalGlow 3s infinite ease-in-out;
@@ -674,14 +674,14 @@ html, body {
   padding: 60px 20px;
 }
 
-/* 🛠️ FIXED FOOTER LOGO: Removed bad scaling rules */
+/* 🛠️ FIXED: Large 80px Footer Logo */
 .footer-logo-img {
-  height: 55px !important; 
-  width: 55px !important;
-  min-width: 55px !important;
+  height: 80px !important; 
+  width: 80px !important;
+  min-width: 80px !important;
   object-fit: cover;
   border-radius: 50% !important;
-  margin-right: 15px;
+  margin-right: 20px;
   background-color: white !important;
   animation: magicalGlow 3s infinite ease-in-out;
   transition: transform 0.3s ease;
@@ -705,6 +705,11 @@ html, body {
   margin-top: 20px !important; 
   position: relative;
   z-index: 10;
+}
+
+/* 🛠️ FIXED: Force the X icon to be white in the dark footer! */
+.study-footer .official-social-link.x svg path {
+  fill: #ffffff !important;
 }
 
 .f-icon {
@@ -791,15 +796,15 @@ html, body {
   
   .logo-area a { justify-content: center; }
   
-  /* 🛠️ UPDATED: Clean mobile logo spacing, NO SCALING */
+  /* 🛠️ UPDATED: Larger 70px logo for Mobile */
   .site-logo { 
-    height: 50px !important; 
-    width: 50px !important;
-    min-width: 50px !important;
+    height: 70px !important; 
+    width: 70px !important;
+    min-width: 70px !important;
     margin-right: 15px;
     margin-left: 0;
     margin-bottom: 5px;
-    transform: none !important; /* Forces off the old zoom */
+    transform: none !important;
   }
   
   .logo-area h1 { font-size: 1.8rem; text-align: center;}
