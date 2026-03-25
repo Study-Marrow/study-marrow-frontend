@@ -55,6 +55,7 @@ function SharedHeader() {
         <div className="header-content">
           <div className="logo-area">
             <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '15px' }}>
+              {/* 🛠️ FIXED: Removed restrictive inline styles so CSS can make it BIG */}
               <img src="/logo.png" alt="Study Marrow Logo" className="site-logo" />
               <h1 style={{ margin: 0 }}>Study Marrow Careers</h1>
             </Link>
@@ -126,7 +127,7 @@ function Sidebar({ notices = [] }) {
             <svg width="28" height="28" viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
           </a>
           <a href="#" className="official-social-link insta" data-name="Instagram">
-            <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad_footer" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad_footer)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
           </a>
           <a href="#" className="official-social-link x" data-name="X (Twitter)">
             <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -211,6 +212,7 @@ function Footer() {
       <div className="footer-container">
         <div className="footer-left">
           <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px'}}>
+            {/* 🛠️ FIXED: Removed restrictive inline styles */}
             <img src="/logo.png" alt="Study Marrow Logo" className="footer-logo-img" />
             <h2 className="footer-logo" style={{margin: 0}}>Study Marrow Careers</h2>
           </div>
@@ -1859,9 +1861,19 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   };
 
 
-  // 🚀 NEW: THE AUTOMATED SHARE GENERATORS
+  // 🚀 THE AUTOMATED SHARE GENERATORS (AssamCareer Style)
   const handleCopyJobShare = (job) => {
-    const message = `🚨 *New Recruitment Alert: ${job.company}*\n\nOnline apply link for the recruitment of *${job.title}* is now active.\n\n⏳ *Last Date to Apply:* ${job.deadline || 'Check Website'}\n\n👇 Click here for full details & apply online:\nhttps://careers.studymarrow.in/job/${job._id}\n\n❗❗ *Join Study Marrow Careers for instant updates:*\nWhatsApp: ${WHATSAPP_LINK}\nTelegram: ${TELEGRAM_LINK}`;
+    let formattedDate = 'Check Website';
+    if (job.deadline) {
+      const d = new Date(job.deadline);
+      if (!isNaN(d.getTime())) {
+        formattedDate = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      } else {
+        formattedDate = job.deadline;
+      }
+    }
+
+    const message = `*${job.title}*\n\nOnline apply link for the recruitment in ${job.company} is activated.\n\nLast date of submission is ${formattedDate}.\n\nhttps://careers.studymarrow.in/job/${job._id}\n\n❗❗ Join Our WhatsApp Channel: ${WHATSAPP_LINK}\nJoin Our Telegram: ${TELEGRAM_LINK}`;
     
     navigator.clipboard.writeText(message)
       .then(() => alert("✅ Share message copied to clipboard! You can now paste it into WhatsApp or Telegram."))
@@ -1869,7 +1881,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   };
 
   const handleCopyNoticeShare = (notice) => {
-    const message = `📢 *UPDATE: ${notice.topicName}*\n\n*${notice.title}*\n\n👇 Click here to check and download directly:\nhttps://careers.studymarrow.in/notice/${notice._id}\n\n❗❗ *Never miss an update! Join our official channels:*\nWhatsApp: ${WHATSAPP_LINK}\nTelegram: ${TELEGRAM_LINK}`;
+    const message = `*${notice.topicName}*\n${notice.title}\n\nRead full details and download official notice here:\n\nhttps://careers.studymarrow.in/notice/${notice._id}\n\n❗❗ Join Our WhatsApp Channel: ${WHATSAPP_LINK}\nJoin Our Telegram: ${TELEGRAM_LINK}`;
     
     navigator.clipboard.writeText(message)
       .then(() => alert("✅ Share message copied to clipboard! You can now paste it into WhatsApp or Telegram."))
@@ -1954,10 +1966,9 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             <div key={job._id} style={{backgroundColor: 'white', padding: '15px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
               <div><strong style={{color: '#2563eb'}}>({job.category || 'Uncategorized'})</strong> {job.title} - {job.company}</div>
               <div>
-                {/* 🚀 NEW SHARE BUTTON FOR JOBS */}
-                <button onClick={() => handleCopyJobShare(job)} style={{backgroundColor: '#10b981', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer', borderRadius: '4px'}}>📋 Share</button>
-                <button onClick={() => handleEditJobClick(job)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer', borderRadius: '4px'}}>Edit</button>
-                <button onClick={() => handleDeleteJob(job._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer', borderRadius: '4px'}}>Delete</button>
+                <button type="button" onClick={() => handleCopyJobShare(job)} style={{backgroundColor: '#10b981', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer', borderRadius: '4px'}}>📋 Share</button>
+                <button type="button" onClick={() => handleEditJobClick(job)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', marginRight: '10px', cursor: 'pointer', borderRadius: '4px'}}>Edit</button>
+                <button type="button" onClick={() => handleDeleteJob(job._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer', borderRadius: '4px'}}>Delete</button>
               </div>
             </div>
           ))}
@@ -2009,12 +2020,9 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
               <div style={{display: 'flex', gap: '8px'}}>
                 <button type="button" onClick={() => moveNotice(index, 'up')} disabled={index === 0} style={{padding: '6px 10px', cursor: index === 0 ? 'not-allowed' : 'pointer'}}>⬆️</button>
                 <button type="button" onClick={() => moveNotice(index, 'down')} disabled={index === notices.length - 1} style={{padding: '6px 10px', cursor: index === notices.length - 1 ? 'not-allowed' : 'pointer'}}>⬇️</button>
-                
-                {/* 🚀 NEW SHARE BUTTON FOR NOTICES */}
                 <button type="button" onClick={() => handleCopyNoticeShare(n)} style={{backgroundColor: '#10b981', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px'}}>📋 Share</button>
-                
-                <button onClick={() => handleEditNoticeClick(n)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px'}}>Edit</button>
-                <button onClick={() => handleDeleteNotice(n._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px'}}>Delete</button>
+                <button type="button" onClick={() => handleEditNoticeClick(n)} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px'}}>Edit</button>
+                <button type="button" onClick={() => handleDeleteNotice(n._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px'}}>Delete</button>
               </div>
             </div>
           ))}
