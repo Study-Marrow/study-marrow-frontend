@@ -55,7 +55,6 @@ function SharedHeader() {
         <div className="header-content">
           <div className="logo-area">
             <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '15px' }}>
-              {/* 🛠️ FIXED: Removed restrictive inline styles so CSS can make it BIG */}
               <img src="/logo.png" alt="Study Marrow Logo" className="site-logo" />
               <h1 style={{ margin: 0 }}>Study Marrow Careers</h1>
             </Link>
@@ -132,7 +131,7 @@ function Sidebar({ notices = [] }) {
           <a href="#" className="official-social-link x" data-name="X (Twitter)">
             <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </a>
-          <a href="#" className="official-social-link yt" data-name="YouTube">
+          <a href="https://www.youtube.com/@studymarrow" target="_blank" rel="noopener noreferrer" className="official-social-link yt" data-name="YouTube">
             <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
         </div>
@@ -212,7 +211,6 @@ function Footer() {
       <div className="footer-container">
         <div className="footer-left">
           <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px'}}>
-            {/* 🛠️ FIXED: Removed restrictive inline styles */}
             <img src="/logo.png" alt="Study Marrow Logo" className="footer-logo-img" />
             <h2 className="footer-logo" style={{margin: 0}}>Study Marrow Careers</h2>
           </div>
@@ -227,7 +225,7 @@ function Footer() {
             <a href="#" className="official-social-link x" data-name="X (Twitter)">
               <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
-            <a href="#" className="official-social-link yt" data-name="YouTube">
+            <a href="https://www.youtube.com/@studymarrow" target="_blank" rel="noopener noreferrer" className="official-social-link yt" data-name="YouTube">
               <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             </a>
           </div>
