@@ -326,8 +326,13 @@ function PublicPage({ jobs, notices }) {
                 
                 <div className="job-text-content">
                   <p style={{ margin: '0 0 15px 0', color: '#334155', lineHeight: '1.6', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
-                    <strong>🏢 Organization:</strong> {job.company} {job.location ? `(${job.location})` : ''}<br/>
-                    <strong>⏳ Last Date:</strong> {job.deadline}<br/><br/>
+                    <strong>🏢 Organization:</strong> {job.company} {job.location ? `(${job.location})` : ''}
+                    {job.deadline && (
+                      <>
+                        <br/><strong>⏳ Last Date:</strong> {job.deadline}
+                      </>
+                    )}
+                    <br/><br/>
                     {stripHtml(job.description).substring(0, 180)}...
                   </p>
                   <Link to={`/job/${job._id}`} className="read-more-link">Read more »</Link>
@@ -402,8 +407,14 @@ function JobDetailsPage({ jobs, notices }) {
           </h1>
 
           <div className="details-meta">
-            <p><strong>Organization: {job.company}</strong><br/>
-            <strong>Last Date: {job.deadline}</strong></p>
+            <p>
+              <strong>Organization: {job.company}</strong>
+              {job.deadline && (
+                <>
+                  <br/><strong>Last Date: {job.deadline}</strong>
+                </>
+              )}
+            </p>
           </div>
 
           <div 
@@ -679,7 +690,7 @@ function ContactPage({ contacts, notices }) {
           <table className="links-table">
             <tbody>
               {contacts.map((c) => {
-                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasn't checked by admin
+                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasnt checked by admin
                 const isUrl = c.isLink || String(c.value).trim().startsWith('http');
                 return (
                   <tr key={c._id}>
@@ -1861,17 +1872,14 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
 
   // 🚀 THE AUTOMATED SHARE GENERATORS (Universal Style)
   const handleCopyJobShare = (job) => {
-    let formattedDate = 'Check Website';
+    let dateString = '';
     if (job.deadline) {
       const d = new Date(job.deadline);
-      if (!isNaN(d.getTime())) {
-        formattedDate = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-      } else {
-        formattedDate = job.deadline;
-      }
+      const formattedDate = !isNaN(d.getTime()) ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : job.deadline;
+      dateString = `\n\n⏳ *Last Date:* ${formattedDate}`;
     }
 
-    const message = `📢 *${job.company}*\n*${job.title}*\n\n⏳ *Last Date:* ${formattedDate}\n\n👇 *Read full details here:*\nhttps://careers.studymarrow.in/job/${job._id}\n\n❗❗ *Join Study Marrow Careers for instant updates:*\nWhatsApp: ${WHATSAPP_LINK}\nTelegram: ${TELEGRAM_LINK}`;
+    const message = `📢 *${job.company}*\n*${job.title}*${dateString}\n\n👇 *Read full details here:*\nhttps://careers.studymarrow.in/job/${job._id}\n\n❗❗ *Join Study Marrow Careers for instant updates:*\nWhatsApp: ${WHATSAPP_LINK}\nTelegram: ${TELEGRAM_LINK}`;
     
     navigator.clipboard.writeText(message)
       .then(() => alert("✅ Share message copied to clipboard! You can now paste it into WhatsApp or Telegram."))
@@ -1931,7 +1939,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
             <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData.description || ''} onChange={(v) => handleJobQuillChange(v, 'description')} style={{ height: '150px' }} /></div>
 
-            <input type="date" name="deadline" value={formData.deadline || ''} onChange={handleJobChange} required style={{padding: '10px', marginTop: '30px'}}/>
+            {/* 🛠️ FIXED: Removed required attribute from deadline input */}
+            <input type="date" name="deadline" value={formData.deadline || ''} onChange={handleJobChange} style={{padding: '10px', marginTop: '30px'}}/>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
               <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (7 Sections Available)</h3>
@@ -1947,8 +1956,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
               <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links (Fill up to 7)</h3>
               {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                 <div key={`jl-${num}`} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-                  <input type="text" name={`link${num}Name`} placeholder={`Link ${num} Name`} value={formData[`link${num}Name`] || ''} onChange={handleJobChange} style={{flex: 1, padding: '8px'}} required={num === 1} />
-                  <input type="url" name={`link${num}Url`} placeholder={`Link ${num} URL (https://...)`} value={formData[`link${num}Url`] || ''} onChange={handleJobChange} style={{flex: 2, padding: '8px'}} required={num === 1} />
+                  <input type="text" name={`link${num}Name`} placeholder={`Link ${num} Name`} value={formData[`link${num}Name`] || ''} onChange={handleJobChange} style={{flex: 1, padding: '8px'}} />
+                  <input type="url" name={`link${num}Url`} placeholder={`Link ${num} URL (https://...)`} value={formData[`link${num}Url`] || ''} onChange={handleJobChange} style={{flex: 2, padding: '8px'}} />
                 </div>
               ))}
             </div>
