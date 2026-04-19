@@ -139,19 +139,6 @@ function Sidebar({ notices = [] }) {
         </div>
       </div>
 
-      {/* 🚀 NEW: EXAM PREP SIDEBAR BOX */}
-      <div className="sidebar-box" style={{ border: '2px solid #2563eb', padding: '15px', backgroundColor: '#f0f9ff' }}>
-        <h3 style={{ margin: '0 0 10px 0', color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          🌍 Current Affairs
-        </h3>
-        <p style={{ margin: '0 0 15px 0', fontSize: '0.95rem', color: '#334155', lineHeight: '1.5' }}>
-          Boost your ADRE & SSC scores with our free daily, weekly, and monthly Current Affairs & Study Materials.
-        </p>
-        <a href="https://www.studymarrow.in/current-affairs" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '10px', backgroundColor: '#2563eb', color: 'white', textAlign: 'center', textDecoration: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1rem', transition: 'background-color 0.2s' }}>
-          Read Current Affairs ➔
-        </a>
-      </div>
-
       <div className="sidebar-box bookstore-banner">
         <h2>SHOPPING STORE</h2>
         <p>Coming Soon</p>
@@ -705,7 +692,7 @@ function ContactPage({ contacts, notices }) {
           <table className="links-table">
             <tbody>
               {contacts.map((c) => {
-                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasn't checked by admin
+                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasnt checked by admin
                 const isUrl = c.isLink || String(c.value).trim().startsWith('http');
                 return (
                   <tr key={c._id}>
