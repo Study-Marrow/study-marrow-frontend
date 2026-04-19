@@ -84,6 +84,8 @@ function SharedHeader() {
           <li><Link to="/category/Scholarship" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Scholarship</Link></li>
           <li><Link to="/imp-links" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Imp Links</Link></li>
           <li><Link to="/contact" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Contact</Link></li>
+          {/* 🚀 NEW: Current Affairs link pointing back to your main site */}
+          <li><a href="https://www.studymarrow.in/current-affairs" target="_blank" rel="noopener noreferrer" onClick={closeMenu} style={{ color: '#fde047', textDecoration: 'none', fontWeight: 'bold' }}>Current Affairs ↗</a></li>
         </ul>
       </nav>
     </>
@@ -135,6 +137,19 @@ function Sidebar({ notices = [] }) {
             <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
         </div>
+      </div>
+
+      {/* 🚀 NEW: EXAM PREP SIDEBAR BOX */}
+      <div className="sidebar-box" style={{ border: '2px solid #2563eb', padding: '15px', backgroundColor: '#f0f9ff' }}>
+        <h3 style={{ margin: '0 0 10px 0', color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          🌍 Current Affairs
+        </h3>
+        <p style={{ margin: '0 0 15px 0', fontSize: '0.95rem', color: '#334155', lineHeight: '1.5' }}>
+          Boost your ADRE & SSC scores with our free daily, weekly, and monthly Current Affairs & Study Materials.
+        </p>
+        <a href="https://www.studymarrow.in/current-affairs" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '10px', backgroundColor: '#2563eb', color: 'white', textAlign: 'center', textDecoration: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1rem', transition: 'background-color 0.2s' }}>
+          Read Current Affairs ➔
+        </a>
       </div>
 
       <div className="sidebar-box bookstore-banner">
@@ -690,7 +705,7 @@ function ContactPage({ contacts, notices }) {
           <table className="links-table">
             <tbody>
               {contacts.map((c) => {
-                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasnt checked by admin
+                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasn't checked by admin
                 const isUrl = c.isLink || String(c.value).trim().startsWith('http');
                 return (
                   <tr key={c._id}>
@@ -1650,6 +1665,9 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   const [impLinkForm, setImpLinkForm] = useState({ name: '', url: '' });
   const [editContactId, setEditContactId] = useState(null);
   const [contactForm, setContactForm] = useState({ platform: '', value: '', isLink: false });
+  
+  // 👥 NEW: Subscribers State
+  const [subscribers, setSubscribers] = useState([]);
 
   const getAuthHeaders = () => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` });
   const getDeleteHeaders = () => ({ 'Authorization': `Bearer ${token}` });
@@ -1668,6 +1686,24 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   };
 
   const handleLogout = () => { localStorage.removeItem('adminToken'); setToken(''); setIsAuthenticated(false); };
+
+  // 👥 NEW: Fetch Subscribers
+  const fetchSubscribers = async () => {
+    try {
+      const res = await fetch('https://study-marrow-backend.onrender.com/api/subscribe', { headers: getAuthHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        setSubscribers(data);
+      }
+    } catch(err) { console.error(err); }
+  };
+
+  // Fetch subscribers when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchSubscribers();
+    }
+  }, [isAuthenticated]);
 
   const handleJobChange = (e) => {
     const { name, value } = e.target;
@@ -1721,8 +1757,24 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
 
   const handleDeleteJob = async (id) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
-      const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { method: 'DELETE', headers: getDeleteHeaders() });
-      if (response.ok) fetchJobs();
+      try {
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { 
+          method: 'DELETE', 
+          headers: getAuthHeaders() 
+        });
+        if (response.status === 401) {
+          alert('Session expired! Please log out and back in.');
+          return;
+        }
+        if (response.ok) {
+          fetchJobs();
+        } else {
+          alert('Backend refused to delete. Please check server logs.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error. Is your backend awake?');
+      }
     }
   };
 
@@ -1759,8 +1811,24 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
 
   const handleDeleteNotice = async (id) => {
     if (window.confirm("Delete this notice?")) {
-      const response = await fetch(`https://study-marrow-backend.onrender.com/api/notices/${id}`, { method: 'DELETE', headers: getDeleteHeaders() });
-      if (response.ok) fetchNotices();
+      try {
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/notices/${id}`, { 
+          method: 'DELETE', 
+          headers: getAuthHeaders() 
+        });
+        if (response.status === 401) {
+          alert('Session expired! Please log out and back in.');
+          return;
+        }
+        if (response.ok) {
+          fetchNotices();
+        } else {
+          alert('Backend refused to delete. Please check server logs.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error. Is your backend awake?');
+      }
     }
   };
 
@@ -1811,7 +1879,19 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     if (res.ok) { setImpLinkForm({ name: '', url: '' }); fetchImpLinks(); }
   };
   const handleImpLinkDelete = async (id) => {
-    if (window.confirm("Delete this link?")) { await fetch(`https://study-marrow-backend.onrender.com/api/implinks/${id}`, { method: 'DELETE', headers: getDeleteHeaders() }); fetchImpLinks(); }
+    if (window.confirm("Delete this link?")) { 
+      try {
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/implinks/${id}`, { 
+          method: 'DELETE', 
+          headers: getAuthHeaders() 
+        });
+        if (response.status === 401) {
+          alert('Session expired! Please log out and back in.');
+          return;
+        }
+        if (response.ok) fetchImpLinks();
+      } catch(err) { alert('Network Error'); }
+    }
   };
   const handleContactSubmit = async (e) => {
     e.preventDefault();
@@ -1869,6 +1949,23 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     } catch (err) { console.error(err); }
   };
 
+  // 👥 NEW: DELETE SUBSCRIBER
+  const handleDeleteSubscriber = async (id) => {
+    if (window.confirm("Are you sure you want to remove this subscriber?")) {
+      try {
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/subscribe/${id}`, { 
+          method: 'DELETE', 
+          headers: getAuthHeaders() 
+        });
+        if (response.status === 401) {
+          alert('Session expired! Please log out and back in.');
+          return;
+        }
+        if (response.ok) fetchSubscribers();
+      } catch(err) { alert('Network Error'); }
+    }
+  };
+
 
   // 🚀 THE AUTOMATED SHARE GENERATORS (Universal Style)
   const handleCopyJobShare = (job) => {
@@ -1921,6 +2018,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
         <button onClick={() => setActiveTab('jobs')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'jobs' ? '#2563eb' : '#cbd5e1', color: activeTab === 'jobs' ? 'white' : '#333' }}>💼 Manage Jobs</button>
         <button onClick={() => setActiveTab('notices')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'notices' ? '#1e3a8a' : '#cbd5e1', color: activeTab === 'notices' ? 'white' : '#333' }}>📌 Manage Notices</button>
         <button onClick={() => setActiveTab('links')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'links' ? '#10b981' : '#cbd5e1', color: activeTab === 'links' ? 'white' : '#333' }}>🔗 Links & Contacts</button>
+        {/* 👥 NEW: Subscribers Tab Button */}
+        <button onClick={() => setActiveTab('subscribers')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'subscribers' ? '#8b5cf6' : '#cbd5e1', color: activeTab === 'subscribers' ? 'white' : '#333' }}>👥 Subscribers ({subscribers.length})</button>
       </div>
 
       {/* TAB 1: JOBS */}
@@ -1939,7 +2038,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
             <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData.description || ''} onChange={(v) => handleJobQuillChange(v, 'description')} style={{ height: '150px' }} /></div>
 
-            {/* 🛠️ FIXED: Removed required attribute from deadline input */}
             <input type="date" name="deadline" value={formData.deadline || ''} onChange={handleJobChange} style={{padding: '10px', marginTop: '30px'}}/>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
@@ -2076,11 +2174,56 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
               <div style={{display: 'flex', gap: '8px'}}>
                 <button type="button" onClick={() => moveContact(index, 'up')} disabled={index === 0} style={{padding: '6px 10px', cursor: index === 0 ? 'not-allowed' : 'pointer'}}>⬆️</button>
                 <button type="button" onClick={() => moveContact(index, 'down')} disabled={index === contacts.length - 1} style={{padding: '6px 10px', cursor: index === contacts.length - 1 ? 'not-allowed' : 'pointer'}}>⬇️</button>
-                <button type="button" onClick={() => {setEditContactId(c._id); setContactForm({ platform: c.platform, value: c.value, isLink: c.isLink });}} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Edit</button>
-                <button type="button" onClick={() => {if (window.confirm("Delete?")) { fetch(`https://study-marrow-backend.onrender.com/api/contacts/${c._id}`, { method: 'DELETE', headers: getDeleteHeaders() }).then(fetchContacts); }}} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Delete</button>
+                <button type="button" onClick={() => {
+                  setEditContactId(c._id); 
+                  setContactForm({ platform: c.platform, value: c.value, isLink: c.isLink });
+                }} style={{backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Edit</button>
+                <button type="button" onClick={async () => {
+                  if (window.confirm("Delete?")) { 
+                    try {
+                      const res = await fetch(`https://study-marrow-backend.onrender.com/api/contacts/${c._id}`, { method: 'DELETE', headers: getAuthHeaders() });
+                      if (res.status === 401) return alert('Session expired!');
+                      if (res.ok) fetchContacts();
+                    } catch(e) { alert('Network Error'); }
+                  } 
+                }} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer'}}>Delete</button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* 👥 NEW: SUBSCRIBERS TAB */}
+      {activeTab === 'subscribers' && (
+        <div>
+          <h2 style={{color: '#8b5cf6', margin: '0 0 20px 0'}}>👥 Subscriber List ({subscribers.length} Total)</h2>
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0', overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #cbd5e1' }}>
+                  <th style={{ padding: '12px' }}>#</th>
+                  <th style={{ padding: '12px' }}>Email Address</th>
+                  <th style={{ padding: '12px', textAlign: 'right' }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {subscribers.map((sub, index) => (
+                  <tr key={sub._id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                    <td style={{ padding: '12px' }}>{index + 1}</td>
+                    <td style={{ padding: '12px', fontWeight: 'bold', color: '#334155' }}>{sub.email}</td>
+                    <td style={{ padding: '12px', textAlign: 'right' }}>
+                      <button onClick={() => handleDeleteSubscriber(sub._id)} style={{backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px'}}>Remove</button>
+                    </td>
+                  </tr>
+                ))}
+                {subscribers.length === 0 && (
+                  <tr>
+                    <td colSpan="3" style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>No subscribers yet.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
