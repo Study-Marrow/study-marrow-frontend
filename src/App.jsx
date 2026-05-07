@@ -84,7 +84,7 @@ function SharedHeader() {
           <li><Link to="/category/Scholarship" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Scholarship</Link></li>
           <li><Link to="/imp-links" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Imp Links</Link></li>
           <li><Link to="/contact" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Contact</Link></li>
-          {/* 🚀 NEW: Current Affairs link pointing back to your main site */}
+          {/* 🚀 Current Affairs link pointing back to your main site */}
           <li><a href="https://www.studymarrow.in/current-affairs" target="_blank" rel="noopener noreferrer" onClick={closeMenu} style={{ color: '#fde047', textDecoration: 'none', fontWeight: 'bold' }}>Current Affairs ↗</a></li>
         </ul>
       </nav>
@@ -124,13 +124,15 @@ function Sidebar({ notices = [] }) {
       <div className="follow-us-box sidebar-box">
         <h3>Follow Us</h3>
         <div className="official-social-icons">
-          <a href="https://www.facebook.com/profile.php?id=61589185591605" className="official-social-link fb" data-name="Facebook">
+          <a href="https://www.facebook.com/profile.php?id=61589185591605" className="official-social-link fb" data-name="Facebook" target="_blank" rel="noopener noreferrer">
             <svg width="28" height="28" viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
           </a>
-          <a href="https://www.instagram.com/study_marrow/" className="official-social-link insta" data-name="Instagram">
+          <a href="https://www.instagram.com/study_marrow/" className="official-social-link insta" data-name="Instagram" target="_blank" rel="noopener noreferrer">
             <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad_footer" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad_footer)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
           </a>
-         
+          <a href="#" className="official-social-link x" data-name="X (Twitter)">
+            <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
           <a href="https://www.youtube.com/@studymarrow" target="_blank" rel="noopener noreferrer" className="official-social-link yt" data-name="YouTube">
             <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
@@ -216,13 +218,15 @@ function Footer() {
           </div>
           
           <div className="footer-social-icons">
-            <a href="https://www.facebook.com/profile.php?id=61589185591605" className="official-social-link fb" data-name="Facebook">
+            <a href="https://www.facebook.com/profile.php?id=61589185591605" className="official-social-link fb" data-name="Facebook" target="_blank" rel="noopener noreferrer">
               <svg width="28" height="28" viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
             </a>
-            <a href="https://www.instagram.com/study_marrow/" className="official-social-link insta" data-name="Instagram">
+            <a href="https://www.instagram.com/study_marrow/" className="official-social-link insta" data-name="Instagram" target="_blank" rel="noopener noreferrer">
               <svg width="28" height="28" viewBox="0 0 24 24"><defs><radialGradient id="insta_grad_footer" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(31.5 31.5 -31.5 31.5 12 12)"><stop offset="0" stopColor="#FED576"/><stop offset=".26" stopColor="#F47133"/><stop offset=".61" stopColor="#BC3081"/><stop offset="1" stopColor="#4C69D1"/></radialGradient></defs><path fill="url(#insta_grad_footer)" d="M12 0C8.74 0 8.333.015 7.053.072 2.695.272.272 2.69.072 7.053.015 8.333 0 8.74 0 12s.015 3.667.072 4.947c.2 4.354 2.617 6.78 6.979 6.98 1.281.056 1.689.072 4.948.072s3.667-.015 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.056-1.28.072-1.689.072-4.948s-.015-3.667-.072-4.947c-.2-4.354-2.617-6.78-6.979-6.98C15.667.015 15.259 0 12 0zm0 2.16c3.203 0 3.582.016 4.85.071 2.67.121 3.602 1.09 3.723 3.723.055 1.268.07 1.648.07 4.848 0 3.202-.015 3.582-.07 4.848-.121 2.669-1.09 3.602-3.723 3.723-1.267.055-1.647.07-4.848.07-3.203 0-3.582-.015-4.848-.07-2.646-.12-3.603-1.07-3.722-3.722-.056-1.268-.07-1.648-.07-4.848 0-3.203.015-3.582.07-4.848.12-2.669 1.07-3.603 3.722-3.722 1.268-.056 1.648-.07 4.848-.07zM12 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm6.404-10.403a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"/></svg>
             </a>
-           
+            <a href="#" className="official-social-link x" data-name="X (Twitter)">
+              <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
             <a href="https://www.youtube.com/@studymarrow" target="_blank" rel="noopener noreferrer" className="official-social-link yt" data-name="YouTube">
               <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             </a>
@@ -259,6 +263,9 @@ function PublicPage({ jobs, notices }) {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search');
+
+  // 🚀 Track how many posts to show at once (Starts at 10)
+  const [visibleCount, setVisibleCount] = useState(10); 
 
   let displayedJobs = jobs;
 
@@ -304,7 +311,8 @@ function PublicPage({ jobs, notices }) {
             </h2>
           )}
 
-          {displayedJobs.map((job) => (
+          {/* 🚀 CHANGED: Only map through the current "slice" of visible jobs */}
+          {displayedJobs.slice(0, visibleCount).map((job) => (
             <div key={job._id} className="list-job-card">
               <Link to={`/job/${job._id}`} style={{ textDecoration: 'none' }}>
                 <h2 className="list-job-title">
@@ -348,9 +356,16 @@ function PublicPage({ jobs, notices }) {
             </p>
           )}
 
-          {displayedJobs.length > 0 && !searchQuery && (
+          {/* 🚀 CHANGED: Make button load 10 more, and hide it when there are no more posts to show */}
+          {displayedJobs.length > visibleCount && !searchQuery && (
             <div style={{ textAlign: 'right', marginTop: '20px' }}>
-              <button className="older-posts-btn">Older Posts</button>
+              <button 
+                onClick={() => setVisibleCount(prev => prev + 10)} 
+                className="older-posts-btn"
+                style={{ cursor: 'pointer' }}
+              >
+                Older Posts ⬇️
+              </button>
             </div>
           )}
         </div>
@@ -688,7 +703,7 @@ function ContactPage({ contacts, notices }) {
           <table className="links-table">
             <tbody>
               {contacts.map((c) => {
-                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasnt checked by admin
+                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasn't checked by admin
                 const isUrl = c.isLink || String(c.value).trim().startsWith('http');
                 return (
                   <tr key={c._id}>
