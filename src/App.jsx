@@ -249,7 +249,7 @@ function Footer() {
       </div>
       <div className="footer-bottom-bar">
         <span onClick={scrollToTop} className="back-to-top" style={{cursor: 'pointer'}}>Return to top of page</span>
-        <span>Copyright © 2024-2026 · Study Marrow Careers</span>
+        <span>Copyright © 2026 · Study Marrow Careers</span>
       </div>
     </footer>
   );
