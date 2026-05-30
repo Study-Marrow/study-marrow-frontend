@@ -383,11 +383,15 @@ function JobDetailsPage({ jobs, notices }) {
   const { id } = useParams();
   const job = jobs.find((j) => j._id === id);
 
-  if (!job) {
+if (!job) {
     return (
       <div className="site-wrapper">
         <SharedHeader />
-        <div style={{ padding: '50px', textAlign: 'center' }}><h2>Loading details...</h2></div>
+        <div style={{ padding: '50px', textAlign: 'center' }}>
+          {/* 🚀 THE FIX: If jobs haven't loaded from DB yet, say loading. Otherwise, show 404 error */}
+          <h2>{jobs.length === 0 ? 'Loading details...' : '❌ Job Not Found'}</h2>
+          {jobs.length > 0 && <p>The job you are looking for does not exist or has been removed.</p>}
+        </div>
       </div>
     );
   }
