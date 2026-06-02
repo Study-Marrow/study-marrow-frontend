@@ -36,6 +36,23 @@ function SharedHeader() {
   const [searchInput, setSearchInput] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); // 🚀 Added to track current route change
+
+  // 🚀 THE SEO FIX: Automatically update the Canonical Tag for Google on every page change
+  useEffect(() => {
+    const baseUrl = 'https://careers.studymarrow.in';
+    const canonicalUrl = `${baseUrl}${location.pathname}`;
+
+    let link = document.querySelector("link[rel='canonical']");
+    
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      document.head.appendChild(link);
+    }
+    
+    link.setAttribute('href', canonicalUrl);
+  }, [location]);
 
   const handleSearch = (e) => {
     e.preventDefault();
