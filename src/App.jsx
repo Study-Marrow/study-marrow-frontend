@@ -120,7 +120,6 @@ function Sidebar({ notices = [] }) {
     { name: 'Text & Word Counter', link: '/tools/text-utility', icon: '🔤' },
     { name: 'CGPA Calculator', link: '/tools/cgpa-calculator', icon: '🔢' },
     { name: 'Age Calculator', link: '/tools/age-calculator', icon: '📅' },
-    { name: 'Typing Speed Test', link: '/tools/typing-test', icon: '⌨️' },
     { name: 'Bio-Data Generator', link: '/tools/bio-data-maker', icon: '📝' },
   ];
 
@@ -1808,75 +1807,6 @@ function CgpaCalculatorToolPage({ notices }) {
   );
 }
 
-// ==========================================
-// 🛠️ TOOL 10: TYPING SPEED TEST (WPM)
-// ==========================================
-function TypingSpeedTestPage({ notices }) {
-  const sampleText = "Competitive exams require not just knowledge but also excellent speed and accuracy. Practice daily to improve your typing speed for computer-based tests.";
-  const [userInput, setUserInput] = useState('');
-  const [startTime, setStartTime] = useState(null);
-  const [wpm, setWpm] = useState(0);
-  const [isFinished, setIsFinished] = useState(false);
-
-  const handleType = (e) => {
-    const val = e.target.value;
-    if (!startTime) setStartTime(Date.now());
-    setUserInput(val);
-
-    if (val === sampleText) {
-      const timeTakenInMinutes = (Date.now() - startTime) / 60000;
-      const words = sampleText.split(' ').length;
-      setWpm(Math.round(words / timeTakenInMinutes));
-      setIsFinished(true);
-    }
-  };
-
-  const resetTest = () => {
-    setUserInput('');
-    setStartTime(null);
-    setWpm(0);
-    setIsFinished(false);
-  };
-
-  return (
-    <div className="site-wrapper">
-      <SharedHeader />
-      <div className="content-wrapper">
-        <div className="main-column" style={{ padding: '20px' }}>
-          <div className="breadcrumb">Home » Online Tools » Typing Test</div>
-          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>⌨️ Typing Speed Test</h1>
-          
-          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-            <div style={{ padding: '15px', backgroundColor: '#f8fafc', borderRadius: '4px', border: '1px solid #cbd5e1', marginBottom: '20px', fontSize: '1.2rem', lineHeight: '1.6', userSelect: 'none' }}>
-              {sampleText}
-            </div>
-
-            <textarea 
-              value={userInput} 
-              onChange={handleType} 
-              disabled={isFinished}
-              placeholder="Start typing the text above. The timer starts on your first keystroke..." 
-              style={{ width: '100%', padding: '15px', border: '2px solid #cbd5e1', borderRadius: '4px', minHeight: '100px', fontSize: '1.1rem', boxSizing: 'border-box', marginBottom: '15px' }} 
-            />
-
-            {isFinished ? (
-              <div style={{ textAlign: 'center', backgroundColor: '#e0e7ff', padding: '20px', borderRadius: '8px', border: '1px solid #c7d2fe' }}>
-                <h2 style={{ color: '#4f46e5', margin: '0 0 10px 0' }}>Test Complete!</h2>
-                <h1 style={{ fontSize: '3rem', color: '#3730a3', margin: '0 0 15px 0' }}>{wpm} WPM</h1>
-                <button onClick={resetTest} style={{ padding: '10px 20px', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>Try Again</button>
-              </div>
-            ) : (
-              <button onClick={resetTest} style={{ padding: '8px 15px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Reset Tracker</button>
-            )}
-          </div>
-        </div>
-        <Sidebar notices={notices} />
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
 
 // ==========================================
 // DEFAULT FORM BLANK STATES 
@@ -2537,12 +2467,11 @@ function App() {
         <Route path="/tools/merge-pdfs" element={<MergePdfsToolPage notices={notices} />} /> 
         <Route path="/tools/age-calculator" element={<AgeCalculatorToolPage notices={notices} />} /> 
         <Route path="/tools/bio-data-maker" element={<BioDataGeneratorToolPage notices={notices} />} /> 
-        
+
         {/* 🚀 NEW TOOL ROUTES */}
         <Route path="/tools/format-converter" element={<ImageFormatConverterPage notices={notices} />} />
         <Route path="/tools/text-utility" element={<TextUtilityToolPage notices={notices} />} />
         <Route path="/tools/cgpa-calculator" element={<CgpaCalculatorToolPage notices={notices} />} />
-        <Route path="/tools/typing-test" element={<TypingSpeedTestPage notices={notices} />} />
 
         <Route path="/syn-world-23" element={
           <AdminPage 
