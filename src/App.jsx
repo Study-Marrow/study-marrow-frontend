@@ -110,12 +110,17 @@ function SharedHeader() {
 }
 
 function Sidebar({ notices = [] }) {
+// 🚀 UPDATED: Logically grouped tools for better UX
   const tools = [
     { name: 'Image Resize & Compress', link: '/tools/image-resize', icon: '🖼️' },
     { name: 'Merge Images', link: '/tools/merge-images', icon: '➕' },
+    { name: 'Image Format Converter', link: '/tools/format-converter', icon: '🔄' },
     { name: 'Image to PDF', link: '/tools/image-to-pdf', icon: '📸' },
     { name: 'Merge PDFs', link: '/tools/merge-pdfs', icon: '📚' },
+    { name: 'Text & Word Counter', link: '/tools/text-utility', icon: '🔤' },
+    { name: 'CGPA Calculator', link: '/tools/cgpa-calculator', icon: '🔢' },
     { name: 'Age Calculator', link: '/tools/age-calculator', icon: '📅' },
+    { name: 'Typing Speed Test', link: '/tools/typing-test', icon: '⌨️' },
     { name: 'Bio-Data Generator', link: '/tools/bio-data-maker', icon: '📝' },
   ];
 
@@ -1645,6 +1650,235 @@ function BioDataGeneratorToolPage({ notices }) {
 }
 
 // ==========================================
+// 🛠️ TOOL 7: IMAGE FORMAT CONVERTER
+// ==========================================
+function ImageFormatConverterPage({ notices }) {
+  const [imageSrc, setImageSrc] = useState(null);
+  const [format, setFormat] = useState('image/png');
+  const [convertedUrl, setConvertedUrl] = useState(null);
+  const canvasRef = useRef(null);
+
+  const handleUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => setImageSrc(event.target.result);
+      reader.readAsDataURL(file);
+      setConvertedUrl(null);
+    }
+  };
+
+  const handleConvert = () => {
+    if (!imageSrc) return;
+    const img = new Image();
+    img.onload = () => {
+      const canvas = canvasRef.current;
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      // Fill white background in case converting transparent PNG to JPG
+      if (format === 'image/jpeg') {
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      ctx.drawImage(img, 0, 0);
+      setConvertedUrl(canvas.toDataURL(format, 1.0));
+    };
+    img.src = imageSrc;
+  };
+
+  const inputStyle = { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '10px', boxSizing: 'border-box' };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » Format Converter</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>🔄 Image Format Converter</h1>
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>1. Upload Image (JPG/PNG)</label>
+            <input type="file" accept="image/*" onChange={handleUpload} style={inputStyle} />
+            
+            <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', marginTop: '10px' }}>2. Convert To</label>
+            <select value={format} onChange={(e) => setFormat(e.target.value)} style={inputStyle}>
+              <option value="image/png">PNG</option>
+              <option value="image/jpeg">JPG / JPEG</option>
+            </select>
+
+            <button onClick={handleConvert} disabled={!imageSrc} style={{ width: '100%', padding: '15px', marginTop: '15px', backgroundColor: imageSrc ? '#2563eb' : '#cbd5e1', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: imageSrc ? 'pointer' : 'not-allowed' }}>Convert Image</button>
+            <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+
+            {convertedUrl && (
+              <div style={{ marginTop: '20px', textAlign: 'center', borderTop: '2px solid #e2e8f0', paddingTop: '20px' }}>
+                <h3 style={{ color: '#166534' }}>✅ Conversion Successful</h3>
+                <a href={convertedUrl} download={`converted_image.${format === 'image/jpeg' ? 'jpg' : 'png'}`} style={{ display: 'inline-block', padding: '10px 20px', backgroundColor: '#166534', color: 'white', textDecoration: 'none', borderRadius: '4px', fontWeight: 'bold' }}>📥 Download {format === 'image/jpeg' ? 'JPG' : 'PNG'}</a>
+              </div>
+            )}
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ TOOL 8: TEXT UTILITY & WORD COUNTER
+// ==========================================
+function TextUtilityToolPage({ notices }) {
+  const [text, setText] = useState('');
+
+  const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+  const charCount = text.length;
+
+  const btnStyle = { padding: '8px 12px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', margin: '5px' };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » Text Utility</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>🔤 Text Case Converter & Word Counter</h1>
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Type or paste your descriptive answer or essay here..." style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '200px', fontFamily: 'inherit', boxSizing: 'border-box', marginBottom: '15px' }} />
+            
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', backgroundColor: '#f8fafc', padding: '15px', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1.1rem' }}>
+              <div><strong>Words:</strong> <span style={{color: '#2563eb'}}>{wordCount}</span></div>
+              <div><strong>Characters:</strong> <span style={{color: '#2563eb'}}>{charCount}</span></div>
+            </div>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              <button onClick={() => setText(text.toUpperCase())} style={btnStyle}>UPPERCASE</button>
+              <button onClick={() => setText(text.toLowerCase())} style={btnStyle}>lowercase</button>
+              <button onClick={() => setText(text.replace(/\b\w/g, c => c.toUpperCase()))} style={btnStyle}>Capitalize Words</button>
+              <button onClick={() => setText('')} style={{ ...btnStyle, backgroundColor: '#ef4444' }}>Clear Text</button>
+            </div>
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ TOOL 9: CGPA TO PERCENTAGE CALCULATOR
+// ==========================================
+function CgpaCalculatorToolPage({ notices }) {
+  const [cgpa, setCgpa] = useState('');
+  const [percentage, setPercentage] = useState(null);
+
+  const handleCalculate = (e) => {
+    e.preventDefault();
+    const val = parseFloat(cgpa);
+    if (isNaN(val) || val < 0 || val > 10) return alert('Please enter a valid CGPA between 0 and 10');
+    setPercentage((val * 9.5).toFixed(2));
+  };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » CGPA Calculator</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>🔢 CGPA to Percentage Calculator</h1>
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0', maxWidth: '500px' }}>
+            <form onSubmit={handleCalculate}>
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', color: '#1e3a8a' }}>Enter your CGPA (Out of 10)</label>
+              <input type="number" step="0.01" min="0" max="10" value={cgpa} onChange={(e) => setCgpa(e.target.value)} placeholder="e.g. 8.5" required style={{ width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', marginBottom: '15px', boxSizing: 'border-box' }} />
+              <button type="submit" style={{ width: '100%', padding: '12px', backgroundColor: '#166534', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>Calculate Percentage</button>
+            </form>
+            {percentage !== null && (
+              <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#e6f4ea', borderRadius: '4px', textAlign: 'center', border: '1px solid #b7e1cd' }}>
+                <span style={{ fontSize: '1.1rem', color: '#137333' }}>Your Equivalent Percentage is:</span>
+                <h2 style={{ margin: '5px 0 0 0', color: '#137333', fontSize: '2.5rem' }}>{percentage}%</h2>
+                <small style={{ color: '#5f6368', display: 'block', marginTop: '5px' }}>Standard Indian University Formula: CGPA × 9.5</small>
+              </div>
+            )}
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+// ==========================================
+// 🛠️ TOOL 10: TYPING SPEED TEST (WPM)
+// ==========================================
+function TypingSpeedTestPage({ notices }) {
+  const sampleText = "Competitive exams require not just knowledge but also excellent speed and accuracy. Practice daily to improve your typing speed for computer-based tests.";
+  const [userInput, setUserInput] = useState('');
+  const [startTime, setStartTime] = useState(null);
+  const [wpm, setWpm] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
+
+  const handleType = (e) => {
+    const val = e.target.value;
+    if (!startTime) setStartTime(Date.now());
+    setUserInput(val);
+
+    if (val === sampleText) {
+      const timeTakenInMinutes = (Date.now() - startTime) / 60000;
+      const words = sampleText.split(' ').length;
+      setWpm(Math.round(words / timeTakenInMinutes));
+      setIsFinished(true);
+    }
+  };
+
+  const resetTest = () => {
+    setUserInput('');
+    setStartTime(null);
+    setWpm(0);
+    setIsFinished(false);
+  };
+
+  return (
+    <div className="site-wrapper">
+      <SharedHeader />
+      <div className="content-wrapper">
+        <div className="main-column" style={{ padding: '20px' }}>
+          <div className="breadcrumb">Home » Online Tools » Typing Test</div>
+          <h1 className="details-main-title" style={{ color: '#1e3a8a' }}>⌨️ Typing Speed Test</h1>
+          
+          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <div style={{ padding: '15px', backgroundColor: '#f8fafc', borderRadius: '4px', border: '1px solid #cbd5e1', marginBottom: '20px', fontSize: '1.2rem', lineHeight: '1.6', userSelect: 'none' }}>
+              {sampleText}
+            </div>
+
+            <textarea 
+              value={userInput} 
+              onChange={handleType} 
+              disabled={isFinished}
+              placeholder="Start typing the text above. The timer starts on your first keystroke..." 
+              style={{ width: '100%', padding: '15px', border: '2px solid #cbd5e1', borderRadius: '4px', minHeight: '100px', fontSize: '1.1rem', boxSizing: 'border-box', marginBottom: '15px' }} 
+            />
+
+            {isFinished ? (
+              <div style={{ textAlign: 'center', backgroundColor: '#e0e7ff', padding: '20px', borderRadius: '8px', border: '1px solid #c7d2fe' }}>
+                <h2 style={{ color: '#4f46e5', margin: '0 0 10px 0' }}>Test Complete!</h2>
+                <h1 style={{ fontSize: '3rem', color: '#3730a3', margin: '0 0 15px 0' }}>{wpm} WPM</h1>
+                <button onClick={resetTest} style={{ padding: '10px 20px', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>Try Again</button>
+              </div>
+            ) : (
+              <button onClick={resetTest} style={{ padding: '8px 15px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Reset Tracker</button>
+            )}
+          </div>
+        </div>
+        <Sidebar notices={notices} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+
+// ==========================================
 // DEFAULT FORM BLANK STATES 
 // ==========================================
 const defaultFormState = { 
@@ -2303,6 +2537,12 @@ function App() {
         <Route path="/tools/merge-pdfs" element={<MergePdfsToolPage notices={notices} />} /> 
         <Route path="/tools/age-calculator" element={<AgeCalculatorToolPage notices={notices} />} /> 
         <Route path="/tools/bio-data-maker" element={<BioDataGeneratorToolPage notices={notices} />} /> 
+        
+        {/* 🚀 NEW TOOL ROUTES */}
+        <Route path="/tools/format-converter" element={<ImageFormatConverterPage notices={notices} />} />
+        <Route path="/tools/text-utility" element={<TextUtilityToolPage notices={notices} />} />
+        <Route path="/tools/cgpa-calculator" element={<CgpaCalculatorToolPage notices={notices} />} />
+        <Route path="/tools/typing-test" element={<TypingSpeedTestPage notices={notices} />} />
 
         <Route path="/syn-world-23" element={
           <AdminPage 
