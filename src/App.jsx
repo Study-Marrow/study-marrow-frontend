@@ -503,11 +503,17 @@ if (!job) {
                 const linkUrl = job[`link${num}Url`];
                 
                 if (linkName && linkUrl) {
+                  // 💡 SMART CHECK: Does it start with http?
+                  const isUrl = String(linkUrl).trim().startsWith('http');
                   return (
                     <tr key={num}>
                       <td><strong>{linkName}</strong></td>
                       <td style={{ textAlign: 'center', width: '150px' }}>
-                        <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
+                        {isUrl ? (
+                          <a href={linkUrl.trim()} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
+                        ) : (
+                          <span style={{ fontWeight: 'bold', color: '#ef4444' }}>{linkUrl}</span>
+                        )}
                       </td>
                     </tr>
                   );
@@ -621,12 +627,18 @@ function NoticeDetailsPage({ notices }) {
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
                 const linkName = notice[`link${num}Name`];
                 const linkUrl = notice[`link${num}Url`];
+                
                 if (linkName && linkUrl) {
+                  const isUrl = String(linkUrl).trim().startsWith('http');
                   return (
                     <tr key={num}>
                       <td><strong>{linkName}</strong></td>
                       <td style={{ textAlign: 'center', width: '150px' }}>
-                        <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
+                        {isUrl ? (
+                          <a href={linkUrl.trim()} target="_blank" rel="noopener noreferrer" className="click-here-btn">Click Here</a>
+                        ) : (
+                          <span style={{ fontWeight: 'bold', color: '#ef4444' }}>{linkUrl}</span>
+                        )}
                       </td>
                     </tr>
                   );
@@ -2226,8 +2238,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             <input type="date" name="deadline" value={formData.deadline || ''} onChange={handleJobChange} style={{padding: '10px', marginTop: '30px'}}/>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
-              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (7 Sections Available)</h3>
-              {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (9 Sections Available)</h3>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <div key={`j-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 7 ? '1px solid #cbd5e1' : 'none', paddingBottom: '20px' }}>
                   <input type="text" name={`section${num}Heading`} placeholder={`Section ${num} Heading`} value={formData[`section${num}Heading`] || ''} onChange={handleJobChange} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
                   <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData[`section${num}Details`] || ''} onChange={(v) => handleJobQuillChange(v, `section${num}Details`)} style={{ height: '150px' }} /></div>
@@ -2236,11 +2248,12 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             </div>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
-              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links (Fill up to 7)</h3>
-              {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links & Status (Fill up to 9)</h3>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <div key={`jl-${num}`} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
                   <input type="text" name={`link${num}Name`} placeholder={`Link ${num} Name`} value={formData[`link${num}Name`] || ''} onChange={handleJobChange} style={{flex: 1, padding: '8px'}} />
-                  <input type="url" name={`link${num}Url`} placeholder={`Link ${num} URL (https://...)`} value={formData[`link${num}Url`] || ''} onChange={handleJobChange} style={{flex: 2, padding: '8px'}} />
+                  {/* 🚀 Changed to type="text" so you can type "Coming Soon" */}
+                  <input type="text" name={`link${num}Url`} placeholder={`URL (https://...) OR Status (e.g. Coming Soon)`} value={formData[`link${num}Url`] || ''} onChange={handleJobChange} style={{flex: 2, padding: '8px'}} />
                 </div>
               ))}
             </div>
@@ -2278,8 +2291,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={noticeData.description || ''} onChange={(v) => handleNoticeQuillChange(v, 'description')} style={{ height: '150px' }} /></div>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
-              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (7 Sections)</h3>
-              {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (9 Sections)</h3>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <div key={`n-${num}`} style={{ marginBottom: '60px', borderBottom: num !== 7 ? '1px solid #e2e8f0' : 'none', paddingBottom: '20px' }}>
                   <input type="text" name={`section${num}Heading`} placeholder={`Section ${num} Heading`} value={noticeData[`section${num}Heading`] || ''} onChange={handleNoticeChange} style={{ width: '100%', padding: '10px', marginBottom: '8px', fontWeight: 'bold', boxSizing: 'border-box' }} />
                   <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={noticeData[`section${num}Details`] || ''} onChange={(v) => handleNoticeQuillChange(v, `section${num}Details`)} style={{ height: '150px' }} /></div>
@@ -2288,11 +2301,11 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             </div>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
-              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links (Fill up to 7)</h3>
-              {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+              <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Custom Web Links & Status (Fill up to 9)</h3>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <div key={`nl-${num}`} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
                   <input type="text" name={`link${num}Name`} placeholder={`Link ${num} Name`} value={noticeData[`link${num}Name`] || ''} onChange={handleNoticeChange} style={{flex: 1, padding: '8px'}} />
-                  <input type="url" name={`link${num}Url`} placeholder={`Link ${num} URL (https://...)`} value={noticeData[`link${num}Url`] || ''} onChange={handleNoticeChange} style={{flex: 2, padding: '8px'}} />
+                  <input type="text" name={`link${num}Url`} placeholder={`URL (https://...) OR Status (e.g. Coming Soon)`} value={noticeData[`link${num}Url`] || ''} onChange={handleNoticeChange} style={{flex: 2, padding: '8px'}} />
                 </div>
               ))}
             </div>
