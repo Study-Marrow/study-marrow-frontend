@@ -468,7 +468,7 @@ if (!job) {
             dangerouslySetInnerHTML={{ __html: cleanDescription }}
           ></div>
 
-          {[1, 2, 3, 4, 5, 6, 7].map((num) => {
+          {[1, 2, 3, 4, 5, 6, 7, 9].map((num) => {
             const heading = job[`section${num}Heading`];
             const details = job[`section${num}Details`];
             
@@ -498,7 +498,7 @@ if (!job) {
           <h2 id="links" className="gradient-header">Important Web-Links</h2>
           <table className="links-table">
             <tbody>
-              {[1, 2, 3, 4, 5, 6, 7].map((num) => {
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
                 const linkName = job[`link${num}Name`];
                 const linkUrl = job[`link${num}Url`];
                 
@@ -593,7 +593,7 @@ function NoticeDetailsPage({ notices }) {
             dangerouslySetInnerHTML={{ __html: cleanDescription }}
           ></div>
 
-          {[1, 2, 3, 4, 5, 6, 7].map((num) => {
+          {[1, 2, 3, 4, 5, 6, 7, 9].map((num) => {
             const heading = notice[`section${num}Heading`];
             const details = notice[`section${num}Details`];
             const cleanDetails = details ? details.replace(/&nbsp;|\u00A0/g, ' ') : '';
@@ -618,7 +618,7 @@ function NoticeDetailsPage({ notices }) {
           <h2 className="gradient-header" style={{ backgroundImage: 'linear-gradient(90deg, #1e3a8a, #2563eb)' }}>Important Web-Links</h2>
           <table className="links-table">
             <tbody>
-              {[1, 2, 3, 4, 5, 6, 7].map((num) => {
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
                 const linkName = notice[`link${num}Name`];
                 const linkUrl = notice[`link${num}Url`];
                 if (linkName && linkUrl) {
@@ -1820,13 +1820,15 @@ const defaultFormState = {
   section5Heading: '', section5Details: '',
   section6Heading: '', section6Details: '',
   section7Heading: '', section7Details: '',
-  link1Name: 'Online Application Form', link1Url: '', link2Name: '', link2Url: '', link3Name: '', link3Url: '', link4Name: '', link4Url: '', link5Name: '', link5Url: '', link6Name: '', link6Url: '', link7Name: '', link7Url: ''
+  section8Heading: '', section8Details: '',
+  section9Heading: '', section9Details: '',
+  link1Name: 'Online Application Form', link1Url: '', link2Name: '', link2Url: '', link3Name: '', link3Url: '', link4Name: '', link4Url: '', link5Name: '', link5Url: '', link6Name: '', link6Url: '', link7Name: '', link7Url: '', link8Name: '', link8Url: '', link9Name: '', link9Url: ''
 };
 
 const defaultNoticeState = { 
   title: '', topicName: '', description: '',
-  section1Heading: 'Details', section1Details: '', section2Heading: '', section2Details: '', section3Heading: '', section3Details: '', section4Heading: '', section4Details: '', section5Heading: '', section5Details: '', section6Heading: '', section6Details: '', section7Heading: '', section7Details: '',
-  link1Name: 'Download Notice', link1Url: '', link2Name: '', link2Url: '', link3Name: '', link3Url: '', link4Name: '', link4Url: '', link5Name: '', link5Url: '', link6Name: '', link6Url: '', link7Name: '', link7Url: ''
+  section1Heading: 'Details', section1Details: '', section2Heading: '', section2Details: '', section3Heading: '', section3Details: '', section4Heading: '', section4Details: '', section5Heading: '', section5Details: '', section6Heading: '', section6Details: '', section7Heading: '', section7Details: '', section8Heading: '', section8Details: '', section9Heading: '', section9Details: '',
+  link1Name: 'Download Notice', link1Url: '', link2Name: '', link2Url: '', link3Name: '', link3Url: '', link4Name: '', link4Url: '', link5Name: '', link5Url: '', link6Name: '', link6Url: '', link7Name: '', link7Url: '', link8Name: '', link8Url: '', link9Name: '', link9Url: ''
 };
 
 // ==========================================
