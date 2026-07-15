@@ -356,7 +356,7 @@ function PublicPage({ jobs, notices }) {
                     <strong>🏢 Organization:</strong> {job.company} {job.location ? `(${job.location})` : ''}
                     {job.deadline && (
                       <>
-                        <br/><strong>⏳ Last Date:</strong> {job.deadline}
+                        <br/><strong>⏳ Last Date:</strong> {job.deadline.includes('-') ? job.deadline.split('T')[0].split('-').reverse().join('-') : job.deadline}
                       </>
                     )}
                     <br/><br/>
@@ -449,7 +449,7 @@ if (!job) {
               <strong>Organization: {job.company}</strong>
               {job.deadline && (
                 <>
-                  <br/><strong>Last Date: {job.deadline}</strong>
+                  <br/><strong>Last Date: {job.deadline.includes('-') ? job.deadline.split('T')[0].split('-').reverse().join('-') : job.deadline}</strong>
                 </>
               )}
             </p>
