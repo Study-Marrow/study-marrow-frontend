@@ -2428,6 +2428,37 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   );
 }
 
+
+// ==========================================
+// 🚀 NEW: FULL SCREEN SPLASH LOADER
+// ==========================================
+function SplashScreen() {
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, backgroundColor: '#1e3a8a', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 99999 }}>
+      <style>
+        {`
+          @keyframes pulseLogo {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+          }
+          @keyframes slideBar {
+            0% { left: -50%; }
+            100% { left: 100%; }
+          }
+        `}
+      </style>
+      <img src="/logo.png" alt="Study Marrow" style={{ width: '130px', animation: 'pulseLogo 2s infinite ease-in-out', filter: 'drop-shadow(0px 4px 10px rgba(0,0,0,0.3))' }} />
+      <h1 style={{ color: 'white', marginTop: '25px', letterSpacing: '1px', fontSize: '2.2rem', textAlign: 'center', margin: '25px 20px 5px 20px' }}>Study Marrow Careers</h1>
+      <p style={{ color: '#93c5fd', fontSize: '1.1rem', textAlign: 'center', margin: '0 20px' }}>Waking up servers... please wait</p>
+      
+      <div style={{ marginTop: '40px', width: '200px', height: '4px', backgroundColor: '#172554', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ position: 'absolute', top: 0, width: '50%', height: '100%', backgroundColor: '#60a5fa', borderRadius: '4px', animation: 'slideBar 1.5s infinite linear' }}></div>
+      </div>
+    </div>
+  );
+}
+
 // ==========================================
 // 7. MAIN APP ROUTER 
 // ==========================================
@@ -2436,37 +2467,41 @@ function App() {
   const [notices, setNotices] = useState([]); 
   const [impLinks, setImpLinks] = useState([]); 
   const [contacts, setContacts] = useState([]); 
+  const [isLoading, setIsLoading] = useState(true); // 🚀 NEW: Tracks the splash screen
 
-  const fetchJobs = () => { fetch('https://study-marrow-backend.onrender.com/api/jobs').then(res => res.json()).then(setJobs).catch(console.error); };
-  const fetchNotices = () => { 
-    fetch('https://study-marrow-backend.onrender.com/api/notices')
-      .then(res => res.json())
-      .then(data => {
-        const sorted = data.sort((a, b) => (a.order ?? 99999) - (b.order ?? 99999));
-        setNotices(sorted);
-      }).catch(console.error); 
-  }; 
+  // 🚀 UPDATED: Removed curly braces so these functions return Promises for the loader to track
+  const fetchJobs = () => fetch('https://study-marrow-backend.onrender.com/api/jobs').then(res => res.json()).then(setJobs).catch(console.error);
   
-  const fetchImpLinks = () => { fetch('https://study-marrow-backend.onrender.com/api/implinks').then(res => res.json()).then(setImpLinks).catch(console.error); };
+  const fetchNotices = () => fetch('https://study-marrow-backend.onrender.com/api/notices').then(res => res.json()).then(data => {
+    const sorted = data.sort((a, b) => (a.order ?? 99999) - (b.order ?? 99999));
+    setNotices(sorted);
+  }).catch(console.error); 
   
-  const fetchContacts = () => { 
-    fetch('https://study-marrow-backend.onrender.com/api/contacts')
-      .then(res => res.json())
-      .then(data => {
-        const sorted = data.sort((a, b) => (a.order ?? 99999) - (b.order ?? 99999));
-        setContacts(sorted);
-      }).catch(console.error); 
-  };
+  const fetchImpLinks = () => fetch('https://study-marrow-backend.onrender.com/api/implinks').then(res => res.json()).then(setImpLinks).catch(console.error);
+  
+  const fetchContacts = () => fetch('https://study-marrow-backend.onrender.com/api/contacts').then(res => res.json()).then(data => {
+    const sorted = data.sort((a, b) => (a.order ?? 99999) - (b.order ?? 99999));
+    setContacts(sorted);
+  }).catch(console.error);
 
+  // 🚀 UPDATED: Triggers the splash screen and waits for all data to arrive
   useEffect(() => { 
-    fetchJobs(); 
-    fetchNotices(); 
-    fetchImpLinks(); 
-    fetchContacts(); 
+    setIsLoading(true);
+    Promise.all([
+      fetchJobs(), 
+      fetchNotices(), 
+      fetchImpLinks(), 
+      fetchContacts()
+    ]).finally(() => {
+      setIsLoading(false); // Render is awake, data is ready, remove splash screen!
+    });
   }, []);
 
   return (
     <Router>
+      {/* 🚀 Mounts the splash screen instantly on load */}
+      {isLoading && <SplashScreen />}
+      
       <Routes>
         <Route path="/" element={<PublicPage jobs={jobs} notices={notices} />} />
         <Route path="/category/:categoryName" element={<PublicPage jobs={jobs} notices={notices} />} />
