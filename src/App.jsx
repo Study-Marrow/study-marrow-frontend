@@ -285,6 +285,17 @@ function PublicPage({ jobs, notices }) {
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search');
 
+  // 🚀 NEW: Dynamically change tab for Home, Categories, and Searches
+  useEffect(() => {
+    if (categoryName) {
+      document.title = `${categoryName} Updates | Study Marrow Careers`;
+    } else if (searchQuery) {
+      document.title = `Search: "${searchQuery}" | Study Marrow`;
+    } else {
+      document.title = 'Study Marrow Careers - Latest Jobs & Updates';
+    }
+  }, [categoryName, searchQuery]);
+
   // 🚀 Track how many posts to show at once (Starts at 10)
   const [visibleCount, setVisibleCount] = useState(10); 
 
@@ -403,6 +414,13 @@ function PublicPage({ jobs, notices }) {
 function JobDetailsPage({ jobs, notices }) {
   const { id } = useParams();
   const job = jobs.find((j) => j._id === id);
+
+  // 🚀 NEW: Dynamically change browser tab title to the Job Title!
+  useEffect(() => {
+    if (job) {
+      document.title = `${job.title} - ${job.company} | Study Marrow`;
+    }
+  }, [job]);
 
 if (!job) {
     return (
@@ -549,6 +567,13 @@ if (!job) {
 function NoticeDetailsPage({ notices }) {
   const { id } = useParams();
   const notice = notices.find((n) => n._id === id);
+
+  // 🚀 NEW: Dynamically change browser tab title to the Notice Title!
+  useEffect(() => {
+    if (notice) {
+      document.title = `📌 ${notice.title} | Study Marrow`;
+    }
+  }, [notice]);
 
   if (!notice) {
     return (
