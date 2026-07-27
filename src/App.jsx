@@ -1744,7 +1744,7 @@ function ImageFormatConverterPage({ notices }) {
 }
 
 // ==========================================
-// 🛠️ TOOL 8: TEXT UTILITY & WORD COUNTER
+// 🛠️ TOOL 8: TEXT Utility & WORD COUNTER
 // ==========================================
 function TextUtilityToolPage({ notices }) {
   const [text, setText] = useState('');
@@ -1864,7 +1864,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   const [editJobId, setEditJobId] = useState(null); 
   const [formData, setFormData] = useState(defaultFormState);
   
-  // 📝 NEW: Tracker to know if we clicked 'Publish' or 'Save as Draft'
+  // 📝 Tracker to know if we clicked 'Publish' or 'Save as Draft'
   const [submitAction, setSubmitAction] = useState('published');
 
   const [editNoticeId, setEditNoticeId] = useState(null); 
@@ -1950,7 +1950,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   const handleLoadDraft = (draftJob) => {
     setEditJobId(draftJob._id); 
     let safeDeadline = '';
-    if (draftJob.deadline && draftJob.deadline !== 'To be announced') {
+    // Simply check if deadline exists
+    if (draftJob.deadline) {
       const dateStr = String(draftJob.deadline);
       if (dateStr.includes('T')) safeDeadline = dateStr.split('T')[0];
       else safeDeadline = dateStr;
@@ -1975,11 +1976,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   const handleJobSubmit = async (e) => {
     e.preventDefault();
 
-    // 🐛 DEADLINE BUG FIX: If empty, give it a placeholder so the database accepts it
-    const finalDeadline = formData.deadline ? formData.deadline : "To be announced";
-    
     // Use the tracker state to know which button was clicked
-    const payload = { ...formData, status: submitAction, deadline: finalDeadline };
+    const payload = { ...formData, status: submitAction };
 
     // 🚀 If publishing an existing Draft to Live, hit the specific Publish route
     if (editJobId && formData.status === 'draft' && submitAction === 'published') {
@@ -2025,7 +2023,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     try {
       setEditJobId(job._id);
       let safeDeadline = '';
-      if (job.deadline && job.deadline !== 'To be announced') {
+      if (job.deadline) {
         const dateStr = String(job.deadline);
         if (dateStr.includes('T')) safeDeadline = dateStr.split('T')[0];
         else safeDeadline = dateStr;
@@ -2238,12 +2236,10 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
 
   const handleCopyJobShare = (job) => {
     let dateString = '';
-    if (job.deadline && job.deadline !== 'To be announced') {
+    if (job.deadline) {
       const d = new Date(job.deadline);
       const formattedDate = !isNaN(d.getTime()) ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : job.deadline;
       dateString = `\n\n⏳ *Last Date:* ${formattedDate}`;
-    } else if (job.deadline === 'To be announced') {
-      dateString = `\n\n⏳ *Last Date:* To be announced`;
     }
 
     const message = `📢 *${job.company}*\n*${job.title}*${dateString}\n\n👇 *Read full details here:*\nhttps://careers.studymarrow.in/job/${job._id}\n\n❗❗ *Join Study Marrow Careers for instant updates:*\nWhatsApp: ${WHATSAPP_LINK}\nTelegram: ${TELEGRAM_LINK}`;
@@ -2326,8 +2322,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
             <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData.description || ''} onChange={(v) => handleJobQuillChange(v, 'description')} style={{ height: '150px' }} /></div>
 
-            <input type="date" name="deadline" value={formData.deadline && formData.deadline !== 'To be announced' ? formData.deadline : ''} onChange={handleJobChange} style={{padding: '10px', marginTop: '30px'}}/>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Leave date blank to automatically display "To be announced".</p>
+            <input type="date" name="deadline" value={formData.deadline || ''} onChange={handleJobChange} style={{padding: '10px', marginTop: '30px'}}/>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Leave date blank if there is no specific deadline.</p>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
               <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (9 Sections Available)</h3>
