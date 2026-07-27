@@ -1848,8 +1848,9 @@ function CgpaCalculatorToolPage({ notices }) {
 // ==========================================
 // DEFAULT FORM BLANK STATES 
 // ==========================================
+// 🚀 ADDED 'status: published' so manual posts bypass the AI Draft stage
 const defaultFormState = { 
-  title: '', company: '', imageUrl: '', location: '', description: '', deadline: '', category: 'General',
+  title: '', company: '', imageUrl: '', location: '', description: '', deadline: '', category: 'General', status: 'published',
   section1Heading: 'Vacancy Details', section1Details: '',
   section2Heading: 'Eligibility Criteria', section2Details: '',
   section3Heading: 'How to Apply', section3Details: '',
@@ -1890,6 +1891,10 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   
   // 👥 NEW: Subscribers State
   const [subscribers, setSubscribers] = useState([]);
+  
+  // 🤖 NEW: AI Drafts State
+  const [pendingDrafts, setPendingDrafts] = useState([]);
+  const [isUploadingPdf, setIsUploadingPdf] = useState(false);
 
   const getAuthHeaders = () => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` });
   const getDeleteHeaders = () => ({ 'Authorization': `Bearer ${token}` });
@@ -1909,7 +1914,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
 
   const handleLogout = () => { localStorage.removeItem('adminToken'); setToken(''); setIsAuthenticated(false); };
 
-  // 👥 NEW: Fetch Subscribers
   const fetchSubscribers = async () => {
     try {
       const res = await fetch('https://study-marrow-backend.onrender.com/api/subscribe', { headers: getAuthHeaders() });
@@ -1920,10 +1924,22 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     } catch(err) { console.error(err); }
   };
 
-  // Fetch subscribers when authenticated
+  // 🤖 NEW: Fetch Pending Drafts
+  const fetchDrafts = async () => {
+    try {
+      const res = await fetch('https://study-marrow-backend.onrender.com/api/drafts/pending', { headers: getAuthHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        setPendingDrafts(data);
+      }
+    } catch(err) { console.error(err); }
+  };
+
+  // Fetch data when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       fetchSubscribers();
+      fetchDrafts(); // Fetch drafts on load
     }
   }, [isAuthenticated]);
 
@@ -1951,9 +1967,88 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     });
   };
 
+  // 🤖 NEW: Handle PDF Upload for Drafts
+  const handlePdfUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setIsUploadingPdf(true);
+    const pdfData = new FormData();
+    pdfData.append('pdf', file);
+    
+    try {
+      const res = await fetch('https://study-marrow-backend.onrender.com/api/drafts/upload-pdf-draft', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }, // Note: No Content-Type needed for FormData
+        body: pdfData
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert('✅ AI Draft Generated Successfully!');
+        fetchDrafts(); // Refresh the list so the new draft appears
+      } else {
+        alert(`❌ Error: ${data.error}`);
+      }
+    } catch (err) {
+      alert('❌ Failed to upload PDF. Is your backend running?');
+    }
+    
+    setIsUploadingPdf(false);
+    e.target.value = null; // Clear input
+  };
+
+  // 🤖 NEW: Load a Draft into the Form
+  const handleLoadDraft = (draftJob) => {
+    setEditJobId(draftJob._id); 
+    let safeDeadline = '';
+    if (draftJob.deadline) {
+      const dateStr = String(draftJob.deadline);
+      if (dateStr.includes('T')) safeDeadline = dateStr.split('T')[0];
+      else safeDeadline = dateStr;
+    }
+    setFormData({ ...defaultFormState, ...draftJob, deadline: safeDeadline });
+    alert(`Draft "${draftJob.title}" loaded! You can now review, paste your links, and publish.`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDeleteDraft = async (id) => {
+    if (window.confirm("Are you sure you want to delete this AI draft?")) {
+      try {
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { 
+          method: 'DELETE', 
+          headers: getAuthHeaders() 
+        });
+        if (response.ok) fetchDrafts();
+      } catch (err) { console.error(err); }
+    }
+  };
+
+
   // --- JOB HANDLERS ---
   const handleJobSubmit = async (e) => {
     e.preventDefault();
+
+    // 🚀 NEW: If publishing an AI Draft, hit the specific Publish route
+    if (editJobId && formData.status === 'draft') {
+      try {
+        const response = await fetch(`https://study-marrow-backend.onrender.com/api/drafts/publish/${editJobId}`, {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(formData)
+        });
+        if (response.status === 401) return alert('Session expired!');
+        if (response.ok) {
+          alert('✅ AI Draft Published to Live Website!');
+          setFormData(defaultFormState);
+          setEditJobId(null);
+          fetchJobs(); // Update live jobs
+          fetchDrafts(); // Remove from pending list
+        }
+      } catch (error) { console.error(error); }
+      return; 
+    }
+
+    // Standard logic for Manual Posts or Live Edits
     const method = editJobId ? 'PUT' : 'POST';
     const url = editJobId ? `https://study-marrow-backend.onrender.com/api/jobs/${editJobId}` : 'https://study-marrow-backend.onrender.com/api/jobs';
     try {
@@ -2247,7 +2342,35 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
       {/* TAB 1: JOBS */}
       {activeTab === 'jobs' && (
         <div>
-          <h3 style={{color: '#2563eb', margin: '0 0 20px 0'}}>{editJobId ? '✏️ Updating Existing Job Post' : '📝 Create New Job Post'}</h3>
+          {/* 🤖 AI DRAFT GENERATOR SECTION */}
+          <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+            <h3 style={{ color: '#d97706', margin: '0 0 15px 0' }}>🤖 AI Job Auto-Generator</h3>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#92400e' }}>1. Upload Official Notification PDF</label>
+              <input type="file" accept="application/pdf" onChange={handlePdfUpload} disabled={isUploadingPdf} style={{ width: '100%', padding: '10px', backgroundColor: 'white', border: '1px dashed #d97706', borderRadius: '4px', cursor: isUploadingPdf ? 'wait' : 'pointer' }} />
+              {isUploadingPdf && <p style={{ color: '#d97706', fontWeight: 'bold', marginTop: '8px' }}>⏳ AI is reading the PDF and writing the post... please wait...</p>}
+            </div>
+
+            {pendingDrafts.length > 0 && (
+              <div>
+                <h4 style={{ color: '#92400e', marginBottom: '10px' }}>2. Pending AI Drafts ({pendingDrafts.length})</h4>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {pendingDrafts.map(draft => (
+                    <li key={draft._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '10px 15px', border: '1px solid #fcd34d', borderRadius: '4px', marginBottom: '8px' }}>
+                      <strong style={{ color: '#b45309' }}>{draft.company} - {draft.title}</strong>
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <button type="button" onClick={() => handleLoadDraft(draft)} style={{ backgroundColor: '#d97706', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Review & Publish</button>
+                        <button type="button" onClick={() => handleDeleteDraft(draft._id)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Delete</button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <h3 style={{color: '#2563eb', margin: '0 0 20px 0'}}>{editJobId ? (formData.status === 'draft' ? '🔎 Reviewing AI Draft' : '✏️ Updating Existing Job Post') : '📝 Create New Job Post'}</h3>
           <form className="job-form" onSubmit={handleJobSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
             <select name="category" value={formData.category || 'General'} onChange={handleJobChange} required style={{padding: '10px', fontSize: '1rem', border: '1px solid #cbd5e1', borderRadius: '4px'}}>
               <option value="General">General (Main Feed Only)</option> <option value="Admission">Admission</option> <option value="Admit Card">Admit Card</option> <option value="Apprentice">Apprentice</option> <option value="Result">Result</option> <option value="Scholarship">Scholarship</option>
@@ -2284,7 +2407,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             </div>
             
             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-              <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: '#2563eb', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{editJobId ? 'Update Post' : 'Publish Update'}</button>
+              <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: formData.status === 'draft' ? '#10b981' : '#2563eb', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{formData.status === 'draft' ? '✅ Publish AI Draft to Live' : (editJobId ? 'Update Post' : 'Publish New Post')}</button>
               {editJobId && (<button type="button" onClick={() => {setEditJobId(null); setFormData(defaultFormState)}} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel Edit</button>)}
             </div>
           </form>
