@@ -36,9 +36,8 @@ function SharedHeader() {
   const [searchInput, setSearchInput] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // 🚀 Added to track current route change
+  const location = useLocation();
 
-  // 🚀 THE SEO FIX: Automatically update the Canonical Tag for Google on every page change
   useEffect(() => {
     const baseUrl = 'https://careers.studymarrow.in';
     const canonicalUrl = `${baseUrl}${location.pathname}`;
@@ -101,7 +100,6 @@ function SharedHeader() {
           <li><Link to="/category/Scholarship" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Scholarship</Link></li>
           <li><Link to="/imp-links" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Imp Links</Link></li>
           <li><Link to="/contact" onClick={closeMenu} style={{ color: 'white', textDecoration: 'none' }}>Contact</Link></li>
-          {/* 🚀 Current Affairs link pointing back to your main site */}
           <li><a href="https://www.studymarrow.in/current-affairs" target="_blank" rel="noopener noreferrer" onClick={closeMenu} style={{ color: '#fde047', textDecoration: 'none', fontWeight: 'bold' }}>Current Affairs ↗</a></li>
         </ul>
       </nav>
@@ -110,7 +108,6 @@ function SharedHeader() {
 }
 
 function Sidebar({ notices = [] }) {
-// 🚀 UPDATED: Logically grouped tools for better UX
   const tools = [
     { name: 'Image Resize & Compress', link: '/tools/image-resize', icon: '🖼️' },
     { name: 'Merge Images', link: '/tools/merge-images', icon: '➕' },
@@ -285,7 +282,6 @@ function PublicPage({ jobs, notices }) {
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search');
 
-  // 🚀 NEW: Dynamically change tab for Home, Categories, and Searches
   useEffect(() => {
     if (categoryName) {
       document.title = `${categoryName} Updates | Study Marrow Careers`;
@@ -296,7 +292,6 @@ function PublicPage({ jobs, notices }) {
     }
   }, [categoryName, searchQuery]);
 
-  // 🚀 Track how many posts to show at once (Starts at 10)
   const [visibleCount, setVisibleCount] = useState(10); 
 
   let displayedJobs = jobs;
@@ -343,7 +338,6 @@ function PublicPage({ jobs, notices }) {
             </h2>
           )}
 
-          {/* 🚀 CHANGED: Only map through the current "slice" of visible jobs */}
           {displayedJobs.slice(0, visibleCount).map((job) => (
             <div key={job._id} className="list-job-card">
               <Link to={`/job/${job._id}`} style={{ textDecoration: 'none' }}>
@@ -388,7 +382,6 @@ function PublicPage({ jobs, notices }) {
             </p>
           )}
 
-          {/* 🚀 CHANGED: Make button load 10 more, and hide it when there are no more posts to show */}
           {displayedJobs.length > visibleCount && !searchQuery && (
             <div style={{ textAlign: 'right', marginTop: '20px' }}>
               <button 
@@ -415,7 +408,6 @@ function JobDetailsPage({ jobs, notices }) {
   const { id } = useParams();
   const job = jobs.find((j) => j._id === id);
 
-  // 🚀 NEW: Dynamically change browser tab title to the Job Title!
   useEffect(() => {
     if (job) {
       document.title = `${job.title} - ${job.company} | Study Marrow`;
@@ -427,7 +419,6 @@ if (!job) {
       <div className="site-wrapper">
         <SharedHeader />
         <div style={{ padding: '50px', textAlign: 'center' }}>
-          {/* 🚀 THE FIX: If jobs haven't loaded from DB yet, say loading. Otherwise, show 404 error */}
           <h2>{jobs.length === 0 ? 'Loading details...' : '❌ Job Not Found'}</h2>
           {jobs.length > 0 && <p>The job you are looking for does not exist or has been removed.</p>}
         </div>
@@ -521,7 +512,6 @@ if (!job) {
                 const linkUrl = job[`link${num}Url`];
                 
                 if (linkName && linkUrl) {
-                  // 💡 SMART CHECK: Does it start with http?
                   const isUrl = String(linkUrl).trim().startsWith('http');
                   return (
                     <tr key={num}>
@@ -568,7 +558,6 @@ function NoticeDetailsPage({ notices }) {
   const { id } = useParams();
   const notice = notices.find((n) => n._id === id);
 
-  // 🚀 NEW: Dynamically change browser tab title to the Notice Title!
   useEffect(() => {
     if (notice) {
       document.title = `📌 ${notice.title} | Study Marrow`;
@@ -765,7 +754,6 @@ function ContactPage({ contacts, notices }) {
           <table className="links-table">
             <tbody>
               {contacts.map((c) => {
-                // 💡 SMART LINK DETECTION: Fallback in case "isLink" wasn't checked by admin
                 const isUrl = c.isLink || String(c.value).trim().startsWith('http');
                 return (
                   <tr key={c._id}>
@@ -1129,7 +1117,7 @@ function ImageToPdfToolPage({ notices }) {
         } else if (item.file.type === 'image/png') {
           pdfImage = await pdfDoc.embedPng(imageBytes);
         } else {
-          continue; // Skip unsupported types
+          continue; 
         }
         
         const page = pdfDoc.addPage([pdfImage.width, pdfImage.height]);
@@ -1348,7 +1336,6 @@ function AgeCalculatorToolPage({ notices }) {
 
     if (days < 0) {
       months--;
-      // Get the number of days in the previous month
       const lastMonth = new Date(compareDate.getFullYear(), compareDate.getMonth(), 0);
       days += lastMonth.getDate();
     }
@@ -1437,12 +1424,10 @@ function BioDataGeneratorToolPage({ notices }) {
   const [extra, setExtra] = useState({ experience: '', languages: '', skills: '' });
   const [declaration, setDeclaration] = useState({ place: '', date: new Date().toISOString().split('T')[0] });
   
-  // 📸 Added state for the uploaded photo
   const [photoDataUrl, setPhotoDataUrl] = useState(null);
 
   const printRef = useRef();
 
-  // 📸 Added function to handle photo upload and perfectly size it
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
@@ -1522,7 +1507,6 @@ function BioDataGeneratorToolPage({ notices }) {
             
             <h3 style={sectionHeaderStyle}>Personal Details & Photo</h3>
             
-            {/* 📸 Added Photo Upload Input */}
             <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '4px' }}>
               <label style={labelStyle}>Upload Passport Photo (Optional)</label>
               <input type="file" accept="image/*" onChange={handlePhotoUpload} style={{ width: '100%' }} />
@@ -1597,9 +1581,8 @@ function BioDataGeneratorToolPage({ notices }) {
             
             <div ref={printRef} style={{ fontFamily: 'Times New Roman, serif', color: 'black' }}>
               
-              {/* 📸 UPDATED HEADER WITH PHOTO PLACEMENT */}
               <div className="header-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '30px' }}>
-                <div style={{ width: '120px' }}></div> {/* Empty spacer to balance the photo */}
+                <div style={{ width: '120px' }}></div> 
                 <div className="title-box" style={{ flexGrow: 1, textAlign: 'center' }}>
                   <h2 style={{ textDecoration: 'underline', letterSpacing: '2px', margin: '0' }}>BIO-DATA</h2>
                 </div>
@@ -1848,7 +1831,6 @@ function CgpaCalculatorToolPage({ notices }) {
 // ==========================================
 // DEFAULT FORM BLANK STATES 
 // ==========================================
-// 🚀 ADDED 'status: published' so manual posts bypass the AI Draft stage
 const defaultFormState = { 
   title: '', company: '', imageUrl: '', location: '', description: '', deadline: '', category: 'General', status: 'published',
   section1Heading: 'Vacancy Details', section1Details: '',
@@ -1881,6 +1863,9 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
 
   const [editJobId, setEditJobId] = useState(null); 
   const [formData, setFormData] = useState(defaultFormState);
+  
+  // 📝 NEW: Tracker to know if we clicked 'Publish' or 'Save as Draft'
+  const [submitAction, setSubmitAction] = useState('published');
 
   const [editNoticeId, setEditNoticeId] = useState(null); 
   const [noticeData, setNoticeData] = useState(defaultNoticeState);
@@ -1889,15 +1874,12 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
   const [editContactId, setEditContactId] = useState(null);
   const [contactForm, setContactForm] = useState({ platform: '', value: '', isLink: false });
   
-  // 👥 NEW: Subscribers State
   const [subscribers, setSubscribers] = useState([]);
   
-  // 🤖 NEW: AI Drafts State
+  // 📝 Pending Drafts State (kept for manual drafts)
   const [pendingDrafts, setPendingDrafts] = useState([]);
-  const [isUploadingPdf, setIsUploadingPdf] = useState(false);
 
   const getAuthHeaders = () => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` });
-  const getDeleteHeaders = () => ({ 'Authorization': `Bearer ${token}` });
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -1924,7 +1906,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     } catch(err) { console.error(err); }
   };
 
-  // 🤖 NEW: Fetch Pending Drafts
   const fetchDrafts = async () => {
     try {
       const res = await fetch('https://study-marrow-backend.onrender.com/api/drafts/pending', { headers: getAuthHeaders() });
@@ -1935,11 +1916,10 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     } catch(err) { console.error(err); }
   };
 
-  // Fetch data when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       fetchSubscribers();
-      fetchDrafts(); // Fetch drafts on load
+      fetchDrafts(); 
     }
   }, [isAuthenticated]);
 
@@ -1967,52 +1947,20 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     });
   };
 
-  // 🤖 NEW: Handle PDF Upload for Drafts
-  const handlePdfUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    setIsUploadingPdf(true);
-    const pdfData = new FormData();
-    pdfData.append('pdf', file);
-    
-    try {
-      const res = await fetch('https://study-marrow-backend.onrender.com/api/drafts/upload-pdf-draft', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }, // Note: No Content-Type needed for FormData
-        body: pdfData
-      });
-      const data = await res.json();
-      if (res.ok) {
-        alert('✅ AI Draft Generated Successfully!');
-        fetchDrafts(); // Refresh the list so the new draft appears
-      } else {
-        alert(`❌ Error: ${data.error}`);
-      }
-    } catch (err) {
-      alert('❌ Failed to upload PDF. Is your backend running?');
-    }
-    
-    setIsUploadingPdf(false);
-    e.target.value = null; // Clear input
-  };
-
-  // 🤖 NEW: Load a Draft into the Form
   const handleLoadDraft = (draftJob) => {
     setEditJobId(draftJob._id); 
     let safeDeadline = '';
-    if (draftJob.deadline) {
+    if (draftJob.deadline && draftJob.deadline !== 'To be announced') {
       const dateStr = String(draftJob.deadline);
       if (dateStr.includes('T')) safeDeadline = dateStr.split('T')[0];
       else safeDeadline = dateStr;
     }
     setFormData({ ...defaultFormState, ...draftJob, deadline: safeDeadline });
-    alert(`Draft "${draftJob.title}" loaded! You can now review, paste your links, and publish.`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDeleteDraft = async (id) => {
-    if (window.confirm("Are you sure you want to delete this AI draft?")) {
+    if (window.confirm("Are you sure you want to delete this draft?")) {
       try {
         const response = await fetch(`https://study-marrow-backend.onrender.com/api/jobs/${id}`, { 
           method: 'DELETE', 
@@ -2023,38 +1971,53 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     }
   };
 
-
   // --- JOB HANDLERS ---
   const handleJobSubmit = async (e) => {
     e.preventDefault();
 
-    // 🚀 NEW: If publishing an AI Draft, hit the specific Publish route
-    if (editJobId && formData.status === 'draft') {
+    // 🐛 DEADLINE BUG FIX: If empty, give it a placeholder so the database accepts it
+    const finalDeadline = formData.deadline ? formData.deadline : "To be announced";
+    
+    // Use the tracker state to know which button was clicked
+    const payload = { ...formData, status: submitAction, deadline: finalDeadline };
+
+    // 🚀 If publishing an existing Draft to Live, hit the specific Publish route
+    if (editJobId && formData.status === 'draft' && submitAction === 'published') {
       try {
         const response = await fetch(`https://study-marrow-backend.onrender.com/api/drafts/publish/${editJobId}`, {
           method: 'PUT',
           headers: getAuthHeaders(),
-          body: JSON.stringify(formData)
+          body: JSON.stringify(payload)
         });
         if (response.status === 401) return alert('Session expired!');
         if (response.ok) {
-          alert('✅ AI Draft Published to Live Website!');
+          alert('✅ Draft Published to Live Website!');
           setFormData(defaultFormState);
           setEditJobId(null);
-          fetchJobs(); // Update live jobs
-          fetchDrafts(); // Remove from pending list
+          fetchJobs(); 
+          fetchDrafts(); 
         }
       } catch (error) { console.error(error); }
       return; 
     }
 
-    // Standard logic for Manual Posts or Live Edits
+    // Standard logic for Manual Posts, Saving Drafts, or Live Edits
     const method = editJobId ? 'PUT' : 'POST';
     const url = editJobId ? `https://study-marrow-backend.onrender.com/api/jobs/${editJobId}` : 'https://study-marrow-backend.onrender.com/api/jobs';
     try {
-      const response = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(formData) });
+      const response = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) });
       if (response.status === 401) return alert('Session expired! Please log out and back in.');
-      if (response.ok) { alert(editJobId ? 'Post updated!' : 'Post published!'); setFormData(defaultFormState); setEditJobId(null); fetchJobs(); }
+      if (response.ok) { 
+        if (submitAction === 'draft') {
+          alert('📝 Saved successfully as a Pending Draft!');
+        } else {
+          alert(editJobId ? '✅ Post updated live!' : '✅ New post published live!');
+        }
+        setFormData(defaultFormState); 
+        setEditJobId(null); 
+        fetchJobs(); 
+        fetchDrafts(); 
+      }
     } catch (error) { console.error(error); }
   };
 
@@ -2062,7 +2025,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     try {
       setEditJobId(job._id);
       let safeDeadline = '';
-      if (job.deadline) {
+      if (job.deadline && job.deadline !== 'To be announced') {
         const dateStr = String(job.deadline);
         if (dateStr.includes('T')) safeDeadline = dateStr.split('T')[0];
         else safeDeadline = dateStr;
@@ -2101,7 +2064,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     const method = editNoticeId ? 'PUT' : 'POST';
     const url = editNoticeId ? `https://study-marrow-backend.onrender.com/api/notices/${editNoticeId}` : 'https://study-marrow-backend.onrender.com/api/notices';
 
-    // Assign an order immediately if it's a completely new Notice
     const payload = { ...noticeData };
     if (!editNoticeId) {
         const maxOrder = notices.reduce((max, n) => Math.max(max, n.order || 0), 0);
@@ -2155,26 +2117,21 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     if (direction === 'up' && index === 0) return;
     if (direction === 'down' && index === currentList.length - 1) return;
 
-    // Safety fallback: ensure every item has a baseline order to swap mathematically 
     currentList.forEach((item, i) => {
         if (item.order === undefined || item.order === null) item.order = i + 1;
     });
 
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-
-    // Swap numbers locally
     const tempOrder = currentList[index].order;
     currentList[index].order = currentList[targetIndex].order;
     currentList[targetIndex].order = tempOrder;
 
-    // Swap position in array so the UI moves instantly
     const itemToMove = currentList[index];
     currentList[index] = currentList[targetIndex];
     currentList[targetIndex] = itemToMove;
 
     setNotices([...currentList]); 
 
-    // Send the two updated orders to the DB
     try {
         await Promise.all([
             fetch(`https://study-marrow-backend.onrender.com/api/notices/${currentList[index]._id}`, { 
@@ -2184,7 +2141,7 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
                 method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ order: currentList[targetIndex].order }) 
             })
         ]);
-        fetchNotices(); // Sync to verify
+        fetchNotices();
     } catch (err) { console.error(err); }
   };
 
@@ -2215,7 +2172,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     const method = editContactId ? 'PUT' : 'POST';
     const url = editContactId ? `https://study-marrow-backend.onrender.com/api/contacts/${editContactId}` : 'https://study-marrow-backend.onrender.com/api/contacts';
 
-    // Assign an order immediately if it's a completely new Contact
     const payload = { ...contactForm };
     if (!editContactId) {
         const maxOrder = contacts.reduce((max, c) => Math.max(max, c.order || 0), 0);
@@ -2236,13 +2192,11 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     if (direction === 'up' && index === 0) return;
     if (direction === 'down' && index === currentList.length - 1) return;
 
-    // Safety fallback
     currentList.forEach((item, i) => {
         if (item.order === undefined || item.order === null) item.order = i + 1;
     });
 
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-
     const tempOrder = currentList[index].order;
     currentList[index].order = currentList[targetIndex].order;
     currentList[targetIndex].order = tempOrder;
@@ -2266,7 +2220,6 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     } catch (err) { console.error(err); }
   };
 
-  // 👥 NEW: DELETE SUBSCRIBER
   const handleDeleteSubscriber = async (id) => {
     if (window.confirm("Are you sure you want to remove this subscriber?")) {
       try {
@@ -2283,14 +2236,14 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
     }
   };
 
-
-  // 🚀 THE AUTOMATED SHARE GENERATORS (Universal Style)
   const handleCopyJobShare = (job) => {
     let dateString = '';
-    if (job.deadline) {
+    if (job.deadline && job.deadline !== 'To be announced') {
       const d = new Date(job.deadline);
       const formattedDate = !isNaN(d.getTime()) ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : job.deadline;
       dateString = `\n\n⏳ *Last Date:* ${formattedDate}`;
+    } else if (job.deadline === 'To be announced') {
+      dateString = `\n\n⏳ *Last Date:* To be announced`;
     }
 
     const message = `📢 *${job.company}*\n*${job.title}*${dateString}\n\n👇 *Read full details here:*\nhttps://careers.studymarrow.in/job/${job._id}\n\n❗❗ *Join Study Marrow Careers for instant updates:*\nWhatsApp: ${WHATSAPP_LINK}\nTelegram: ${TELEGRAM_LINK}`;
@@ -2335,42 +2288,32 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
         <button onClick={() => setActiveTab('jobs')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'jobs' ? '#2563eb' : '#cbd5e1', color: activeTab === 'jobs' ? 'white' : '#333' }}>💼 Manage Jobs</button>
         <button onClick={() => setActiveTab('notices')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'notices' ? '#1e3a8a' : '#cbd5e1', color: activeTab === 'notices' ? 'white' : '#333' }}>📌 Manage Notices</button>
         <button onClick={() => setActiveTab('links')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'links' ? '#10b981' : '#cbd5e1', color: activeTab === 'links' ? 'white' : '#333' }}>🔗 Links & Contacts</button>
-        {/* 👥 NEW: Subscribers Tab Button */}
         <button onClick={() => setActiveTab('subscribers')} style={{ flex: 1, padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', backgroundColor: activeTab === 'subscribers' ? '#8b5cf6' : '#cbd5e1', color: activeTab === 'subscribers' ? 'white' : '#333' }}>👥 Subscribers ({subscribers.length})</button>
       </div>
 
       {/* TAB 1: JOBS */}
       {activeTab === 'jobs' && (
         <div>
-          {/* 🤖 AI DRAFT GENERATOR SECTION */}
-          <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-            <h3 style={{ color: '#d97706', margin: '0 0 15px 0' }}>🤖 AI Job Auto-Generator</h3>
-            
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#92400e' }}>1. Upload Official Notification PDF</label>
-              <input type="file" accept="application/pdf" onChange={handlePdfUpload} disabled={isUploadingPdf} style={{ width: '100%', padding: '10px', backgroundColor: 'white', border: '1px dashed #d97706', borderRadius: '4px', cursor: isUploadingPdf ? 'wait' : 'pointer' }} />
-              {isUploadingPdf && <p style={{ color: '#d97706', fontWeight: 'bold', marginTop: '8px' }}>⏳ AI is reading the PDF and writing the post... please wait...</p>}
+          
+          {/* 📝 MANUAL DRAFTS SECTION */}
+          {pendingDrafts.length > 0 && (
+            <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+              <h3 style={{ color: '#d97706', margin: '0 0 15px 0' }}>📝 Your Saved Drafts ({pendingDrafts.length})</h3>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {pendingDrafts.map(draft => (
+                  <li key={draft._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '10px 15px', border: '1px solid #fcd34d', borderRadius: '4px', marginBottom: '8px' }}>
+                    <strong style={{ color: '#b45309' }}>{draft.company || 'Unknown'} - {draft.title || 'Draft Post'}</strong>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button type="button" onClick={() => handleLoadDraft(draft)} style={{ backgroundColor: '#d97706', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Continue Editing</button>
+                      <button type="button" onClick={() => handleDeleteDraft(draft._id)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Delete</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
+          )}
 
-            {pendingDrafts.length > 0 && (
-              <div>
-                <h4 style={{ color: '#92400e', marginBottom: '10px' }}>2. Pending AI Drafts ({pendingDrafts.length})</h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                  {pendingDrafts.map(draft => (
-                    <li key={draft._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '10px 15px', border: '1px solid #fcd34d', borderRadius: '4px', marginBottom: '8px' }}>
-                      <strong style={{ color: '#b45309' }}>{draft.company} - {draft.title}</strong>
-                      <div style={{ display: 'flex', gap: '10px' }}>
-                        <button type="button" onClick={() => handleLoadDraft(draft)} style={{ backgroundColor: '#d97706', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Review & Publish</button>
-                        <button type="button" onClick={() => handleDeleteDraft(draft._id)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Delete</button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          <h3 style={{color: '#2563eb', margin: '0 0 20px 0'}}>{editJobId ? (formData.status === 'draft' ? '🔎 Reviewing AI Draft' : '✏️ Updating Existing Job Post') : '📝 Create New Job Post'}</h3>
+          <h3 style={{color: '#2563eb', margin: '0 0 20px 0'}}>{editJobId ? (formData.status === 'draft' ? '🔎 Resuming Saved Draft' : '✏️ Updating Existing Job Post') : '📝 Create New Job Post'}</h3>
           <form className="job-form" onSubmit={handleJobSubmit} style={{ backgroundColor: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
             <select name="category" value={formData.category || 'General'} onChange={handleJobChange} required style={{padding: '10px', fontSize: '1rem', border: '1px solid #cbd5e1', borderRadius: '4px'}}>
               <option value="General">General (Main Feed Only)</option> <option value="Admission">Admission</option> <option value="Admit Card">Admit Card</option> <option value="Apprentice">Apprentice</option> <option value="Result">Result</option> <option value="Scholarship">Scholarship</option>
@@ -2383,7 +2326,8 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
             <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#1e3a8a' }}>Introduction / Brief Details</p>
             <div style={{ backgroundColor: 'white', marginBottom: '40px' }}><ReactQuill modules={quillModules} theme="snow" value={formData.description || ''} onChange={(v) => handleJobQuillChange(v, 'description')} style={{ height: '150px' }} /></div>
 
-            <input type="date" name="deadline" value={formData.deadline || ''} onChange={handleJobChange} style={{padding: '10px', marginTop: '30px'}}/>
+            <input type="date" name="deadline" value={formData.deadline && formData.deadline !== 'To be announced' ? formData.deadline : ''} onChange={handleJobChange} style={{padding: '10px', marginTop: '30px'}}/>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Leave date blank to automatically display "To be announced".</p>
 
             <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: '8px', marginTop: '15px', border: '1px solid #e2e8f0' }}>
               <h3 style={{ margin: '0 0 15px 0', color: '#1e3a8a' }}>Dynamic Content Sections (9 Sections Available)</h3>
@@ -2400,15 +2344,37 @@ function AdminPage({ fetchJobs, jobs, fetchNotices, notices, setNotices, fetchIm
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <div key={`jl-${num}`} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
                   <input type="text" name={`link${num}Name`} placeholder={`Link ${num} Name`} value={formData[`link${num}Name`] || ''} onChange={handleJobChange} style={{flex: 1, padding: '8px'}} />
-                  {/* 🚀 Changed to type="text" so you can type "Coming Soon" */}
                   <input type="text" name={`link${num}Url`} placeholder={`URL (https://...) OR Status (e.g. Coming Soon)`} value={formData[`link${num}Url`] || ''} onChange={handleJobChange} style={{flex: 2, padding: '8px'}} />
                 </div>
               ))}
             </div>
             
             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-              <button type="submit" style={{flex: 1, padding: '15px', backgroundColor: formData.status === 'draft' ? '#10b981' : '#2563eb', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>{formData.status === 'draft' ? '✅ Publish AI Draft to Live' : (editJobId ? 'Update Post' : 'Publish New Post')}</button>
-              {editJobId && (<button type="button" onClick={() => {setEditJobId(null); setFormData(defaultFormState)}} style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}>Cancel Edit</button>)}
+              <button 
+                type="submit" 
+                onClick={() => setSubmitAction('published')}
+                style={{flex: 1, padding: '15px', backgroundColor: formData.status === 'draft' ? '#10b981' : '#2563eb', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}
+              >
+                {formData.status === 'draft' ? '✅ Publish Draft to Live' : (editJobId ? 'Update Live Post' : 'Publish Live Post')}
+              </button>
+              
+              <button 
+                type="submit" 
+                onClick={() => setSubmitAction('draft')}
+                style={{flex: 1, padding: '15px', backgroundColor: '#d97706', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}
+              >
+                {editJobId && formData.status === 'draft' ? '📝 Update Draft' : '📝 Save as Draft'}
+              </button>
+
+              {editJobId && (
+                <button 
+                  type="button" 
+                  onClick={() => {setEditJobId(null); setFormData(defaultFormState)}} 
+                  style={{padding: '15px', backgroundColor: '#64748b', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}
+                >
+                  Cancel Edit
+                </button>
+              )}
             </div>
           </form>
 
@@ -2615,9 +2581,8 @@ function App() {
   const [notices, setNotices] = useState([]); 
   const [impLinks, setImpLinks] = useState([]); 
   const [contacts, setContacts] = useState([]); 
-  const [isLoading, setIsLoading] = useState(true); // 🚀 NEW: Tracks the splash screen
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 🚀 UPDATED: Removed curly braces so these functions return Promises for the loader to track
   const fetchJobs = () => fetch('https://study-marrow-backend.onrender.com/api/jobs').then(res => res.json()).then(setJobs).catch(console.error);
   
   const fetchNotices = () => fetch('https://study-marrow-backend.onrender.com/api/notices').then(res => res.json()).then(data => {
@@ -2632,7 +2597,6 @@ function App() {
     setContacts(sorted);
   }).catch(console.error);
 
-  // 🚀 UPDATED: Triggers the splash screen and waits for all data to arrive
   useEffect(() => { 
     setIsLoading(true);
     Promise.all([
@@ -2641,13 +2605,12 @@ function App() {
       fetchImpLinks(), 
       fetchContacts()
     ]).finally(() => {
-      setIsLoading(false); // Render is awake, data is ready, remove splash screen!
+      setIsLoading(false);
     });
   }, []);
 
   return (
     <Router>
-      {/* 🚀 Mounts the splash screen instantly on load */}
       {isLoading && <SplashScreen />}
       
       <Routes>
@@ -2665,8 +2628,6 @@ function App() {
         <Route path="/tools/merge-pdfs" element={<MergePdfsToolPage notices={notices} />} /> 
         <Route path="/tools/age-calculator" element={<AgeCalculatorToolPage notices={notices} />} /> 
         <Route path="/tools/bio-data-maker" element={<BioDataGeneratorToolPage notices={notices} />} /> 
-
-        {/* 🚀 NEW TOOL ROUTES */}
         <Route path="/tools/format-converter" element={<ImageFormatConverterPage notices={notices} />} />
         <Route path="/tools/text-utility" element={<TextUtilityToolPage notices={notices} />} />
         <Route path="/tools/cgpa-calculator" element={<CgpaCalculatorToolPage notices={notices} />} />
