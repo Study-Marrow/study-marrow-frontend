@@ -2579,7 +2579,15 @@ function App() {
   const [contacts, setContacts] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchJobs = () => fetch('https://study-marrow-backend.onrender.com/api/jobs').then(res => res.json()).then(setJobs).catch(console.error);
+  const fetchJobs = () => fetch('https://study-marrow-backend.onrender.com/api/jobs')
+    .then(res => res.json())
+    .then(data => {
+      // 🛡️ THE FIX: Filter out any post marked as a draft before saving it to the public state.
+      // (Older posts without a status tag will be safely kept).
+      const activeJobs = data.filter(job => job.status !== 'draft');
+      setJobs(activeJobs);
+    })
+    .catch(console.error);
   
   const fetchNotices = () => fetch('https://study-marrow-backend.onrender.com/api/notices').then(res => res.json()).then(data => {
     const sorted = data.sort((a, b) => (a.order ?? 99999) - (b.order ?? 99999));
